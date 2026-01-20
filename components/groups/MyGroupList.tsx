@@ -1,5 +1,7 @@
 import { GroupSummary } from "@/types/groups";
 import { GroupCard } from "./GroupCard";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Users } from "lucide-react";
 
 interface MyGroupListProps {
   groupSummaryList?: GroupSummary[];
@@ -8,9 +10,10 @@ interface MyGroupListProps {
 export function MyGroupList({ groupSummaryList = [] }: MyGroupListProps) {
   if (groupSummaryList.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center px-4 py-16 sm:px-5 sm:py-20">
-        <p className="text-muted-foreground">아직 참여하는 그룹이 없습니다.</p>
-      </div>
+      <EmptyState
+        icon={Users}
+        description="아직 참여하는 그룹이 없습니다."
+      />
     );
   }
 

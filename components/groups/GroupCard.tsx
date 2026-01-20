@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { GroupSummary } from "@/types/groups";
-import Image from "next/image";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { GROUP_FALLBACK_IMAGE } from "@/constants/image";
 
 interface GroupCardProps {
@@ -12,8 +13,6 @@ export function GroupCard({
   groupSummary,
   className,
 }: GroupCardProps) {
-  const imageSrc = groupSummary.imageUrl ?? GROUP_FALLBACK_IMAGE;
-
   return (
     <div
       className={cn(
@@ -21,27 +20,23 @@ export function GroupCard({
         className
       )}
     >
-      <div className="relative size-16 shrink-0 overflow-hidden rounded-full border-2 border-muted-foreground/30 bg-muted sm:size-20">
-        <Image
-          src={imageSrc}
-          alt={`${groupSummary.name} 그룹 이미지`}
-          fill
-          className="object-cover text-muted-foreground/50"
-        />
-      </div>
-            
+      <Avatar
+        src={groupSummary.imageUrl}
+        alt={`${groupSummary.name} 그룹 이미지`}
+        fallbackText={groupSummary.name}
+        fallbackUrl={GROUP_FALLBACK_IMAGE}
+        size="lg"
+      />
 
-      {/* 그룹 정보 */}
       <div className="flex flex-1 flex-col gap-1">
         <h3 className="text-lg font-bold leading-tight text-foreground sm:text-xl">
           {groupSummary.name}
         </h3>
         <p className="text-sm text-muted-foreground">{groupSummary.description}</p>
-        <p className="text-sm text-muted-foreground">
+        <Badge variant="secondary" size="sm" className="w-fit mt-1">
           이번 달 회식 {groupSummary.diningCountPerMonth}회
-        </p>
+        </Badge>
       </div>
-
     </div>
   );
 }

@@ -22,22 +22,27 @@ interface AvatarProps {
   src?: string | null;
   alt: string;
   fallbackText?: string;
+  fallbackUrl?: string;
   size?: keyof typeof sizeStyles;
   shape?: "circle" | "rounded";
   showBorder?: boolean;
   className?: string;
 }
 
+type RenderType = "image" | "fallbackImage" | "initials"; 
+
 export function Avatar({
   src,
   alt,
   fallbackText,
+  fallbackUrl,
   size = "md",
   shape = "circle",
   showBorder = true,
   className,
 }: AvatarProps) {
   const [hasError, setHasError] = useState(false);
+  const [hasFallbackError, setHasFallbackError] = useState(false);
 
   const initials = fallbackText
     ? fallbackText
@@ -52,8 +57,16 @@ export function Avatar({
         .join("")
         .slice(0, 2)
         .toUpperCase();
+    
+    let renderType: RenderType;
 
-  const showFallback = !src || hasError;
+    if (src && !hasError){
+        renderType = "image";
+    } else if (fallbackUrl && !hasFallbackError){
+        renderType = "fallbackImage";
+    } else {
+        renderType = "initials";
+    }
 
   return (
     <div
@@ -65,7 +78,27 @@ export function Avatar({
         className
       )}
     >
-      {showFallback ? (
+      {renderType === "image" && (
+        <Image
+          src={src!}
+          alt={alt}
+          fill 
+          className="object-cover"
+          onError={()=>setHasError(true)}
+        />
+      )}
+
+      {renderType === "fallbackImage" && (
+        <Image
+          src={fallbackUrl!}
+          alt={alt}
+          fill 
+          className="object-cover"
+          onError={()=>setHasFallbackError(true)}
+        />
+      )}
+
+      {renderType === "initials" && (
         <div
           className={cn(
             "flex size-full items-center justify-center font-semibold text-muted-foreground",
@@ -74,14 +107,6 @@ export function Avatar({
         >
           {initials}
         </div>
-      ) : (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-cover"
-          onError={() => setHasError(true)}
-        />
       )}
     </div>
   );
