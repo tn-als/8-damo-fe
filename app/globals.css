@@ -95,6 +95,11 @@
 }
 
 @theme inline {
+  /* Mobile-first breakpoints */
+  --breakpoint-sm: 360px;
+  --breakpoint-md: 375px;
+  --breakpoint-lg: 430px;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
