@@ -15,7 +15,7 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("flex flex-col gap-5 pt-5", className)}>
+    <div className={cn("flex flex-col gap-5 px-5 pt-10", className)}>
       {onBack && (
         <button
           onClick={onBack}
