@@ -9,13 +9,13 @@ export function LoginButton(){
     };
 
     return <>
-        <button onClick={handleLogin} className="fixed bottom-24 mx-auto">
+        <button onClick={handleLogin} className="fixed bottom-20 left-1/2 -translate-x-1/2 sm:bottom-24">
         <Image
           src="/kakao-login.png"
           alt="카카오 로그인"
           width={183}
           height={45}
-          className="object-contain"
+          className="h-auto w-[160px] object-contain sm:w-[183px]"
         />
       </button>
     </>
