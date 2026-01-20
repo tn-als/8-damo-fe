@@ -49,7 +49,7 @@ export function CharacteristicsForm({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background px-5 pb-8">
+    <div className="flex flex-col bg-background pb-8">
       <div className="mt-8">
         <NoPreferencesField
           value={noPreferences}
