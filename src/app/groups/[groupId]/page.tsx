@@ -1,10 +1,10 @@
 "use client";
 
-import { GroupDetailHeader } from "@/src/components/groups/GroupDetailHeader";
+import { GroupDetailHeader } from "@/src/components/groups/group-detail-header";
 import { Button } from "@/src/components/ui/button";
-import { GroupDetailInformationSection } from "@/src/components/groups/GroupDetailInformationSection";
-import { GroupDetailDiningSection } from "@/src/components/groups/GroupDetailDiningSection";
-import { GroupDetailCreateDiningButton } from "@/src/components/groups/GroupDetailCreateDiningButton";
+import { GroupDetailInformationSection } from "@/src/components/groups/group-detail-information-section";
+import { GroupDetailDiningSection } from "@/src/components/groups/group-detail-dining-section";
+import { GroupDetailCreateDiningButton } from "@/src/components/groups/group-detail-create-dining-button";
 
 // Mock data - 실제로는 API에서 가져올 데이터
 const mockGroupDetail = {
