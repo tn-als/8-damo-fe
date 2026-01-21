@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html,
+body {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 :root {
   --background: #fffaf5;
   --foreground: #3d3637;
