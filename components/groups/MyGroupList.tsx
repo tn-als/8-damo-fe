@@ -1,14 +1,19 @@
+'use client'
+
 import { GroupSummary } from "@/types/groups";
 import { GroupCard } from "./GroupCard";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface MyGroupListProps {
   groupSummaryList?: GroupSummary[];
 }
 
 export function MyGroupList({ groupSummaryList = [] }: MyGroupListProps) {
-  if (groupSummaryList.length === 0) {
+  const router = useRouter();
+
+    if (groupSummaryList.length === 0) {
     return (
       <EmptyState
         icon={Users}
@@ -23,6 +28,9 @@ export function MyGroupList({ groupSummaryList = [] }: MyGroupListProps) {
         <GroupCard
           key={groupSummary.id}
           groupSummary={groupSummary}
+          onClick={(groupId) => {
+            router.push(`/groups/${groupId}`);
+          }}
         />
       ))}
     </div>
