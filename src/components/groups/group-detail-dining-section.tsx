@@ -1,6 +1,6 @@
 "use client";
 
-import { DiningSummaryCard } from "@/src/components/groups/DiningSummaryCard";
+import { DiningSummaryCard } from "@/src/components/groups/dining-summary-card";
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";
 import { useState } from "react";
 

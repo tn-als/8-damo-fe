@@ -1,8 +1,7 @@
-<<<<<<< HEAD
-export { MyGroupHeader } from "./MyGroupHeader";
-export { MyGroupList } from "./MyGroupList";
-export { MyGroupActionsFAB } from "./MyGroupActionsFAB";
-export { GroupCard } from "./GroupCard";
+export { MyGroupHeader } from "./my-group-header";
+export { MyGroupList } from "./my-group-list";
+export { MyGroupActionsFAB } from "./my-group-actions-fab";
+export { GroupCard } from "./group-card";
 
 // Group Join
 export { GroupJoinContainer } from "./group-join-container";

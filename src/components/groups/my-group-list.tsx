@@ -1,7 +1,7 @@
 'use client'
 
 import { GroupSummary } from "@/src/types/groups";
-import { GroupCard } from "./GroupCard";
+import { GroupCard } from "./group-card";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { Users } from "lucide-react";
 import { useRouter } from "next/navigation";
