@@ -1,6 +1,6 @@
-import { MyGroupHeader } from '@/src/components/groups/MyGroupHeader';
-import { MyGroupList } from '@/src/components/groups/MyGroupList';
-import { MyGroupActionsFAB } from '@/src/components/groups/MyGroupActionsFAB';
+import { MyGroupHeader } from '@/src/components/groups/my-group-header';
+import { MyGroupList } from '@/src/components/groups/my-group-list';
+import { MyGroupActionsFAB } from '@/src/components/groups/my-group-actions-fab';
 import { GroupSummary } from '@/src/types/groups';
 
 const mockGroupSummary: GroupSummary[] = [
