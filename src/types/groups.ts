@@ -1,7 +1,8 @@
 export interface GroupSummary {
     id: string; 
     name: string; 
-    description: string; 
-    diningCountPerMonth: number;
+    description?: string; 
+    memberCount?: number;
+    diningCountPerMonth?: number;
     imageUrl?: string;
 }
