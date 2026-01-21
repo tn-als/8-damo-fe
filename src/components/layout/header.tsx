@@ -35,7 +35,7 @@ export function Header({
   return (
     <header
       className={cn(
-        "flex h-14 items-center justify-between px-4 sm:h-16 sm:px-5",
+        "flex h-16 items-center justify-between px-4 sm:h-20 sm:px-5",
         className
       )}
     >

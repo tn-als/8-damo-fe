@@ -2,7 +2,7 @@ import { cn } from "@/src/lib/utils";
 import { GroupSummary } from "@/src/types/groups";
 import { Avatar } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
-import { GROUP_FALLBACK_IMAGE } from "@/constants/image";
+import { GROUP_FALLBACK_IMAGE } from "@/src/constants/image";
 
 interface GroupCardProps {
   groupSummary: GroupSummary;
