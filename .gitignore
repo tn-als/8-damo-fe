@@ -43,3 +43,9 @@ next-env.d.ts
 # skills
 .claude/
 skills/
+
+# local tooling
+.vscode/
+.husky/
+
+CLAUDE.md
