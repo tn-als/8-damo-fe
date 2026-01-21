@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { GroupImageUploadField } from "./group-image-upload-field";
 import { GroupNameInputField } from "./group-name-input-field";
 import { GroupIntroductionInputField } from "./group-introduction-input-field";
+import { GroupLocationInputField } from "./group-location-input-field";
 import { GroupCreateSubmitArea } from "./group-create-submit-area";
 
 export type GroupCreateFormValues = {
@@ -65,6 +66,7 @@ export function GroupCreateContainer({
           <div className="flex flex-col gap-8">
             <GroupNameInputField name="groupName" control={control} />
             <GroupIntroductionInputField name="introduction" control={control} />
+            <GroupLocationInputField />
           </div>
 
           <GroupCreateSubmitArea
