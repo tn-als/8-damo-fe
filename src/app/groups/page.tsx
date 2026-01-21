@@ -1,73 +1,11 @@
+<<<<<<< HEAD
 import { MyGroupHeader } from '@/src/components/groups/MyGroupHeader';
 import { MyGroupList } from '@/src/components/groups/MyGroupList';
 import { MyGroupActionsFAB } from '@/src/components/groups/MyGroupActionsFAB';
-import { GroupSummary } from '@/src/types/groups';
-
-const mockGroupSummary: GroupSummary[] = [
-  {
-    id: '1',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '2',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '3',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '4',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '5',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '6',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '7',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '8',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '9',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  },
-  {
-    id: '10',
-    name: '개발팀',
-    description: '백엔드 개발팀',
-    diningCountPerMonth: 3
-  }
-];
+import { GROUP_SUMMARY_MOCK_LIST } from '@/src/constants/mock-data/group-summary';
 
 export default function GroupsPage() {
-  const groups = mockGroupSummary;
+  const groups = GROUP_SUMMARY_MOCK_LIST;
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[430px] bg-background">
