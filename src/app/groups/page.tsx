@@ -7,10 +7,11 @@ export default function GroupsPage() {
   const groups = GROUP_SUMMARY_MOCK_LIST;
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-[430px] bg-background">
-      <MyGroupHeader />
-      <MyGroupList groupSummaryList={groups} />
-      <MyGroupActionsFAB />
-    </div>
+    <>
+        <main className="flex flex-col gap-6 px-4 py-4 sm:pt-4">
+            <MyGroupList groupSummaryList={groups} />
+            <MyGroupActionsFAB />
+        </main>
+    </>
   );
 }

@@ -38,7 +38,10 @@ export function MyGroupActionsFAB({
   };
 
   return (
-    <div className="fixed bottom-5 right-4 flex flex-col items-end gap-2 sm:bottom-6 sm:right-5 sm:gap-3 md:bottom-7 md:right-6 lg:bottom-8 lg:right-8">
+    <div
+      className="fixed right-4 z-[60] flex flex-col items-end gap-2"
+      style={{ bottom: 'calc(var(--bottom-nav-height) + 1rem)' }}
+    >
       <div
         className={cn(
           "flex flex-col items-end gap-2 transition-all duration-200 sm:gap-2.5",
