@@ -14,6 +14,11 @@ body {
   }
 }
 
+/* FAB 위치 - 바텀 네비게이션 바 위 */
+.fab-above-nav {
+  bottom: calc(var(--bottom-nav-height) + 1rem);
+}
+
 /* 스크롤바 숨기기 */
 .scrollbar-hide {
   -ms-overflow-style: none;
