@@ -35,7 +35,7 @@ export function Header({
   return (
     <header
       className={cn(
-        "flex h-16 items-center justify-between px-4 sm:h-20 sm:px-5",
+        "fixed flex top-0 left-0 right-0 z-50 flex h-14 items-center justify-center bg-primary text-primary-foreground sm:h-16",
         className
       )}
     >
@@ -57,7 +57,7 @@ export function Header({
       </div>
 
       {/* 가운데: 제목 */}
-      <h1 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
+      <h1 className="text-lg font-bold tracking-tight sm:text-xl">
         {title}
       </h1>
 
