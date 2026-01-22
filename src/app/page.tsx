@@ -13,9 +13,9 @@ import {
 export default function HomePage() {
     return (
         <>
-            <HomeHeader appName="다모"/>
+            {/* <HomeHeader appName="다모"/> */}
 
-            <main className="flex flex-col gap-6 px-4 pt-14 pb-20 sm:pt-16">
+            <main className="flex flex-col gap-6 px-4 pt-4 pb-20 sm:pt-4">
                 {/* 광고 배너 섹션 */}
                 <AdBannerSection banner={mockAdBanner} />
 
