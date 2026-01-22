@@ -4,11 +4,9 @@ import { LoginButton } from "@/src/components/login/login-button";
 export default function LoginPage() {
 
   return (
-    <>
-      <main className="flex flex-col gap-6 px-4 py-4 sm:pt-4">
-          <LoginLogo />
-          <LoginButton />
-      </main>
-    </>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-4">
+        <LoginLogo />
+        <LoginButton />
+    </main>
   );
 }

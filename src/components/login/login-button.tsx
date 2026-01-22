@@ -22,8 +22,9 @@ export function LoginButton(){
 
     return (
         <Button
+            variant="kakao"
             onClick={handleLogin}
-            className="fixed bottom-20 left-1/2 -translate-x-1/2 sm:bottom-24 bg-[#FEE500] hover:bg-[#FEE500]/90 text-black/85 rounded-[12px] px-6 py-3 h-auto gap-2"
+            className="fixed bottom-[35%] left-1/2 -translate-x-1/2 sm:bottom-[30%] px-6 py-3 h-auto gap-2"
         >
             <KakaoSymbol className="size-5" />
             카카오 로그인
