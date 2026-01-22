@@ -97,7 +97,9 @@ export function CameraScanSection({
   }, [onScanSuccess, onScanningChange, stopScanner]);
 
   useEffect(() => {
-    startScanner();
+    queueMicrotask(() => {
+      startScanner();
+    });
 
     return () => {
       stopScanner();
