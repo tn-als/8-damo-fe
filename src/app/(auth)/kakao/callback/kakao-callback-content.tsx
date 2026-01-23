@@ -8,7 +8,7 @@ import { Button } from "@/src/components/ui/button";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { PageHeader } from "@/src/components/ui/page-header";
 
-type OnboardingStatus = "BASIC" | "CHARACTERISTIC" | "DONE";
+type OnboardingStep = "BASIC" | "CHARACTERISTIC" | "DONE";
 
 type State = 
     | { status: "loading"}
@@ -51,14 +51,14 @@ export function KakaoCallbackContent() {
       try{
         const response = await axios.post(
           "/api/v1/auth/oauth",
-          { code}, 
+          { code }, 
           {withCredentials: true}
         );
 
-        const onboardingStatus =
-          response.data?.data?.onboardingStatus as OnboardingStatus;
-
-        switch (onboardingStatus){
+        const onboardingStep =
+          response.data?.data?.onboardingStep as OnboardingStep;
+        
+        switch (onboardingStep){
           case "BASIC":
             router.replace("/onboarding/basic");
             return;
@@ -83,7 +83,7 @@ export function KakaoCallbackContent() {
     };
 
     run();
-  }, [code, error, errorDescription, router]);
+  }, [code, router]);
 
     return (
     <div className="mx-auto min-h-screen w-full max-w-[430px] bg-background px-4 sm:px-0">
