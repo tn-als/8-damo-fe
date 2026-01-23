@@ -1,0 +1,125 @@
+name: Frontend CI/CD
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "20"
+  REMOTE_DIR: /home/ubuntu/opt/fe-prod
+  ARTIFACT_FILE: next-build.tar.gz
+
+jobs:
+  ci:
+    name: CI (format/lint/build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      #      - name: Check formatting (Prettier)
+      #        run: npm run format:check
+
+      - name: Run Lint (ESLint)
+        run: npm run lint
+
+      # 테스트 도입 전이면 주석 유지 추후 도입
+      # - name: Run Unit Tests
+      #   run: npm run test
+
+      - name: Build Next.js App
+        run: npm run build
+
+      - name: Package Next.js build (non-standalone)
+        run: |
+          rm -rf deploy_fe
+          mkdir -p deploy_fe
+          
+          # 빌드 산출물 전체
+          cp -r .next deploy_fe/.next
+          
+          # public (사용하면)
+          if [ -d "public" ]; then
+          cp -r public deploy_fe/public
+          fi
+          
+          # 실행에 필요한 파일들
+          cp package.json deploy_fe/package.json
+          
+          # lockfile도 같이 넣는 게 안전
+          if [ -f package-lock.json ]; then
+          cp package-lock.json deploy_fe/package-lock.json
+          fi
+          
+          # next.config.* 필요할 수도 있음(런타임에서 참조하는 경우)
+          if [ -f next.config.js ]; then cp next.config.js deploy_fe/next.config.js; fi
+          if [ -f next.config.mjs ]; then cp next.config.mjs deploy_fe/next.config.mjs; fi
+          
+          tar -czf next-build.tar.gz -C deploy_fe .
+
+      - name: Upload bundle to server (SCP)
+        if: github.event_name == 'push'
+        # if: github.event_name == 'push' && github.ref_name == 'develop'
+
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.FRONT_PROD_SERVER_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ${{ env.ARTIFACT_FILE }}
+          target: ${{ env.REMOTE_DIR }}/incoming/
+
+  deploy:
+    name: CD (prod deploy)
+    runs-on: ubuntu-latest
+    needs: [ci]
+    if: github.event_name == 'push' && needs.ci.result == 'success'
+    #    if: github.event_name == 'push' && github.ref_name == 'develop' && needs.ci.result == 'success'
+
+    steps:
+      - name: Deploy via SSH (run deploy.sh)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.FRONT_PROD_SERVER_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            cd ${{ env.REMOTE_DIR }}
+
+            echo "Artifact: ${{ env.REMOTE_DIR }}/incoming/${{ env.ARTIFACT_FILE }}"
+
+            chmod +x deploy.sh
+            ./deploy.sh "${{ env.REMOTE_DIR }}/incoming/${{ env.ARTIFACT_FILE }}"
+
+  notify:
+    name: Notify Discord
+    runs-on: ubuntu-latest
+    needs: [ci, deploy]
+    if: always()
+
+    steps:
+      - name: Send notification
+        run: |
+          CI_RESULT="${{ needs.ci.result }}"
+          DEPLOY_RESULT="${{ needs.deploy.result }}"
+          REF="${{ github.repository }}@${{ github.ref_name }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"username\":\"Frontend CI/CD\",\"content\":\"🖥️ Frontend CI/CD 결과\\n- CI: **${CI_RESULT}**\\n- Deploy: **${DEPLOY_RESULT}**\\n🔗 [${REF}](${RUN_URL})\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
