@@ -44,14 +44,15 @@ export async function POST(request: Request) {
       status: response.status,
     });
 
-    const accessToken = response.data?.data?.accessToken;
-    if (accessToken) {
-      nextResponse.cookies.set("accessToken", accessToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-      });
+    const setCookieHeader = response.headers["set-cookie"];
+    if (setCookieHeader) {
+      if (Array.isArray(setCookieHeader)) {
+        setCookieHeader.forEach((cookie) => {
+          nextResponse.headers.append("set-cookie", cookie);
+        });
+      } else {
+        nextResponse.headers.set("set-cookie", setCookieHeader);
+      }
     }
 
     return nextResponse;
