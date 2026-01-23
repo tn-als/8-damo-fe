@@ -1,6 +1,9 @@
-"use client"
+"use client";
 
 import { Button } from "@/src/components/ui/button";
+
+const kakaoClientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+const kakaoRedirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
 
 function KakaoSymbol({ className }: { className?: string }) {
     return (
@@ -16,8 +19,17 @@ function KakaoSymbol({ className }: { className?: string }) {
 
 export function LoginButton(){
     const handleLogin = () => {
-        // TODO: Implement OAuth login
-        console.log("Login clicked");
+        if (!kakaoClientId || !kakaoRedirectUri) {
+            window.alert("카카오 로그인 설정이 필요합니다.");
+            return;
+        }
+
+        const authorizeUrl = new URL("https://kauth.kakao.com/oauth/authorize");
+        authorizeUrl.searchParams.set("client_id", kakaoClientId);
+        authorizeUrl.searchParams.set("redirect_uri", kakaoRedirectUri);
+        authorizeUrl.searchParams.set("response_type", "code");
+
+        window.location.assign(authorizeUrl.toString());
     };
 
     return (
