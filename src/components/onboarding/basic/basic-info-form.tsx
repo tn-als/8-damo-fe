@@ -31,7 +31,7 @@ export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
 
   const onFormSubmit = (data: BasicInfoFormValues) => {
     onSubmit?.(data);
-    router.push("/onboarding/characteristics");
+    router.push("/onboarding/characteristic");
   };
 
   return (
