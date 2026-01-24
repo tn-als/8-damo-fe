@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { getAccessToken } from "../cookie";
 
 interface UpdateBasicInfoRequest {
   nickname: string;
@@ -24,8 +24,7 @@ export async function updateBasicInfo(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const accessToken = await getAccessToken();
 
   if (!accessToken) {
     return { success: false, error: "인증 토큰이 없습니다." };
