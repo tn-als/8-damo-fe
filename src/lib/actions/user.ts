@@ -25,7 +25,7 @@ export async function updateBasicInfo(
   }
 
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
+  const accessToken = cookieStore.get("access_token")?.value;
 
   if (!accessToken) {
     return { success: false, error: "인증 토큰이 없습니다." };
