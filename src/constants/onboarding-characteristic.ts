@@ -24,6 +24,9 @@ export const ALLERGIES = [
 ] as const;
 
 export type Allergy = typeof ALLERGIES[number]["value"];
+export const ALLERGY_VALUES = ALLERGIES.map(
+  (item) => item.value
+) as readonly Allergy[];
 
 export const FOOD_TYPES = [
   { value: "KOREAN", label: "한식" },
@@ -32,8 +35,10 @@ export const FOOD_TYPES = [
   { value: "WESTERN", label: "양식" },
   { value: "INTERNATIONAL", label: "세계 음식" },
 ] as const;
-
 export type FoodTypes = typeof FOOD_TYPES[number]["value"];
+export const FOOD_TYPE_VALUES = FOOD_TYPES.map(
+  (item) => item.value
+) as readonly FoodTypes[];
 
 export const INGREDIENTS = [
   { value: "MEAT", label: "육류" },
@@ -45,3 +50,6 @@ export const INGREDIENTS = [
 ] as const;
 
 export type Ingredient = typeof INGREDIENTS[number]["value"];
+export const INGREDIENTS_VALUES = INGREDIENTS.map(
+  (item) => item.value
+) as readonly Ingredient[];
