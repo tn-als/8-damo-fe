@@ -9,9 +9,9 @@ import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
 export default function FoodTypesPage() {
   const router = useRouter();
-  const { noPreferences, foodTypes, setFoodTypes } = useOnboardingStore();
+  const { foodTypes, setFoodTypes } = useOnboardingStore();
 
-  const canProceed = noPreferences || foodTypes.length > 0;
+  const canProceed = foodTypes.length > 0;
 
   const handleNext = () => {
     if (!canProceed) return;

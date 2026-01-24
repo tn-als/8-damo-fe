@@ -26,9 +26,6 @@ export default function AllergiesPage() {
 
   const handleNoPreferencesChange = (value: boolean) => {
     setNoPreferences(value);
-    if (value) {
-      router.push("/onboarding/characteristic/food-types");
-    }
   };
 
   return (
