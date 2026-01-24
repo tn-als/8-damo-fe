@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { PageHeader } from "@/src/components/ui/page-header";
+import { ProgressBar } from "@/src/components/ui/progress-bar";
 import { AdditionalNotesField } from "@/src/components/onboarding/characteristics/additional-notes-field";
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
@@ -23,6 +24,9 @@ export default function AdditionalNotesPage() {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-background px-4 sm:px-0">
+      <div className="px-5 pt-4">
+        <ProgressBar current={5} total={5} />
+      </div>
       <PageHeader
         title={<>추가로 전달하고 싶은 내용이 있나요?</>}
         subtitle={<>음식 추천에 참고할 내용을 적어주세요.</>}

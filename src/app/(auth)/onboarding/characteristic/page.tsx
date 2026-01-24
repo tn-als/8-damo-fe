@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { PageHeader } from "@/src/components/ui/page-header";
+import { ProgressBar } from "@/src/components/ui/progress-bar";
 import { NoPreferencesField } from "@/src/components/onboarding/characteristics/no-preferences-field";
 import { AllergiesField } from "@/src/components/onboarding/characteristics/allergies-field";
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
@@ -32,6 +33,9 @@ export default function AllergiesPage() {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-background px-4 sm:px-0">
+      <div className="px-5 pt-4">
+        <ProgressBar current={2} total={5} />
+      </div>
       <PageHeader
         title={<>알레르기가 있나요?</>}
         subtitle={<>해당하는 알레르기가 있다면 선택해 주세요.</>}
