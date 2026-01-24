@@ -17,18 +17,22 @@ interface AllergiesFieldProps {
   value: string[];
   onChange: (value: string[]) => void;
   disabled?: boolean;
+  showLabel?: boolean;
 }
 
 export function AllergiesField({
   value,
   onChange,
   disabled,
+  showLabel = true,
 }: AllergiesFieldProps) {
   return (
     <div className="flex flex-col gap-4">
-      <Label className="text-lg font-bold text-foreground">
-        알레르기가 있나요?
-      </Label>
+      {showLabel && (
+        <Label className="text-lg font-bold text-foreground">
+          알레르기가 있나요?
+        </Label>
+      )}
       <CharacterGroup
         columns={3}
         spacing={12}

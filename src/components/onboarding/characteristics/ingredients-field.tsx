@@ -14,18 +14,22 @@ interface IngredientsFieldProps {
   value: string[];
   onChange: (value: string[]) => void;
   disabled?: boolean;
+  showLabel?: boolean;
 }
 
 export function IngredientsField({
   value,
   onChange,
   disabled,
+  showLabel = true,
 }: IngredientsFieldProps) {
   return (
     <div className="flex flex-col gap-4">
-      <Label className="text-lg font-bold text-foreground">
-        선호하는 음식 재료가 있나요?
-      </Label>
+      {showLabel && (
+        <Label className="text-lg font-bold text-foreground">
+          선호하는 음식 재료가 있나요?
+        </Label>
+      )}
       <CharacterGroup
         columns={3}
         spacing={12}
