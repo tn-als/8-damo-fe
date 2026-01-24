@@ -29,10 +29,13 @@ export function AgeGroupField({ name, control }: AgeGroupFieldProps) {
     <Controller
       name={name}
       control={control}
-      render={({ field: { value, onChange }, fieldState: { error } }) => (
+      rules={{ required: "연령대를 선택해주세요." }}
+      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
         <div className="flex flex-col gap-3">
-          <Label className="text-lg font-bold text-foreground">연령대</Label>
-          <DropdownMenu>
+          <Label className="text-lg font-bold text-foreground">
+            연령대<span className="text-destructive"> *</span>
+          </Label>
+          <DropdownMenu onOpenChange={(open) => !open && onBlur()}>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"

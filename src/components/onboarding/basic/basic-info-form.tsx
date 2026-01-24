@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/src/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ProfileImageField,
   NicknameField,
@@ -9,17 +10,24 @@ import {
   AgeGroupField,
   type BasicInfoFormValues,
 } from "@/src/components/onboarding/basic";
+import { basicInfoSchema } from "@/src/lib/schema/basic-info-validation";
+import { updateBasicInfo } from "@/src/lib/actions/user";
 import { useRouter } from "next/navigation";
+import { Button } from "../../ui/button";
+import { toast } from "@/src/components/ui/sonner";
 
 interface BasicInfoFormProps {
-  defaultValues?: Partial<BasicInfoFormValues>;
+  defaultValues?: Partial<BasicInfoFormProps>;
   onSubmit?: (data: BasicInfoFormValues) => void;
 }
 
-export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
+export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { control, handleSubmit } = useForm<BasicInfoFormValues>({
+  const { control, handleSubmit, formState: { isValid } } = useForm<BasicInfoFormValues>({
+    resolver: zodResolver(basicInfoSchema),
+    mode: "all",
     defaultValues: {
       profileImage: null,
       nickname: "",
@@ -29,16 +37,26 @@ export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
     },
   });
 
-  const onFormSubmit = (data: BasicInfoFormValues) => {
-    onSubmit?.(data);
-    router.push("/onboarding/characteristic");
+  const onFormSubmit = async (data: BasicInfoFormValues) => {
+    setIsSubmitting(true);
+
+    const result = await updateBasicInfo({
+      nickname: data.nickname,
+      gender: data.gender,
+      ageGroup: data.ageGroup,
+    });
+
+    if (result.success) {
+      onSubmit?.(data);
+      router.push("/onboarding/characteristic");
+    } else {
+      toast.error(result.error || "저장에 실패했습니다.");
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onFormSubmit)}
-      className="flex flex-col bg-background pb-8"
-    >
+    <form onSubmit={handleSubmit(onFormSubmit)}>
       <div className="mt-8">
         <ProfileImageField name="profileImage" control={control} />
       </div>
@@ -52,11 +70,16 @@ export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
       <div className="mt-auto pt-8">
         <Button
           type="submit"
-          className="h-16 w-full rounded-lg bg-primary text-base font-semibold text-white shadow-md hover:bg-primary/90"
+          disabled={!isValid || isSubmitting}
+          className="h-16 w-full rounded-lg bg-primary text-base font-semibold text-white shadow-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
         >
-          다음
+          {isSubmitting ? "저장 중..." : "다음"}
         </Button>
       </div>
     </form>
   );
+
+
+
+
 }

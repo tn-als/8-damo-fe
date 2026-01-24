@@ -15,12 +15,17 @@ export function NicknameField({ name, control }: NicknameFieldProps) {
     <Controller
       name={name}
       control={control}
+      rules={{required: "이름을 입력해주세요."}}
       render={({ field, fieldState: { error } }) => (
         <div className="flex flex-col gap-3">
-          <Label className="text-lg font-bold text-foreground">이름</Label>
+          <Label className="text-lg font-bold text-foreground">
+            이름<span className="text-destructive"> *</span>
+          </Label>
           <Input
             {...field}
             placeholder="이름을 작성해 주세요."
+            maxLength={10}
+            onChange={(e) => field.onChange(e.target.value.slice(0, 10))}
             className="h-[54px] rounded-lg border-none bg-muted px-4 text-base font-semibold placeholder:text-muted-foreground"
           />
           {error && (
