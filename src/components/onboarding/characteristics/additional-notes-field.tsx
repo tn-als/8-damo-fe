@@ -5,18 +5,22 @@ interface AdditionalNotesFieldProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  showLabel?: boolean;
 }
 
 export function AdditionalNotesField({
   value,
   onChange,
   disabled,
+  showLabel = true,
 }: AdditionalNotesFieldProps) {
   return (
     <div className="flex flex-col gap-3">
-      <Label className="text-lg font-bold text-foreground">
-        추가적으로 전달하고 싶은 내용이 있나요?
-      </Label>
+      {showLabel && (
+        <Label className="text-lg font-bold text-foreground">
+          추가적으로 전달하고 싶은 내용이 있나요?
+        </Label>
+      )}
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}

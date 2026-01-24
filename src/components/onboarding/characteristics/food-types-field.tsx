@@ -13,18 +13,22 @@ interface FoodTypesFieldProps {
   value: string[];
   onChange: (value: string[]) => void;
   disabled?: boolean;
+  showLabel?: boolean;
 }
 
 export function FoodTypesField({
   value,
   onChange,
   disabled,
+  showLabel = true,
 }: FoodTypesFieldProps) {
   return (
     <div className="flex flex-col gap-4">
-      <Label className="text-lg font-bold text-foreground">
-        선호하는 음식 종류가 있나요?
-      </Label>
+      {showLabel && (
+        <Label className="text-lg font-bold text-foreground">
+          선호하는 음식 종류가 있나요?
+        </Label>
+      )}
       <CharacterGroup
         columns={3}
         spacing={12}
