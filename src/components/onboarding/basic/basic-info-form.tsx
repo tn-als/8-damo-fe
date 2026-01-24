@@ -10,7 +10,7 @@ import {
   AgeGroupField,
   type BasicInfoFormValues,
 } from "@/src/components/onboarding/basic";
-import { basicInfoSchema } from "@/src/lib/schema/basic-info-validation";
+import { basicInfoSchema } from "@/src/lib/schema/basic-information";
 import { updateBasicInfo } from "@/src/lib/actions/user";
 import { useRouter } from "next/navigation";
 import { Button } from "../../ui/button";

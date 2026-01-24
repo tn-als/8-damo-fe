@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { PageHeader } from "@/src/components/ui/page-header";
 import { ProgressBar } from "@/src/components/ui/progress-bar";
-import { AdditionalNotesField } from "@/src/components/onboarding/characteristics/additional-notes-field";
+import { AdditionalNotesField } from "@/src/components/onboarding/characteristic/additional-notes-field";
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
 export default function AdditionalNotesPage() {

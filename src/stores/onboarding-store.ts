@@ -1,18 +1,19 @@
 import { create } from "zustand";
+import { Allergy, Ingredient, FoodTypes } from "@/src/constants/onboarding-characteristic";
 
 interface CharacteristicsState {
   noPreferences: boolean;
-  allergies: string[];
-  foodTypes: string[];
-  ingredients: string[];
+  allergies: Allergy[];
+  foodTypes: FoodTypes[];
+  ingredients: Ingredient[];
   additionalNotes: string;
 }
 
 interface OnboardingStore extends CharacteristicsState {
   setNoPreferences: (value: boolean) => void;
-  setAllergies: (value: string[]) => void;
-  setFoodTypes: (value: string[]) => void;
-  setIngredients: (value: string[]) => void;
+  setAllergies: (value: Allergy[]) => void;
+  setFoodTypes: (value: FoodTypes[]) => void;
+  setIngredients: (value: Ingredient[]) => void;
   setAdditionalNotes: (value: string) => void;
   resetCharacteristics: () => void;
   getCharacteristics: () => CharacteristicsState;

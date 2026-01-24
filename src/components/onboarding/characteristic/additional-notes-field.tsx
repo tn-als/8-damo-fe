@@ -1,5 +1,8 @@
 import { Textarea } from "@/src/components/ui/textarea";
 import { Label } from "@/src/components/ui/label";
+import { cn } from "@/src/lib/utils";
+
+const MAX_LENGTH = 100;
 
 interface AdditionalNotesFieldProps {
   value: string;
@@ -14,6 +17,8 @@ export function AdditionalNotesField({
   disabled,
   showLabel = true,
 }: AdditionalNotesFieldProps) {
+  const isMaxLength = value.length >= MAX_LENGTH;
+
   return (
     <div className="flex flex-col gap-3">
       {showLabel && (
@@ -26,8 +31,17 @@ export function AdditionalNotesField({
         onChange={(e) => onChange(e.target.value)}
         placeholder="예) 매운 음식은 잘 못 먹어요."
         disabled={disabled}
+        maxLength={MAX_LENGTH}
         className="min-h-[100px] rounded-lg border-none bg-muted px-4 py-4 text-base font-semibold placeholder:text-muted-foreground"
       />
+      <p
+        className={cn(
+          "text-sm text-muted-foreground",
+          isMaxLength && "text-destructive"
+        )}
+      >
+        {value.length}/{MAX_LENGTH}
+      </p>
     </div>
   );
 }
