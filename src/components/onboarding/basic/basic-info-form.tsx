@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Button } from "@/src/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ProfileImageField,
   NicknameField,
@@ -9,17 +9,21 @@ import {
   AgeGroupField,
   type BasicInfoFormValues,
 } from "@/src/components/onboarding/basic";
+import { basicInfoSchema } from "@/src/lib/schema/basic-info-validation";
 import { useRouter } from "next/navigation";
+import { Button } from "../../ui/button";
 
 interface BasicInfoFormProps {
-  defaultValues?: Partial<BasicInfoFormValues>;
+  defaultValues?: Partial<BasicInfoFormProps>;
   onSubmit?: (data: BasicInfoFormValues) => void;
 }
 
-export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
+export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
   const router = useRouter();
 
-  const { control, handleSubmit } = useForm<BasicInfoFormValues>({
+  const { control, handleSubmit, formState: { isValid } } = useForm<BasicInfoFormValues>({
+    resolver: zodResolver(basicInfoSchema),
+    mode: "all",
     defaultValues: {
       profileImage: null,
       nickname: "",
@@ -35,10 +39,7 @@ export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onFormSubmit)}
-      className="flex flex-col bg-background pb-8"
-    >
+    <form>
       <div className="mt-8">
         <ProfileImageField name="profileImage" control={control} />
       </div>
@@ -52,11 +53,17 @@ export function BasicInfoForm({ defaultValues, onSubmit }: BasicInfoFormProps) {
       <div className="mt-auto pt-8">
         <Button
           type="submit"
-          className="h-16 w-full rounded-lg bg-primary text-base font-semibold text-white shadow-md hover:bg-primary/90"
+          disabled={!isValid}
+          className="h-16 w-full rounded-lg bg-primary text-base font-semibold text-white shadow-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
         >
           다음
         </Button>
       </div>
+
     </form>
-  );
+  )
+
+
+
+
 }

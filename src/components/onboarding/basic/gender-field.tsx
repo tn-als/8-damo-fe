@@ -15,10 +15,20 @@ export function GenderField({ name, control }: GenderFieldProps) {
     <Controller
       name={name}
       control={control}
-      render={({ field: { value, onChange }, fieldState: { error } }) => (
+      rules={{ required: "성별을 선택해주세요." }}
+      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
         <div className="flex flex-col gap-3">
-          <Label className="text-lg font-bold text-foreground">성별</Label>
-          <div className="grid grid-cols-2 gap-2.5">
+          <Label className="text-lg font-bold text-foreground">
+            성별<span className="text-destructive"> *</span>
+          </Label>
+          <div
+            className="grid grid-cols-2 gap-2.5"
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                onBlur();
+              }
+            }}
+          >
             <button
               type="button"
               onClick={() => onChange("FEMALE")}
