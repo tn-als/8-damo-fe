@@ -2,13 +2,13 @@
 
 import { cn } from "@/src/lib/utils";
 
-interface CharacterGroupProps {
+interface CharacterGroupProps<T extends string> {
   columns?: 2 | 3 | 4;
   spacing?: number;
   size?: "sm" | "md" | "lg";
-  values: string[];
-  onValueChange: (values: string[]) => void;
-  options: { value: string; label: string }[];
+  values: T[];
+  onValueChange: (values: T[]) => void;
+  options: readonly { value: T; label: string }[];
   disabled?: boolean;
 }
 
@@ -18,7 +18,7 @@ const sizeStyles = {
   lg: "h-14 text-base",
 };
 
-export function CharacterGroup({
+export function CharacterGroup<T extends string>({
   columns = 3,
   spacing = 12,
   size = "md",
@@ -26,8 +26,8 @@ export function CharacterGroup({
   onValueChange,
   options,
   disabled = false,
-}: CharacterGroupProps) {
-  const toggleSelection = (itemValue: string) => {
+}: CharacterGroupProps<T>) {
+  const toggleSelection = (itemValue: T) => {
     if (disabled) return;
     if (values.includes(itemValue)) {
       onValueChange(values.filter((v) => v !== itemValue));

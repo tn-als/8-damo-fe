@@ -8,13 +8,14 @@ import { FoodTypesField } from "./food-types-field";
 import { IngredientsField } from "./ingredients-field";
 import { AdditionalNotesField } from "./additional-notes-field";
 import { cn } from "@/src/lib/utils";
+import { Allergy, Ingredient, FoodTypes } from "@/src/constants/onboarding-characteristic";
 
 interface CharacteristicsFormProps {
   onSubmit?: (data: {
     noPreferences: boolean;
-    allergies: string[];
-    foodTypes: string[];
-    ingredients: string[];
+    allergies: Allergy[];
+    foodTypes: FoodTypes[];
+    ingredients: Ingredient[];
     additionalNotes: string;
   }) => void;
 }
@@ -23,9 +24,9 @@ export function CharacteristicsForm({
   onSubmit,
 }: CharacteristicsFormProps) {
   const [noPreferences, setNoPreferences] = React.useState(false);
-  const [allergies, setAllergies] = React.useState<string[]>([]);
-  const [foodTypes, setFoodTypes] = React.useState<string[]>([]);
-  const [ingredients, setIngredients] = React.useState<string[]>([]);
+  const [allergies, setAllergies] = React.useState<Allergy[]>([]);
+  const [foodTypes, setFoodTypes] = React.useState<FoodTypes[]>([]);
+  const [ingredients, setIngredients] = React.useState<Ingredient[]>([]);
   const [additionalNotes, setAdditionalNotes] = React.useState("");
 
   const handleNoPreferencesChange = (value: boolean) => {

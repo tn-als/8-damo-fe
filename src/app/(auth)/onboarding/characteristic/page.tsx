@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { PageHeader } from "@/src/components/ui/page-header";
 import { ProgressBar } from "@/src/components/ui/progress-bar";
-import { NoPreferencesField } from "@/src/components/onboarding/characteristics/no-preferences-field";
-import { AllergiesField } from "@/src/components/onboarding/characteristics/allergies-field";
+import { NoPreferencesField } from "@/src/components/onboarding/characteristic/no-preferences-field";
+import { AllergiesField } from "@/src/components/onboarding/characteristic/allergies-field";
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
 export default function AllergiesPage() {

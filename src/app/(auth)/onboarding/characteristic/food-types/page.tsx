@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { PageHeader } from "@/src/components/ui/page-header";
 import { ProgressBar } from "@/src/components/ui/progress-bar";
-import { FoodTypesField } from "@/src/components/onboarding/characteristics/food-types-field";
+import { FoodTypesField } from "@/src/components/onboarding/characteristic/food-types-field";
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
 export default function FoodTypesPage() {
