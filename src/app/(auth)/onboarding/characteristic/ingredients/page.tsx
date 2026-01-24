@@ -9,9 +9,9 @@ import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
 export default function IngredientsPage() {
   const router = useRouter();
-  const { noPreferences, ingredients, setIngredients } = useOnboardingStore();
+  const { ingredients, setIngredients } = useOnboardingStore();
 
-  const canProceed = noPreferences || ingredients.length > 0;
+  const canProceed = ingredients.length > 0;
 
   const handleNext = () => {
     if (!canProceed) return;
