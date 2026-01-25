@@ -14,7 +14,7 @@ import {
   characteristicSchema,
   type CharacteristicFormValues,
 } from "@/src/lib/schema/characteristic";
-import { updateCharacteristics } from "@/src/lib/actions/user";
+import { updateCharacteristics } from "@/src/lib/actions/user-characteristics";
 
 export function CharacteristicsForm() {
   const router = useRouter();
