@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { processKakaoOAuth } from "@/src/lib/actions/auth";
+import { KakaoCallbackContent } from "./kakao-callback-content";
 import { KakaoCallbackError } from "./kakao-callback-error";
 
 interface KakaoCallbackPageProps {
@@ -29,20 +28,6 @@ export default async function KakaoCallbackPage({
     return <KakaoCallbackError message="인가코드가 전달되지 않았습니다." />;
   }
 
-  // 3. 백엔드 인증 처리
-  const result = await processKakaoOAuth(code);
-
-  if (!result.success) {
-    return <KakaoCallbackError message={result.error} />;
-  }
-
-  // 4. 온보딩 상태에 따른 리디렉션
-  switch (result.onboardingStep) {
-    case "BASIC":
-      redirect("/onboarding/basic");
-    case "CHARACTERISTIC":
-      redirect("/onboarding/characteristic");
-    case "DONE":
-      redirect("/");
-  }
+  // 3. 클라이언트 컴포넌트에서 서버 액션 호출
+  return <KakaoCallbackContent code={code} />;
 }
