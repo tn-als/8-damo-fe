@@ -37,9 +37,9 @@ export function AdditionalNotesForm() {
 
     try {
       const result = await updateCharacteristics({
-        allergyTypes: characteristics.allergies,
-        likedFoodTypes: characteristics.foodTypes,
-        likedIngredientTypes: characteristics.ingredients,
+        allergies: characteristics.allergies,
+        likeFoods: characteristics.foodTypes,
+        likeIngredients: characteristics.ingredients,
         otherCharacteristics: data.additionalNotes,
       });
 

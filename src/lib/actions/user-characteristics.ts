@@ -3,10 +3,10 @@
 import { getAccessToken } from "../cookie";
 
 interface UpdateCharacteristicsRequest {
-  allergyTypes: string[];
-  likedFoodTypes: string[];
-  likedIngredientTypes: string[];
-  otherCharacteristics: string | null;
+  allergies: string[];
+  likeFoods: string[];
+  likeIngredients: string[];
+  otherCharacteristics: string;
 }
 
 interface UpdateCharacteristicsResponse {
