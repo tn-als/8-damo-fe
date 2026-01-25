@@ -43,7 +43,7 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
             <Label htmlFor={name}>{label}</Label>
             <div className="flex justify-center">
               <div className="relative">
-                <div className="flex size-[120px] items-center justify-center overflow-hidden rounded-full border-2 border-muted bg-muted">
+                <div className="flex size-[120px] items-center justify-center overflow-hidden rounded-full border-2 border-input bg-input">
                   {displayImage ? (
                     <img
                       src={displayImage}

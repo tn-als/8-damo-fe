@@ -1,6 +1,7 @@
 import { MyGroupHeader } from '@/src/components/groups/my-group-header';
 import { MyGroupList } from '@/src/components/groups/my-group-list';
 import { MyGroupActionsFAB } from '@/src/components/groups/my-group-actions-fab';
+import { BottomNavigationBar } from '@/src/components/layout';
 import { GROUP_SUMMARY_MOCK_LIST } from '@/src/constants/mock-data/group-summary';
 
 export default function GroupsPage() {
@@ -8,10 +9,11 @@ export default function GroupsPage() {
 
   return (
     <>
-        <main className="flex flex-col gap-6 px-4 py-4 sm:pt-4">
-            <MyGroupList groupSummaryList={groups} />
-            <MyGroupActionsFAB />
-        </main>
+      <main className="flex flex-col gap-6 px-4 py-4 pb-20 sm:pt-4">
+        <MyGroupList groupSummaryList={groups} />
+        <MyGroupActionsFAB />
+      </main>
+      <BottomNavigationBar />
     </>
   );
 }

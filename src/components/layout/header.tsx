@@ -33,14 +33,9 @@ export function Header({
   };
 
   return (
-    <header
-      className={cn(
-        "fixed flex top-0 left-0 right-0 z-50 flex h-14 items-center justify-center bg-primary text-primary-foreground sm:h-16",
-        className
-      )}
-    >
+    <header className="relative fixed top-0 left-0 right-0 z-50 bg-background sm:h-16">
       {/* 왼쪽: 뒤로가기 버튼 */}
-      <div className="flex w-9 items-center justify-start sm:w-10">
+      <div className="absolute left-2 top-1/2 -translate-y-1/2">
         {showBackButton ? (
           <Button
             variant="ghost"
@@ -57,12 +52,13 @@ export function Header({
       </div>
 
       {/* 가운데: 제목 */}
-      <h1 className="text-lg font-bold tracking-tight sm:text-xl">
+      <h1 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                    text-lg font-bold sm:text-xl">
         {title}
       </h1>
 
       {/* 오른쪽: 더보기 버튼 */}
-      <div className="flex w-9 items-center justify-end sm:w-10">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2">
         {showMoreButton ? (
           <Button
             variant="ghost"

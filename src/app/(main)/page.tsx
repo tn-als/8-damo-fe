@@ -4,6 +4,7 @@ import {
     WeeklyDiningScheduleSection,
     LateDiningSummarySection,
 } from "@/src/components/home";
+import { BottomNavigationBar } from "@/src/components/layout";
 import {
     mockAdBanner,
     mockWeeklyDinings,
@@ -25,6 +26,7 @@ export default function HomePage() {
                 {/* 최근 회식 요약 섹션 */}
                 <LateDiningSummarySection dinings={mockLateDiningSummaries} />
             </main>
+            <BottomNavigationBar />
         </>
     );
 }
