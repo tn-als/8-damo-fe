@@ -60,10 +60,10 @@ export function GroupCreateContainer({
       className="flex min-h-[calc(100vh-64px)] flex-col bg-background px-5 py-8 sm:min-h-[calc(100vh-80px)]"
     >
       <div className="flex flex-1 flex-col justify-center">
-        <div className="mx-auto flex w-full max-w-[360px] flex-col gap-12 sm:max-w-[380px]">
+        <div className="mx-auto flex w-full max-w-[360px] flex-col gap-4 sm:max-w-[380px]">
           <GroupImageUploadField name="groupImage" control={control} />
 
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
             <GroupNameInputField name="groupName" control={control} />
             <GroupIntroductionInputField name="introduction" control={control} />
             <GroupLocationInputField />
