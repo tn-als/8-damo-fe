@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Allergy, Ingredient, FoodTypes } from "@/src/constants/onboarding-characteristic";
 
 interface CharacteristicsState {
-  noPreferences: boolean;
+  noAllergy: boolean;
   allergies: Allergy[];
   foodTypes: FoodTypes[];
   ingredients: Ingredient[];
@@ -10,7 +10,7 @@ interface CharacteristicsState {
 }
 
 interface OnboardingStore extends CharacteristicsState {
-  setNoPreferences: (value: boolean) => void;
+  setNoAllergy: (value: boolean) => void;
   setAllergies: (value: Allergy[]) => void;
   setFoodTypes: (value: FoodTypes[]) => void;
   setIngredients: (value: Ingredient[]) => void;
@@ -20,7 +20,7 @@ interface OnboardingStore extends CharacteristicsState {
 }
 
 const initialState: CharacteristicsState = {
-  noPreferences: false,
+  noAllergy: false,
   allergies: [],
   foodTypes: [],
   ingredients: [],
@@ -30,9 +30,9 @@ const initialState: CharacteristicsState = {
 export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
   ...initialState,
 
-  setNoPreferences: (value) => {
+  setNoAllergy: (value) => {
     set({
-      noPreferences: value,
+      noAllergy: value,
       ...(value && {
         allergies: [],
         foodTypes: [],
@@ -50,7 +50,7 @@ export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
   resetCharacteristics: () => set(initialState),
 
   getCharacteristics: () => {
-    const { noPreferences, allergies, foodTypes, ingredients, additionalNotes } = get();
-    return { noPreferences, allergies, foodTypes, ingredients, additionalNotes };
+    const { noAllergy, allergies, foodTypes, ingredients, additionalNotes } = get();
+    return { noAllergy, allergies, foodTypes, ingredients, additionalNotes };
   },
 }));

@@ -11,7 +11,7 @@ import {
   type BasicInfoFormValues,
 } from "@/src/components/onboarding/basic";
 import { basicInfoSchema } from "@/src/lib/schema/basic-information";
-import { updateBasicInfo } from "@/src/lib/actions/user";
+import { updateBasicInfo } from "@/src/lib/actions/user-basic-info";
 import { useRouter } from "next/navigation";
 import { Button } from "../../ui/button";
 import { toast } from "@/src/components/ui/sonner";
