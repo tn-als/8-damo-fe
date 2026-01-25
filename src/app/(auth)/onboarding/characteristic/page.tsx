@@ -10,10 +10,10 @@ import { useOnboardingStore } from "@/src/stores/onboarding-store";
 
 export default function AllergiesPage() {
   const router = useRouter();
-  const { noPreferences, setNoPreferences, allergies, setAllergies } =
+  const { noAllergy, setNoAllergy, allergies, setAllergies } =
     useOnboardingStore();
 
-  const canProceed = noPreferences || allergies.length > 0;
+  const canProceed = noAllergy || allergies.length > 0;
 
   const handleNext = () => {
     if (!canProceed) return;
@@ -24,8 +24,8 @@ export default function AllergiesPage() {
     router.push("/onboarding/basic");
   };
 
-  const handleNoPreferencesChange = (value: boolean) => {
-    setNoPreferences(value);
+  const handleNoAllergyChange = (value: boolean) => {
+    setNoAllergy(value);
   };
 
   return (
@@ -41,11 +41,11 @@ export default function AllergiesPage() {
       <main className="flex flex-1 flex-col px-5 pb-10 pt-6">
         <div className="flex flex-col gap-8">
           <NoPreferencesField
-            value={noPreferences}
-            onChange={handleNoPreferencesChange}
+            value={noAllergy}
+            onChange={handleNoAllergyChange}
           />
 
-          {!noPreferences && (
+          {!noAllergy && (
             <AllergiesField
               value={allergies}
               onChange={setAllergies}
