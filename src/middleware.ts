@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ROUTES } from '@/src/constants/routes';
 
-const PUBLIC_ROUTES = ['/login'];
+const PUBLIC_ROUTES = ['/login', '/kakao'];
 const ONBOARDING_ROUTES = ['/onboarding'];
 
 export function middleware(request: NextRequest) {
