@@ -68,24 +68,22 @@ export async function createGroup(
     });
 
     const payload = await response.json().catch(() => null);
-    const inner = payload?.data;
-    const innerData = inner?.data;
 
     if (!response.ok) {
       return {
         success: false,
         error:
-          inner?.errorMessage ||
-          payload?.errorMessage ||
-          `요청 실패 (${response.status})`,
+          payload?.errorMessage || `요청 실패 (${response.status})`,
       };
     }
 
-    if (!innerData?.groupId) {
+    const groupId = payload?.data;
+
+    if (!groupId) {
       return { success: false, error: "groupId를 확인할 수 없습니다." };
     }
 
-    return { success: true, groupId: innerData.groupId };
+    return { success: true, groupId: String(groupId) };
   } catch (error) {
     console.error("[createGroup] Request failed", error);
     return {
