@@ -109,6 +109,20 @@ jobs:
             chmod +x deploy.sh
             ./deploy.sh "${{ env.REMOTE_DIR }}/incoming/${{ env.ARTIFACT_FILE }}"
 
+  k6_test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1
+      - uses: grafana/run-k6-action@v1
+        env:
+          URL: ${{ secrets.HOME_URL}}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          path: tests/home_loading.js
+            
+
   notify:
     name: Notify Discord
     runs-on: ubuntu-latest
