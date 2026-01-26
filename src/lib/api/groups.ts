@@ -5,7 +5,7 @@ import type { GroupSummary } from "@/src/types/groups";
 import { getAccessToken } from "../cookie";
 
 interface MyGroupSummaryResponse {
-  groupId: string | number;
+  groupId: number;
   name: string;
   introduction?: string | null;
 }
@@ -60,9 +60,9 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
     const mappedGroups: GroupSummary[] = [];
 
     for (const group of groupList) {
-      const parsedGroupId = Number(group.groupId);
+      console.log(group.groupId)
 
-      if (!Number.isFinite(parsedGroupId)) {
+      if (!Number.isFinite(group.groupId)) {
         return {
           success: false,
           error: payload?.errorMessage ?? "Invalid groupId.",
@@ -70,9 +70,10 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
       }
 
       mappedGroups.push({
-        id: parsedGroupId,
+        id: group.groupId,
         name: group.name,
         description: group.introduction ?? "",
+        imageUrl: `${process.env.NEXT_PUBLIC_S3_URL}/groups/profile/${group.groupId}.png`
       });
     }
 
