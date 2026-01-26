@@ -4,7 +4,7 @@ import { GroupCreateContainer } from "@/src/components/groups/group-create-conta
 export default function GroupCreatePage() {
   return (
     <div className="mx-auto min-h-screen w-full max-w-[430px] bg-background">
-      <Header title="그룹 생성" showBackButton={true} />
+      <Header title="그룹 만들기" showBackButton={true} />
       <GroupCreateContainer />
     </div>
   );
