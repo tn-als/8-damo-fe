@@ -16,6 +16,7 @@ interface ImageUploadFieldProps<TFieldValues extends FieldValues> {
   maxFileSizeBytes?: number;
   invalidTypeMessage?: string;
   invalidSizeMessage?: string;
+  onFileChange?: (file: File | null) => void;
 }
 
 export function ImageUploadField<TFieldValues extends FieldValues>({
@@ -28,6 +29,7 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
   maxFileSizeBytes,
   invalidTypeMessage = "PNG, JPG, JPEG, WEBP만 업로드할 수 있어요.",
   invalidSizeMessage = "이미지는 5MB 이하만 업로드할 수 있어요.",
+  onFileChange,
 }: ImageUploadFieldProps<TFieldValues>) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const normalizedExtensions = React.useMemo(() => {
@@ -56,15 +58,18 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
             ) {
               toast.error(invalidTypeMessage);
               e.target.value = "";
+              onFileChange?.(null);
               return;
             }
 
             if (maxFileSizeBytes && file.size > maxFileSizeBytes) {
               toast.error(invalidSizeMessage);
               e.target.value = "";
+              onFileChange?.(null);
               return;
             }
 
+            onFileChange?.(file);
             const reader = new FileReader();
             reader.onloadend = () => {
               onChange(reader.result as string);

@@ -9,7 +9,7 @@ import { GroupNameInputField } from "./group-name-input-field";
 import { GroupIntroductionInputField } from "./group-introduction-input-field";
 import { GroupLocationInputField } from "./group-location-input-field";
 import { GroupCreateSubmitArea } from "./group-create-submit-area";
-import { createGroup } from "@/src/lib/actions/groups";
+import { createGroup, getGroupProfilePresignedUrl } from "@/src/lib/actions/groups";
 
 export type GroupCreateFormValues = {
   groupImage: string;
@@ -31,6 +31,7 @@ export function GroupCreateContainer({
     latitude: number;
     longitude: number;
   } | null>(null);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
   const {
     control,
@@ -65,6 +66,38 @@ export function GroupCreateContainer({
         return;
       }
 
+      if (profileImageFile) {
+        const extension =
+          profileImageFile.name.split(".").pop()?.toLowerCase() ?? "";
+        const fileName = extension
+          ? `${result.groupId}.${extension}`
+          : result.groupId;
+
+        const presignedResult = await getGroupProfilePresignedUrl({
+          fileName,
+          contentType: profileImageFile.type,
+          directory: "groups/profile",
+        });
+
+        if (!presignedResult.success || !presignedResult.data) {
+          toast.error(presignedResult.error || "이미지 업로드에 실패했습니다.");
+          return;
+        }
+
+        const uploadResponse = await fetch(presignedResult.data.presignedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": profileImageFile.type,
+          },
+          body: profileImageFile,
+        });
+
+        if (!uploadResponse.ok) {
+          toast.error("이미지 업로드에 실패했습니다.");
+          return;
+        }
+      }
+
       if (onSubmit) {
         await onSubmit(data);
       }
@@ -84,7 +117,11 @@ export function GroupCreateContainer({
     >
       <div className="flex flex-1 flex-col justify-center">
         <div className="mx-auto flex w-full max-w-[360px] flex-col gap-4 sm:max-w-[380px]">
-          <GroupImageUploadField name="groupImage" control={control} />
+          <GroupImageUploadField
+            name="groupImage"
+            control={control}
+            onFileChange={setProfileImageFile}
+          />
 
           <div className="flex flex-col gap-6">
             <GroupNameInputField name="groupName" control={control} />
