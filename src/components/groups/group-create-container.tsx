@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -8,6 +9,7 @@ import { GroupNameInputField } from "./group-name-input-field";
 import { GroupIntroductionInputField } from "./group-introduction-input-field";
 import { GroupLocationInputField } from "./group-location-input-field";
 import { GroupCreateSubmitArea } from "./group-create-submit-area";
+import { createGroup } from "@/src/lib/actions/groups";
 
 export type GroupCreateFormValues = {
   groupImage: string;
@@ -25,6 +27,10 @@ export function GroupCreateContainer({
   onSubmit,
 }: GroupCreateContainerProps) {
   const router = useRouter();
+  const [location, setLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   const {
     control,
@@ -42,6 +48,23 @@ export function GroupCreateContainer({
 
   const onFormSubmit = async (data: GroupCreateFormValues) => {
     try {
+      if (!location) {
+        toast.error("그룹 위치를 제공해주세요.");
+        return;
+      }
+
+      const result = await createGroup({
+        name: data.groupName,
+        introduction: data.introduction ?? "",
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+
+      if (!result.success) {
+        toast.error(result.error || "그룹 생성에 실패했습니다.");
+        return;
+      }
+
       if (onSubmit) {
         await onSubmit(data);
       }
@@ -66,12 +89,12 @@ export function GroupCreateContainer({
           <div className="flex flex-col gap-6">
             <GroupNameInputField name="groupName" control={control} />
             <GroupIntroductionInputField name="introduction" control={control} />
-            <GroupLocationInputField />
+            <GroupLocationInputField onLocationChange={setLocation} />
           </div>
 
           <GroupCreateSubmitArea
             isSubmitting={isSubmitting}
-            isValid={isValid}
+            isValid={isValid && !!location}
           />
         </div>
       </div>

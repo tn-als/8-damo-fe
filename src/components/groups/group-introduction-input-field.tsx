@@ -52,7 +52,7 @@ export function GroupIntroductionInputField({
             id={name}
             placeholder="그룹 소개를 입력해주세요"
             aria-invalid={!!error}
-            className="min-h-[120px]"
+            className="min-h-[60px]"
             value={field.value ?? ""}
             onChange={(event) => {
               const noNewlineValue = event.target.value.replace(/\r?\n/g, "");
