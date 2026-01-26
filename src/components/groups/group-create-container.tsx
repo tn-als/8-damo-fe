@@ -10,7 +10,7 @@ import { GroupLocationInputField } from "./group-location-input-field";
 import { GroupCreateSubmitArea } from "./group-create-submit-area";
 
 export type GroupCreateFormValues = {
-  groupImage: string | null;
+  groupImage: string;
   groupName: string;
   introduction: string;
 };
@@ -33,7 +33,7 @@ export function GroupCreateContainer({
   } = useForm<GroupCreateFormValues>({
     mode: "onChange",
     defaultValues: {
-      groupImage: null,
+      groupImage: "",
       groupName: "",
       introduction: "",
       ...defaultValues,

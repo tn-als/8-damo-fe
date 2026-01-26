@@ -4,12 +4,18 @@ import * as React from "react";
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 import { Camera, ImageIcon } from "lucide-react";
 import { Label } from "@/src/components/ui/label";
+import { toast } from "@/src/components/ui/sonner";
 
 interface ImageUploadFieldProps<TFieldValues extends FieldValues> {
   name: FieldPath<TFieldValues>;
   control: Control<TFieldValues>;
   fallbackUrl?: string;
   label?: string;
+  accept?: string;
+  allowedExtensions?: string[];
+  maxFileSizeBytes?: number;
+  invalidTypeMessage?: string;
+  invalidSizeMessage?: string;
 }
 
 export function ImageUploadField<TFieldValues extends FieldValues>({
@@ -17,8 +23,22 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
   control,
   fallbackUrl,
   label = "이미지",
+  accept,
+  allowedExtensions,
+  maxFileSizeBytes,
+  invalidTypeMessage = "PNG, JPG, JPEG, WEBP만 업로드할 수 있어요.",
+  invalidSizeMessage = "이미지는 5MB 이하만 업로드할 수 있어요.",
 }: ImageUploadFieldProps<TFieldValues>) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const normalizedExtensions = React.useMemo(() => {
+    if (!allowedExtensions || allowedExtensions.length === 0) {
+      return null;
+    }
+
+    return new Set(
+      allowedExtensions.map((extension) => extension.toLowerCase())
+    );
+  }, [allowedExtensions]);
 
   return (
     <Controller
@@ -28,6 +48,23 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
         const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
           const file = e.target.files?.[0];
           if (file) {
+            if (
+              normalizedExtensions &&
+              !normalizedExtensions.has(
+                file.name.split(".").pop()?.toLowerCase() ?? ""
+              )
+            ) {
+              toast.error(invalidTypeMessage);
+              e.target.value = "";
+              return;
+            }
+
+            if (maxFileSizeBytes && file.size > maxFileSizeBytes) {
+              toast.error(invalidSizeMessage);
+              e.target.value = "";
+              return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => {
               onChange(reader.result as string);
@@ -37,6 +74,13 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
         };
 
         const displayImage = value || fallbackUrl;
+        const inputAccept =
+          accept ??
+          (normalizedExtensions
+            ? Array.from(normalizedExtensions)
+                .map((extension) => `.${extension}`)
+                .join(",")
+            : "image/*");
 
         return (
           <div className="flex flex-col gap-4">
@@ -65,7 +109,7 @@ export function ImageUploadField<TFieldValues extends FieldValues>({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept={inputAccept}
                   onChange={handleImageUpload}
                   className="hidden"
                 />

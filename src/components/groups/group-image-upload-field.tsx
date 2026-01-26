@@ -18,6 +18,8 @@ export function GroupImageUploadField({
       name={name}
       control={control}
       label="그룹 이미지"
+      allowedExtensions={["png", "jpg", "jpeg", "webp"]}
+      maxFileSizeBytes={5 * 1024 * 1024}
     />
   );
 }
