@@ -6,7 +6,7 @@ import { GROUP_FALLBACK_IMAGE } from "@/src/constants/image";
 interface GroupCardProps {
   groupSummary: GroupSummary;
   className?: string;
-  onClick?: (groupId: string) => void;
+  onClick?: (groupId: number) => void;
 }
 
 export function GroupCard({
