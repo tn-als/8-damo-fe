@@ -81,6 +81,8 @@ export function GroupCreateContainer({
           ? `image/${extension}`
           : profileImageFile.type;
 
+        console.log(fileName, contentType);
+
         const presignedResult = await getGroupProfilePresignedUrl({
           fileName,
           contentType,

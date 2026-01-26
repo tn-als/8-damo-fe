@@ -128,32 +128,28 @@ export async function getGroupProfilePresignedUrl(
     });
 
     const payload = await response.json().catch(() => null);
-    const inner = payload?.data;
-    const innerData = inner?.data;
+    const responseData = payload?.data;
 
     if (!response.ok) {
       return {
         success: false,
-        error:
-          inner?.errorMessage ||
-          payload?.errorMessage ||
-          `요청 실패 (${response.status})`,
+        error: payload?.errorMessage || `요청 실패 (${response.status})`,
       };
     }
 
-    if (!innerData) {
+    if (!responseData) {
       return {
         success: false,
-        error: inner?.errorMessage || "presigned url을 받을 수 없습니다.",
+        error: payload?.errorMessage || "presigned url을 받을 수 없습니다.",
       };
     }
 
     return {
       success: true,
       data: {
-        presignedUrl: innerData.presignedUrl,
-        objectKey: innerData.objectKey,
-        expiresIn: innerData.expiresIn,
+        presignedUrl: responseData.presignedUrl,
+        objectKey: responseData.objectKey,
+        expiresIn: responseData.expiresIn,
       },
     };
   } catch (error) {
