@@ -4,9 +4,7 @@ import { ROUTES } from '@/src/constants/routes';
 const PUBLIC_ROUTES = ['/login', '/kakao'];
 const ONBOARDING_ROUTES = ['/onboarding'];
 
-export function middleware(request: NextRequest) {
-
-  return NextResponse.next();
+export function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get('access_token')?.value;
