@@ -8,12 +8,11 @@ export default function GroupsPage() {
   const groups = GROUP_SUMMARY_MOCK_LIST;
 
   return (
-    <>
-      <main className="flex flex-col gap-6 px-4 py-4 pb-20 sm:pt-4">
-        <MyGroupList groupSummaryList={groups} />
-        <MyGroupActionsFAB />
-      </main>
+    <div className="mx-auto min-h-dvh w-full max-w-[430px] bg-app-background">
+      <MyGroupHeader />
+      <MyGroupList groupSummaryList={groups} />
+      <MyGroupActionsFAB />
       <BottomNavigationBar />
-    </>
+    </div>
   );
 }

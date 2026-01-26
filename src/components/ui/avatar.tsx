@@ -71,10 +71,10 @@ export function Avatar({
   return (
     <div
       className={cn(
-        "relative shrink-0 overflow-hidden bg-muted",
+        "relative shrink-0 overflow-hidden bg-background",
         sizeStyles[size],
         shape === "circle" ? "rounded-full" : "rounded-xl",
-        showBorder && "border-2 border-muted-foreground/30",
+        showBorder && "border-2 border-accent-foreground/30",
         className
       )}
     >

@@ -5,7 +5,7 @@ export const GROUP_FALLBACK_IMAGE =
   <path
     stroke-linecap="round"
     stroke-linejoin="round"
-    stroke-width="1.5"
+    stroke-width="0.8"
     d="M17 20h5v-2a3 3 0 00-5.356-1.857
        M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857
        M7 20H2v-2a3 3 0 015.356-1.857

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { IconButton } from "@/src/components/ui/icon-button";
@@ -48,18 +48,24 @@ export function MyGroupActionsFAB({
         )}
       >
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={handleJoinClick}
-          className="rounded-full px-3 py-2 text-xs font-semibold shadow-md transition-transform hover:scale-105 active:scale-95 sm:px-4 sm:text-sm"
+          className="group flex h-10 items-center gap-2 rounded-full bg-background px-3 text-xs font-semibold text-foreground shadow-sm transition-transform hover:bg-background active:scale-95 sm:h-12 sm:px-3.5 sm:text-sm"
         >
-          그룹 참여하기
+          <span>그룹 참여하기</span>
+          <span className="flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground sm:size-10">
+            <ArrowRight className="size-4 sm:size-4.5" />
+          </span>
         </Button>
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={handleCreateClick}
-          className="rounded-full px-3 py-2 text-xs font-semibold shadow-md transition-transform hover:scale-105 active:scale-95 sm:px-4 sm:text-sm"
+          className="group flex h-10 items-center gap-2 rounded-full bg-background px-3 text-xs font-semibold text-foreground shadow-sm transition-transform hover:bg-background active:scale-95 sm:h-12 sm:px-3.5 sm:text-sm"
         >
-          그룹 생성하기
+          <span>그룹 생성하기</span>
+          <span className="flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground sm:size-10">
+            <Users className="size-4 sm:size-5" />
+          </span>
         </Button>
       </div>
       <IconButton
@@ -70,7 +76,7 @@ export function MyGroupActionsFAB({
         size="lg"
         onClick={() => setIsOpen((prev) => !prev)}
         className={cn(
-          "rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95",
+          "size-12 rounded-full shadow-lg transition-transform active:scale-95 sm:size-14 [&_svg]:size-6 sm:[&_svg]:size-7",
           isOpen && "[&_svg]:rotate-45"
         )}
       />
