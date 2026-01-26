@@ -1,18 +1,9 @@
-import { MyGroupHeader } from '@/src/components/groups/my-group-header';
-import { MyGroupList } from '@/src/components/groups/my-group-list';
-import { MyGroupActionsFAB } from '@/src/components/groups/my-group-actions-fab';
-import { BottomNavigationBar } from '@/src/components/layout';
-import { GROUP_SUMMARY_MOCK_LIST } from '@/src/constants/mock-data/group-summary';
+import { getMyGroups } from '@/src/lib/api/groups';
+import { GroupsPageContent } from '@/src/components/groups/groups-page-content';
 
-export default function GroupsPage() {
-  const groups = GROUP_SUMMARY_MOCK_LIST;
+export default async function GroupsPage() {
+  const result = await getMyGroups();
+  const groups = result.success && result.data ? result.data : [];
 
-  return (
-    <div className="mx-auto min-h-dvh w-full max-w-[430px] bg-app-background">
-      <MyGroupHeader />
-      <MyGroupList groupSummaryList={groups} />
-      <MyGroupActionsFAB />
-      <BottomNavigationBar />
-    </div>
-  );
+  return <GroupsPageContent groups={groups} />;
 }
