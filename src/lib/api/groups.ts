@@ -57,11 +57,24 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
       };
     }
 
-    const mappedGroups: GroupSummary[] = groupList.map((group) => ({
-      id: String(group.groupId),
-      name: group.name,
-      description: group.introduction ?? "",
-    }));
+    const mappedGroups: GroupSummary[] = [];
+
+    for (const group of groupList) {
+      const parsedGroupId = Number(group.groupId);
+
+      if (!Number.isFinite(parsedGroupId)) {
+        return {
+          success: false,
+          error: payload?.errorMessage ?? "Invalid groupId.",
+        };
+      }
+
+      mappedGroups.push({
+        id: parsedGroupId,
+        name: group.name,
+        description: group.introduction ?? "",
+      });
+    }
 
     return { success: true, data: mappedGroups };
   } catch (error) {

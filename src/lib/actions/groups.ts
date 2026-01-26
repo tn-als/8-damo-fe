@@ -11,7 +11,7 @@ interface CreateGroupRequest {
 
 interface CreateGroupResponse {
   success: boolean;
-  groupId?: string;
+  groupId?: number;
   error?: string;
 }
 
@@ -79,11 +79,17 @@ export async function createGroup(
 
     const groupId = payload?.data;
 
-    if (!groupId) {
+    if (groupId === null || groupId === undefined) {
       return { success: false, error: "groupId를 확인할 수 없습니다." };
     }
 
-    return { success: true, groupId: String(groupId) };
+    const parsedGroupId = Number(groupId);
+
+    if (!Number.isFinite(parsedGroupId)) {
+      return { success: false, error: "groupId를 확인할 수 없습니다." };
+    }
+
+    return { success: true, groupId: parsedGroupId };
   } catch (error) {
     console.error("[createGroup] Request failed", error);
     return {

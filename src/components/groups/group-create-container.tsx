@@ -66,17 +66,18 @@ export function GroupCreateContainer({
         return;
       }
 
-      if (!result.groupId) {
+      if (result.groupId == null) {
         toast.error("groupId를 확인할 수 없습니다.");
         return;
       }
 
       if (profileImageFile) {
-        const extension =
-          profileImageFile.name.split(".").pop()?.toLowerCase() ?? "";
+        const groupId = result.groupId;
+        const extension = profileImageFile.name.split('.').pop()?.toLowerCase();
         const fileName = extension
-          ? `${result.groupId}.${extension}`
-          : result.groupId;
+        ? `${groupId}.${extension}`
+        : `${groupId}`;
+
         const contentType = extension
           ? `image/${extension}`
           : profileImageFile.type;
