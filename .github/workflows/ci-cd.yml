@@ -115,12 +115,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: grafana/setup-k6-action@v1
-      - uses: grafana/run-k6-action@v1
+
+      - name: k6-home-test
+        uses: grafana/run-k6-action@v1
         env:
           URL: ${{ secrets.HOME_URL}}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
-          path: tests/home_loading.js
+          path: tests/page_loading.js
+
+      - name: k6-group-detail-test
+        uses: grafana/run-k6-action@v1
+        env:
+          URL: ${{ secrets.GROUP_DETAIL_URL }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          path: tests/page_loading.js
             
 
   notify:
