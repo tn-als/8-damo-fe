@@ -189,3 +189,114 @@ body {
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
+/* React Day Picker Custom Styles */
+.rdp-custom {
+  --rdp-accent-color: #ff8d28;
+  --rdp-accent-background-color: #ff8d28;
+  --rdp-background-color: #f2f2f7;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+  --rdp-selected-color: #ffffff;
+  --rdp-selected-background-color: #ff8d28;
+  --rdp-today-color: #ff8d28;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* Chevron (화살표) 색상 - primary color */
+.rdp-custom .rdp-chevron {
+  fill: #ff8d28;
+}
+
+.rdp-custom .rdp-button_previous:hover .rdp-chevron,
+.rdp-custom .rdp-button_next:hover .rdp-chevron {
+  fill: #e67a1f;
+}
+
+/* 선택된 날짜 스타일 */
+.rdp-custom .rdp-day.rdp-selected .rdp-day_button,
+.rdp-custom .rdp-day_button.rdp-selected {
+  background-color: #ff8d28 !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* 포커스/선택 시 보더 제거 */
+.rdp-custom .rdp-day_button:focus,
+.rdp-custom .rdp-day_button:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 호버 스타일 */
+.rdp-custom .rdp-day_button:hover:not([disabled]):not(.rdp-selected) {
+  background-color: #fff5eb;
+}
+
+/* 오늘 날짜 스타일 */
+.rdp-custom .rdp-day.rdp-today:not(.rdp-selected) .rdp-day_button,
+.rdp-custom .rdp-day_button.rdp-today:not(.rdp-selected) {
+  background-color: #fff5eb;
+  color: #ff8d28;
+  font-weight: 600;
+}
+
+/* 비활성화된 날짜 */
+.rdp-custom .rdp-day.rdp-disabled .rdp-day_button {
+  color: #aeaeb2;
+  opacity: 0.5;
+}
+
+/* 네비게이션 버튼 호버 */
+.rdp-custom .rdp-button_previous:hover,
+.rdp-custom .rdp-button_next:hover {
+  background-color: #fff5eb;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 375px) {
+  .rdp-custom {
+    font-size: 0.875rem;
+  }
+}
+
+/* Time input 스타일 - primary color */
+input[type="time"] {
+  color-scheme: light;
+  accent-color: #ff8d28;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(58%) sepia(98%) saturate(1000%) hue-rotate(360deg) brightness(100%) contrast(100%);
+  cursor: pointer;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+  color: #333;
+}
+
+input[type="time"]::-webkit-datetime-edit-hour-field:focus,
+input[type="time"]::-webkit-datetime-edit-minute-field:focus,
+input[type="time"]::-webkit-datetime-edit-ampm-field:focus {
+  background-color: #ff8d28;
+  color: white;
+  border-radius: 2px;
+}
+
+input[type="time"]:focus {
+  border-color: #ff8d28 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 141, 40, 0.2) !important;
+}
+
+input[type="time"]::selection {
+  background-color: #ff8d28;
+  color: white;
+}
+
+/* 전역 accent-color 설정 */
+:root {
+  accent-color: #ff8d28;
+}
