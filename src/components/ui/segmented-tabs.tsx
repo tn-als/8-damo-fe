@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { cn } from "@/src/lib/utils";
 
 interface SegmentedTabsProps {
@@ -19,28 +18,24 @@ export function SegmentedTabs({
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 rounded-xl bg-muted p-0.5",
+        "flex items-center gap-1.5 rounded-xl bg-[#fbfbff] p-0.5",
         className
       )}
     >
-      {tabs.map((tab, index) => (
-        <React.Fragment key={tab.value}>
-          <button
-            type="button"
-            onClick={() => onChange(tab.value)}
-            className={cn(
-              "flex-1 rounded-[10px] px-3 py-2 text-sm font-semibold transition-all",
-              value === tab.value
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab.label}
-          </button>
-          {index < tabs.length - 1 && (
-            <div className="h-3 w-px bg-border" />
+      {tabs.map((tab) => (
+        <button
+          key={tab.value}
+          type="button"
+          onClick={() => onChange(tab.value)}
+          className={cn(
+            "flex-1 rounded-[11px] px-3 py-2 text-base font-semibold transition-all",
+            value === tab.value
+              ? "bg-white text-foreground shadow-[0px_4px_6px_0px_rgba(0,0,0,0.08)]"
+              : "text-[#aeaeb2]"
           )}
-        </React.Fragment>
+        >
+          {tab.label}
+        </button>
       ))}
     </div>
   );

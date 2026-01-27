@@ -6,11 +6,12 @@ import { cn } from "@/src/lib/utils";
 import { Button } from "../ui/button";
 
 interface HeaderProps {
-  title: string;
+  title?: string;
   onBack?: () => void;
   showBackButton?: boolean;
   showMoreButton?: boolean;
   onMoreClick?: () => void;
+  rightElement?: React.ReactNode;
   className?: string;
 }
 
@@ -20,6 +21,7 @@ export function Header({
   showBackButton = true,
   showMoreButton = false,
   onMoreClick,
+  rightElement,
   className,
 }: HeaderProps) {
   const router = useRouter();
@@ -33,9 +35,14 @@ export function Header({
   };
 
   return (
-    <header className="relative fixed top-0 left-0 right-0 z-50 bg-background sm:h-16">
+    <header
+      className={cn(
+        "fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between bg-background px-2 sm:h-16",
+        className
+      )}
+    >
       {/* 왼쪽: 뒤로가기 버튼 */}
-      <div className="absolute left-2 top-1/2 -translate-y-1/2">
+      <div className="shrink-0">
         {showBackButton ? (
           <Button
             variant="ghost"
@@ -44,7 +51,7 @@ export function Header({
             onClick={handleBack}
             aria-label="뒤로 가기"
           >
-            <ArrowLeft className="size-5 sm:size-6" />
+            <ArrowLeft className="size-6 text-[#8e8e93]" />
           </Button>
         ) : (
           <div className="size-9 sm:size-10" />
@@ -52,14 +59,17 @@ export function Header({
       </div>
 
       {/* 가운데: 제목 */}
-      <h1 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                    text-lg font-bold sm:text-xl">
-        {title}
-      </h1>
+      {title && (
+        <h1 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold leading-8 text-[#333] sm:text-xl">
+          {title}
+        </h1>
+      )}
 
-      {/* 오른쪽: 더보기 버튼 */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2">
-        {showMoreButton ? (
+      {/* 오른쪽: 더보기 버튼 또는 커스텀 요소 */}
+      <div className="shrink-0">
+        {rightElement ? (
+          rightElement
+        ) : showMoreButton ? (
           <Button
             variant="ghost"
             size="icon"
