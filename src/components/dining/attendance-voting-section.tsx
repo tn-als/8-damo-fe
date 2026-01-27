@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
+import { type AttendanceVoteStatus } from "@/src/types/api/dining";
 import { AttendanceVoteProgress } from "./attendance-voting/attendance-vote-progress";
 import { AttendanceVotePrompt } from "./attendance-voting/attendance-vote-prompt";
 import { AttendanceVoteActions } from "./attendance-voting/attendance-vote-action";
-
-export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND";
 
 interface AttendanceVotingSectionProps {
   progress: {

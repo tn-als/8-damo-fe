@@ -1,4 +1,4 @@
-import { type DiningStatus } from "@/src/types/dining";
+import { type DiningStatus } from "@/src/types/api/dining";
 
 export interface GroupDetailMock {
   id: number;
@@ -83,7 +83,7 @@ export const GROUP_DININGS_MOCK_LIST: GroupDiningMock[] = [
     groupId: 1,
     date: "2024-02-22",
     attendeeCount: 7,
-    status: "COMPLETED",
+    status: "COMPLETE",
   },
   {
     id: "5",
@@ -97,7 +97,7 @@ export const GROUP_DININGS_MOCK_LIST: GroupDiningMock[] = [
     groupId: 2,
     date: "2024-03-05",
     attendeeCount: 6,
-    status: "COMPLETED",
+    status: "COMPLETE",
   },
   {
     id: "7",

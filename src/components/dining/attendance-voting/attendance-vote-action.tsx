@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { cn } from "@/src/lib/utils";
-import { type AttendanceVoteStatus } from "@/src/types/dining";
+import { type AttendanceVoteStatus } from "@/src/types/api/dining";
 
 interface AttendanceVoteActionsProps {
   myVoteStatus: AttendanceVoteStatus;

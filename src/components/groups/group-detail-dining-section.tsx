@@ -3,19 +3,20 @@
 import {
   DiningSummaryCard,
 } from "@/src/components/groups/dining-summary-card";
-import {
-  type DiningStatus
-} from "@/src/types/dining"
-
+import { type DiningStatus } from "@/src/types/api/dining";
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";
 import { useState } from "react";
 
-type DiningTab = "ATTENDANCE_VOTING" | "RESTAURANT_VOTING" | "CONFIRMED" | "COMPLETED";
+type DiningTab =
+  | "ATTENDANCE_VOTING"
+  | "RESTAURANT_VOTING"
+  | "CONFIRMED"
+  | "COMPLETE";
 
 const TAB_OPTIONS: { value: DiningTab; label: string }[] = [
   { value: "ATTENDANCE_VOTING", label: "참석 투표" },
   { value: "RESTAURANT_VOTING", label: "장소 투표" },
-  { value: "COMPLETED", label: "회식 완료" },
+  { value: "COMPLETE", label: "회식 완료" },
 ];
 
 interface DiningSummaryProps {

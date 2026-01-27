@@ -1,9 +1,7 @@
 import { cn } from "@/src/lib/utils";
 import { Badge } from "@/src/components/ui/badge";
 import { Users } from "lucide-react";
-import {
-  type DiningStatus
-} from "@/src/types/dining"
+import { type DiningStatus } from "@/src/types/api/dining";
 
 interface DiningSummaryCardProps {
   date: string;
@@ -15,12 +13,20 @@ interface DiningSummaryCardProps {
 
 const statusConfig: Record<
   DiningStatus,
-  { label: string; variant: "diningAttendance" | "diningRestaurant" | "confirmed" | "completed" }
+  {
+    label: string;
+    variant:
+      | "diningAttendance"
+      | "diningRestaurant"
+      | "confirmed"
+      | "completed";
+  }
 > = {
   ATTENDANCE_VOTING: { label: "참석 투표", variant: "diningAttendance" },
+  RECOMMENDATION_PENDING: { label: "추천 대기", variant: "diningRestaurant" },
   RESTAURANT_VOTING: { label: "장소 투표", variant: "diningRestaurant" },
-  CONFIRMED: { label: "회식 확정", variant: "confirmed"},
-  COMPLETED: { label: "회식 완료", variant: "completed" },
+  CONFIRMED: { label: "회식 확정", variant: "confirmed" },
+  COMPLETE: { label: "회식 완료", variant: "completed" },
 };
 
 export function DiningSummaryCard({

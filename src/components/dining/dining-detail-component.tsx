@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { STATUS_BADGE_CONFIG } from "@/src/constants/dining-status-badge";
-import { type AttendanceVoteStatus } from "@/src/types/dining";
 import {
   DINING_DETAIL_MOCK_BY_ID,
   DINING_DETAIL_MOCK_LIST,
@@ -82,7 +81,7 @@ export default function DiningDetailComponent({
               voteState={dining.restaurantVotes[0]}
             />
           )}
-          {dining.phase === "COMPLETED" && (
+          {dining.phase === "COMPLETE" && (
             <CompleteSection
               restaurant={dining.restaurant}
               voteState={dining.restaurantVotes[0]}

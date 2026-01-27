@@ -1,5 +1,4 @@
 export { AttendanceVotingSection } from "./attendance-voting-section";
-export type { AttendanceVoteStatus } from "./attendance-voting-section";
 export { RestaurantVotingSection } from "./restaurant-voting-section";
 export type {
   Restaurant,

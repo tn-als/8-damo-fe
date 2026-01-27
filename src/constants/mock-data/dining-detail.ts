@@ -1,5 +1,5 @@
 import { GROUP_SUMMARY_MOCK_BY_ID } from "./group-summary";
-import { type DiningStatus} from "@/src/types/dining";
+import { type DiningStatus } from "@/src/types/api/dining";
 
 export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND" | null;
 export type RestaurantVoteAction = "LIKE" | "UNLIKE" | null;
@@ -148,7 +148,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     groupId: 3,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[3]?.name ?? "그룹명",
     date: "2024-12-25 18:00",
-    phase: "COMPLETED",
+    phase: "COMPLETE",
     progress: {
       totalCount: 9,
       voteCount: 9,
