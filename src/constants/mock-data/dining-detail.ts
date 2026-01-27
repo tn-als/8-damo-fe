@@ -46,7 +46,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     id: 1,
     groupId: 1,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[1]?.name ?? "그룹명",
-    date: "yyyy-MM-dd",
+    date: "2024-12-25 18:00",
     phase: "ATTENDANCE_VOTING",
     progress: {
       totalCount: 15,
@@ -80,7 +80,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     id: 2,
     groupId: 1,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[1]?.name ?? "그룹명",
-    date: "yyyy-MM-dd",
+    date: "2024-12-25 18:00",
     phase: "RESTAURANT_VOTING",
     progress: {
       totalCount: 12,
@@ -113,7 +113,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     id: 3,
     groupId: 2,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[2]?.name ?? "그룹명",
-    date: "yyyy-MM-dd",
+    date: "2024-12-25 18:00",
     phase: "CONFIRMED",
     progress: {
       totalCount: 8,
@@ -147,7 +147,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     id: 4,
     groupId: 3,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[3]?.name ?? "그룹명",
-    date: "yyyy-MM-dd",
+    date: "2024-12-25 18:00",
     phase: "COMPLETED",
     progress: {
       totalCount: 9,

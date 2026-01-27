@@ -1,4 +1,4 @@
-export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND" | null;
+export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND" | "PENDING";
 
 export type DiningStatus =
   | "ATTENDANCE_VOTING"

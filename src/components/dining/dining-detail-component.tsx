@@ -29,10 +29,6 @@ export default function DiningDetailComponent({
   diningId,
 }: DiningDetailComponentProps) {
   const router = useRouter();
-  const [myVoteStatus, setMyVoteStatus] = useState<AttendanceVoteStatus | null>(
-    null
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /** 목업 데이터 쓰기 */
   const numDiningId = Number(diningId);
@@ -41,6 +37,9 @@ export default function DiningDetailComponent({
     DINING_DETAIL_MOCK_BY_ID[numDiningId] ??
     DINING_DETAIL_MOCK_LIST.find((item) => item.groupId === numGroupId) ??
     DINING_DETAIL_MOCK_LIST[0];
+  
+  const date = dining.date.split(" ")[0];
+  const myVoteStatus = "NON_ATTEND";
 
   const badgeConfig = STATUS_BADGE_CONFIG[dining.phase];
 
@@ -48,17 +47,10 @@ export default function DiningDetailComponent({
     router.push(`/groups/${groupId}`);
   };
 
-  const handleVoteSubmit = (vote: AttendanceVoteStatus) => {
-    if (myVoteStatus || isSubmitting) return;
-    setIsSubmitting(true);
-    setMyVoteStatus(vote);
-    setIsSubmitting(false);
-  };
-
   return (
     <div className="mx-auto min-h-screen w-full max-w-[430px] bg-background">
       <Header
-        title={dining.date}
+        title={date}
         showBackButton
         onBack={handleBack}
         rightElement={
@@ -73,10 +65,8 @@ export default function DiningDetailComponent({
           {dining.phase === "ATTENDANCE_VOTING" && (
             <AttendanceVotingSection
               progress={dining.progress}
-              diningDate={dining.date}
+              diningDate={date}
               myVoteStatus={myVoteStatus}
-              isSubmitting={isSubmitting}
-              onSubmit={handleVoteSubmit}
             />
           )}
           {dining.phase === "RESTAURANT_VOTING" && (
