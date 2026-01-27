@@ -23,7 +23,7 @@ export function GroupCard({
       tabIndex={0}
       onClick={() => onClick?.(groupSummary.id)}
       className={cn(
-        "flex cursor-pointer items-center gap-2 rounded-lg bg-page-background p-3 shadow-xs transition-colors active:bg-card-pressed sm:gap-3 sm:p-4",
+        "flex cursor-pointer items-center gap-2 rounded-lg bg-card p-3 shadow-xs transition-colors active:bg-card-pressed sm:gap-3 sm:p-4",
         className
       )}
     >
