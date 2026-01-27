@@ -6,7 +6,7 @@ import { DateTimePicker } from "@/src/components/ui/date-time-picker";
 import type { DiningCreateFormValues } from "./dining-create-container";
 
 interface DiningDateTimeFieldProps {
-  name: "diningDateTime";
+  name: "diningDate";
   control: Control<DiningCreateFormValues>;
 }
 

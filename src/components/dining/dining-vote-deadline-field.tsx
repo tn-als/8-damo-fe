@@ -6,7 +6,7 @@ import { DateTimePicker } from "@/src/components/ui/date-time-picker";
 import type { DiningCreateFormValues } from "./dining-create-container";
 
 interface DiningVoteDeadlineFieldProps {
-  name: "voteDeadline";
+  name: "voteDueDate";
   control: Control<DiningCreateFormValues>;
 }
 
@@ -14,9 +14,9 @@ export function DiningVoteDeadlineField({
   name,
   control,
 }: DiningVoteDeadlineFieldProps) {
-  const diningDateTime = useWatch({
+  const diningDate = useWatch({
     control,
-    name: "diningDateTime",
+    name: "diningDate",
   });
 
   return (
@@ -35,7 +35,7 @@ export function DiningVoteDeadlineField({
             return "과거 날짜는 선택할 수 없습니다";
           }
 
-          if (diningDateTime && value >= diningDateTime) {
+          if (diningDate && value >= diningDate) {
             return "투표 마감 시간은 회식 시간보다 빨라야 합니다";
           }
 
