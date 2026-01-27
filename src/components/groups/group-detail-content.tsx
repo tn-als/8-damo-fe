@@ -26,7 +26,7 @@ export function GroupDetailContent({ groupId }: { groupId: string }) {
   };
 
   const handleDiningClick = (diningId: string) => {
-    router.push(`${groupId}/dining/${diningId}`);
+    router.push(`/groups/${groupId}/dining/${diningId}`);
   };
 
   const handleCreateDining = () => {
@@ -41,6 +41,9 @@ export function GroupDetailContent({ groupId }: { groupId: string }) {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white">
       <GroupDetailHeader groupName={group.name} onBack={handleBack} onMoreClick={handleMoreClick} />
+
+      {/* Header spacer */}
+      <div className="h-14 sm:h-16" />
 
       <GroupDetailInformationSection
         description={group.description}

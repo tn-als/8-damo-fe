@@ -68,7 +68,7 @@ export function RestaurantVotingSection({
         </div>
       )}
 
-      <div className="w-full max-w-[370px] rounded-[20px] border border-[#e2e8f0] bg-white px-4 pb-4 pt-6">
+      <div className="w-full max-w-[390px] rounded-[20px] border border-[#e2e8f0] bg-white px-4 pb-4 pt-6">
         <div className="relative h-40 w-full overflow-hidden rounded-[12px] bg-[#edf2f7]">
           <span className="absolute left-1/2 top-1/2 h-px w-[140%] -translate-x-1/2 -translate-y-1/2 rotate-[12deg] bg-black/50" />
           <span className="absolute left-1/2 top-1/2 h-px w-[140%] -translate-x-1/2 -translate-y-1/2 rotate-[-12deg] bg-black/50" />
@@ -88,40 +88,46 @@ export function RestaurantVotingSection({
         </div>
 
         <div className="mt-4 flex w-full items-center justify-end gap-6 text-black">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onVote?.(restaurant.id, "LIKE")}
-            className="flex items-center gap-2 text-[16px] font-medium leading-[22px]"
+            className="flex items-center gap-2 px-2 text-base font-medium leading-[22px]"
             aria-pressed={voteState.myVote === "LIKE"}
           >
             <ThumbsUp className="size-5" />
             <span>{voteState.likeCount}</span>
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onVote?.(restaurant.id, "UNLIKE")}
-            className="flex items-center gap-2 text-[16px] font-medium leading-[22px]"
+            className="flex items-center gap-2 px-2 text-base font-medium leading-[22px]"
             aria-pressed={voteState.myVote === "UNLIKE"}
           >
             <ThumbsDown className="size-5" />
             <span>{voteState.unlikeCount}</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {permissions.canDecideRestaurant && (
-        <div className="flex w-full max-w-[338px] flex-col gap-2">
+        <div className="flex w-full max-w-[390px] flex-col gap-2">
           <Button
             type="button"
+            variant="ghost"
             onClick={() => onDecideRestaurant?.(restaurant.id)}
-            className="h-[50px] w-full rounded-[12px] border border-[#d9d9d9] bg-[#f2f2f7] text-[16px] font-semibold leading-[22px] tracking-[0.2px] text-[#404040]"
+            className="w-full rounded-[12px] border border-[#d9d9d9] bg-[#f2f2f7] px-5 py-[14px] text-base font-semibold leading-[22px] tracking-[0.2px] text-[#404040] hover:bg-[#e5e5ea]"
           >
             이 장소 확정하기
           </Button>
           <Button
             type="button"
+            variant="ghost"
             onClick={onRerecommendRestaurant}
-            className="h-[50px] w-full rounded-[12px] border border-[#d9d9d9] bg-[#f2f2f7] text-[16px] font-semibold leading-[22px] tracking-[0.2px] text-[#404040]"
+            className="w-full rounded-[12px] border border-[#d9d9d9] bg-[#f2f2f7] px-5 py-[14px] text-base font-semibold leading-[22px] tracking-[0.2px] text-[#404040] hover:bg-[#e5e5ea]"
           >
             추천 다시 받기
           </Button>
@@ -129,11 +135,12 @@ export function RestaurantVotingSection({
       )}
 
       {permissions.canAttendAdditional && (
-        <div className="w-full max-w-[338px]">
+        <div className="w-full max-w-[390px]">
           <Button
             type="button"
+            variant="ghost"
             onClick={onAttendAdditional}
-            className="h-[50px] w-full rounded-[12px] border border-[#d9d9d9] bg-[#f2f2f7] text-[16px] font-semibold leading-[22px] tracking-[0.2px] text-[#404040]"
+            className="w-full rounded-[12px] border border-[#d9d9d9] bg-[#f2f2f7] px-5 py-[14px] text-base font-semibold leading-[22px] tracking-[0.2px] text-[#404040] hover:bg-[#e5e5ea]"
           >
             추가 참석하기
           </Button>

@@ -1,8 +1,4 @@
-export type DiningStatus =
-  | "ATTENDANCE_VOTING"
-  | "RESTAURANT_VOTING"
-  | "CONFIRMED"
-  | "COMPLETED";
+import { type DiningStatus } from "@/src/types/dining";
 
 export interface GroupDetailMock {
   id: number;

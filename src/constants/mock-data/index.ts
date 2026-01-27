@@ -15,7 +15,6 @@ export {
 export type {
     GroupDetailMock,
     GroupDiningMock,
-    DiningStatus,
 } from "./group-detail";
 
 // Ad Banner
