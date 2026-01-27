@@ -35,7 +35,7 @@ export function GroupDetailContent({ groupId }: { groupId: string }) {
   };
 
   const handleShareQR = () => {
-    // TODO: QR 공유 기능
+    router.push(`/groups/${groupId}/qr-share`);
   };
 
   return (
