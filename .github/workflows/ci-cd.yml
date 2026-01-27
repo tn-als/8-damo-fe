@@ -44,8 +44,8 @@ jobs:
           NEXT_PUBLIC_KAKAO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_KAKAO_CLIENT_ID }}
           NEXT_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_KAKAO_REDIRECT_URI }}
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-          NEXT_PUBLIC_S3_URL: ${{ secretes.NEXT_PUBLIC_S3_URL }}
-          NEXT_PUBLIC_S3_DIR: ${{ secretes.NEXT_PUBLIC_S3_DIR }}
+          NEXT_PUBLIC_S3_URL: ${{ secrets.NEXT_PUBLIC_S3_URL }}
+          NEXT_PUBLIC_S3_DIR: ${{ secrets.NEXT_PUBLIC_S3_DIR }}
         run: npm run build
 
       - name: Package Next.js build (non-standalone)
