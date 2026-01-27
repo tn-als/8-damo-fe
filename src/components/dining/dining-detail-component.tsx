@@ -100,13 +100,13 @@ export default function DiningDetailComponent({
                 permissions={dining.permissions}
               />
             )}
-            {dining.phase === "RESTAURANT_CONFIRMED" && (
+            {dining.phase === "CONFIRMED" && (
               <ConfirmedSection
                 restaurant={dining.restaurant}
                 voteState={dining.restaurantVotes[0]}
               />
             )}
-            {dining.phase === "DINING_COMPLETED" && (
+            {dining.phase === "COMPLETED" && (
               <CompleteSection
                 restaurant={dining.restaurant}
                 voteState={dining.restaurantVotes[0]}

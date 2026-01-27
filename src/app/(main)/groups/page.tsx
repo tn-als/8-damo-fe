@@ -7,5 +7,7 @@ export default async function GroupsPage() {
   const result = { success: true, data: GROUP_SUMMARY_MOCK_LIST};
   const groups = result.success && result.data ? result.data : [];
 
-  return <GroupsPageContent groups={groups} />;
+  return <main className="flex min-h-screen flex-col items-center justify-center gap-6">
+    <GroupsPageContent groups={groups} />
+  </main>
 }

@@ -1,7 +1,7 @@
 export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND" | null;
 
-export type DiningEventPhase =
+export type DiningStatus =
   | "ATTENDANCE_VOTING"
   | "RESTAURANT_VOTING"
-  | "RESTAURANT_CONFIRMED"
-  | "DINING_COMPLETED";
+  | "CONFIRMED"
+  | "COMPLETED";

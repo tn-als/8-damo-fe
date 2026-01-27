@@ -12,45 +12,50 @@ import { GroupDetailCreateDiningButton } from "@/src/components/groups/group-det
 
 export function GroupDetailContent({ groupId }: { groupId: string }) {
   const router = useRouter();
-  console.log(groupId);
   const numericGroupId = Number(groupId);
-  // const numericGroupId = 0;
-  const group = GROUP_DETAIL_MOCK_BY_ID[numericGroupId] ?? GROUP_DETAIL_MOCK_BY_ID[1];
+  const group =
+    GROUP_DETAIL_MOCK_BY_ID[numericGroupId] ?? GROUP_DETAIL_MOCK_BY_ID[1];
   const dinings = GROUP_DININGS_MOCK_BY_GROUP_ID[numericGroupId] ?? [];
 
-  console.log(dinings);
+  const handleBack = () => {
+    router.push("/groups");
+  };
 
   const handleMoreClick = () => {
     // TODO: 더보기 메뉴 열기
-    console.log("More clicked");
   };
 
   const handleDiningClick = (diningId: string) => {
-    // TODO: 회식 상세 페이지로 이동
-    console.log("Dining clicked:", diningId);
     router.push(`${groupId}/dining/${diningId}`);
   };
 
-    return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-background">
-      <GroupDetailHeader
-        groupName={group.name}
-        onMoreClick={handleMoreClick}
-      />
+  const handleCreateDining = () => {
+    // TODO: 회식 생성 페이지로 이동
+    router.push(`/groups/${groupId}/dining/create`);
+  };
 
-     <GroupDetailInformationSection
+  const handleShareQR = () => {
+    // TODO: QR 공유 기능
+  };
+
+  return (
+    <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white">
+      <GroupDetailHeader groupName={group.name} onBack={handleBack} onMoreClick={handleMoreClick} />
+
+      <GroupDetailInformationSection
         description={group.description}
         memberCount={group.memberCount}
-     />
+      />
 
-     <GroupDetailDiningSection
+      <GroupDetailDiningSection
         dinings={dinings}
         onDiningClick={handleDiningClick}
-     />
+      />
 
-      <GroupDetailCreateDiningButton/>
-
+      <GroupDetailCreateDiningButton
+        onCreateDining={handleCreateDining}
+        onShareQR={handleShareQR}
+      />
     </div>
   );
-
 }

@@ -1,7 +1,9 @@
-import { type DiningEventPhase } from "@/src/types/dining";
+import {
+  type DiningStatus
+} from "@/src/types/dining"
 
 export const STATUS_BADGE_CONFIG: Record<
-  DiningEventPhase,
+  DiningStatus,
   { label: string; variant: "diningAttendance" | "diningRestaurant" | "diningConfirmed" | "diningCompleted" }
 > = {
   ATTENDANCE_VOTING: {
@@ -12,11 +14,11 @@ export const STATUS_BADGE_CONFIG: Record<
     label: "장소 투표",
     variant: "diningRestaurant",
   },
-  RESTAURANT_CONFIRMED: {
+  CONFIRMED: {
     label: "회식 확정",
     variant: "diningConfirmed",
   },
-  DINING_COMPLETED: {
+  COMPLETED: {
     label: "회식 완료",
     variant: "diningCompleted",
   },

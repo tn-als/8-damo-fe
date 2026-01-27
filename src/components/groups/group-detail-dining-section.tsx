@@ -1,27 +1,28 @@
 "use client";
 
-import { DiningSummaryCard } from "@/src/components/groups/dining-summary-card";
+import {
+  DiningSummaryCard,
+} from "@/src/components/groups/dining-summary-card";
+import {
+  type DiningStatus
+} from "@/src/types/dining"
+
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";
 import { useState } from "react";
 
-const TAB_OPTIONS = [
+type DiningTab = "ATTENDANCE_VOTING" | "RESTAURANT_VOTING" | "CONFIRMED" | "COMPLETED";
+
+const TAB_OPTIONS: { value: DiningTab; label: string }[] = [
   { value: "ATTENDANCE_VOTING", label: "참석 투표" },
   { value: "RESTAURANT_VOTING", label: "장소 투표" },
-  { value: "DINING_COMPLETED", label: "회식 완료" },
+  { value: "COMPLETED", label: "회식 완료" },
 ];
-
-type DiningTab = (typeof TAB_OPTIONS)[number]["value"];
 
 interface DiningSummaryProps {
   id: string;
   date: string;
   attendeeCount: number;
-  status: DiningTab;
-}
-
-interface GroupDetailDiningSectionProps {
-    dinings: DiningSummaryProps[];
-    onDiningClick?: (id:string) => void; 
+  status: DiningStatus;
 }
 
 interface GroupDetailDiningSectionProps {
@@ -40,25 +41,34 @@ export function GroupDetailDiningSection({
   );
 
   return (
-    <>
-      <div className="px-4 py-4 sm:px-5">
+    <div className="flex flex-1 flex-col bg-[#f2f2f7]">
+      <div className="px-5 py-4">
         <SegmentedTabs
           tabs={TAB_OPTIONS}
           value={activeTab}
-          onChange={(value) => setActiveTab(value)}
+          onChange={(value) => setActiveTab(value as DiningTab)}
         />
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 px-4 pb-24 sm:px-5">
-        {filteredDinings.map((dining) => (
-          <DiningSummaryCard
-            key={dining.id}
-            date={dining.date}
-            attendeeCount={dining.attendeeCount}
-            onClick={() => onDiningClick?.(dining.id)}
-          />
-        ))}
+      <div className="flex flex-1 flex-col gap-3 px-5 pb-32">
+        {filteredDinings.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+            <p>조회된 회식이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+          {filteredDinings.map((dining) => (
+            <DiningSummaryCard
+              key={dining.id}
+              date={dining.date}
+              attendeeCount={dining.attendeeCount}
+              status={dining.status}
+              onClick={() => onDiningClick?.(dining.id)}
+            />
+          ))}
+        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }

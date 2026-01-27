@@ -1,13 +1,7 @@
-"use client";
-
-export type DiningEventPhase =
-  | "ATTENDANCE_VOTING"
-  | "RESTAURANT_VOTING"
-  | "RESTAURANT_CONFIRMED"
-  | "DINING_COMPLETED";
+import { type DiningStatus } from "@/src/types/dining";
 
 interface DiningEventSectionProps {
-  phase: DiningEventPhase;
+  phase: DiningStatus;
   children: React.ReactNode;
 }
 

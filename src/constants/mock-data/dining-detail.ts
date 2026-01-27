@@ -1,10 +1,5 @@
 import { GROUP_SUMMARY_MOCK_BY_ID } from "./group-summary";
-
-export type DiningEventPhase =
-  | "ATTENDANCE_VOTING"
-  | "RESTAURANT_VOTING"
-  | "RESTAURANT_CONFIRMED"
-  | "DINING_COMPLETED";
+import { type DiningStatus} from "@/src/types/dining";
 
 export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND" | null;
 export type RestaurantVoteAction = "LIKE" | "UNLIKE" | null;
@@ -27,7 +22,7 @@ export interface DiningDetailMock {
   groupId: number;
   groupName: string;
   date: string;
-  phase: DiningEventPhase;
+  phase: DiningStatus;
   progress: {
     totalCount: number;
     voteCount: number;
@@ -119,7 +114,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     groupId: 2,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[2]?.name ?? "그룹명",
     date: "yyyy-MM-dd",
-    phase: "RESTAURANT_CONFIRMED",
+    phase: "CONFIRMED",
     progress: {
       totalCount: 8,
       voteCount: 8,
@@ -153,7 +148,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     groupId: 3,
     groupName: GROUP_SUMMARY_MOCK_BY_ID[3]?.name ?? "그룹명",
     date: "yyyy-MM-dd",
-    phase: "DINING_COMPLETED",
+    phase: "COMPLETED",
     progress: {
       totalCount: 9,
       voteCount: 9,

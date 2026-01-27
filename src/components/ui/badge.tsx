@@ -12,10 +12,14 @@ const badgeVariants = cva(
         warning: "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400",
         error: "bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400",
         outline: "border border-border bg-transparent text-foreground",
+        // Dining status variants
         diningAttendance: "bg-[rgba(0,195,208,0.2)] text-[#009687]",
         diningRestaurant: "bg-[rgba(255,187,0,0.2)] text-[#b88100]",
         diningConfirmed: "bg-[rgba(255,45,85,0.15)] text-[#dd002a]",
         diningCompleted: "bg-[#f2f2f7] text-[#aeaeb2]",
+        // Alias variants for dining status
+        confirmed: "bg-[rgba(255,45,85,0.15)] text-[#dd002a]",
+        completed: "bg-[#f2f2f7] text-[#aeaeb2]",
       },
       size: {
         sm: "h-5 px-2 text-xs sm:h-6 sm:px-2.5",

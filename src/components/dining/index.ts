@@ -9,5 +9,4 @@ export type {
 export { ConfirmedSection } from "./confirmed-section";
 export { CompleteSection } from "./complete-section";
 export { DiningEventSection } from "./dining-event-section";
-export type { DiningEventPhase } from "./dining-event-section";
 export { DiningParticipantList } from "./dining-participant-list";

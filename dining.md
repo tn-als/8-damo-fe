@@ -246,15 +246,15 @@
             
             ```tsx
             // 회식 진행 상태를 나타내는 타입
-            type DiningEventPhase = 
+            type DiningStatus = 
               | 'ATTENDANCE_VOTING'      // 참석 투표
               | 'RESTAURANT_VOTING'      // 식당 투표
-              | 'RESTAURANT_CONFIRMED'   // 식당 확정됨
-              | 'DINING_COMPLETED';      // 회식 완료됨
+              | 'CONFIRMED'   // 식당 확정됨
+              | 'COMPLETED';      // 회식 완료됨
             
             // 최상위 컨테이너 Props
             interface DiningEventSectionProps {
-              phase: DiningEventPhase;
+              phase: DiningStatus;
               children: React.ReactNode;
             }
             ```

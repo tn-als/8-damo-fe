@@ -1,8 +1,8 @@
 export type DiningStatus =
   | "ATTENDANCE_VOTING"
   | "RESTAURANT_VOTING"
-  | "RESTAURANT_CONFIRMED"
-  | "DINING_COMPLETED";
+  | "CONFIRMED"
+  | "COMPLETED";
 
 export interface GroupDetailMock {
   id: number;
@@ -80,14 +80,14 @@ export const GROUP_DININGS_MOCK_LIST: GroupDiningMock[] = [
     groupId: 1,
     date: "2024-03-01",
     attendeeCount: 7,
-    status: "RESTAURANT_CONFIRMED",
+    status: "CONFIRMED",
   },
   {
     id: "4",
     groupId: 1,
     date: "2024-02-22",
     attendeeCount: 7,
-    status: "DINING_COMPLETED",
+    status: "COMPLETED",
   },
   {
     id: "5",
@@ -101,7 +101,7 @@ export const GROUP_DININGS_MOCK_LIST: GroupDiningMock[] = [
     groupId: 2,
     date: "2024-03-05",
     attendeeCount: 6,
-    status: "DINING_COMPLETED",
+    status: "COMPLETED",
   },
   {
     id: "7",
