@@ -3,6 +3,7 @@
 import { DiningSummaryCard } from "@/src/components/groups/dining-summary-card";
 import { type DiningStatus, type DiningSummary } from "@/src/types/api/dining";
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const TAB_OPTIONS: { value: DiningStatus; label: string }[] = [
   { value: "ATTENDANCE_VOTING", label: "참석 투표" },
@@ -11,25 +12,37 @@ const TAB_OPTIONS: { value: DiningStatus; label: string }[] = [
 ];
 
 interface GroupDetailDiningSectionProps {
+  groupId: string;
   dinings: DiningSummary[];
   status: DiningStatus;
-  onStatusChange: (status: DiningStatus) => void;
-  onDiningClick?: (id: string) => void;
 }
 
 export function GroupDetailDiningSection({
+  groupId,
   dinings,
   status,
-  onStatusChange,
-  onDiningClick,
 }: GroupDetailDiningSectionProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleStatusChange = (nextStatus: DiningStatus) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("status", nextStatus);
+    router.push(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  };
+
+  const handleDiningClick = (diningId: string) => {
+    router.push(`/groups/${groupId}/dining/${diningId}`);
+  };
+
   return (
     <div className="flex flex-1 flex-col bg-[#f2f2f7]">
       <div className="px-5 py-4">
         <SegmentedTabs
           tabs={TAB_OPTIONS}
           value={status}
-          onChange={(value) => onStatusChange(value as DiningStatus)}
+          onChange={(value) => handleStatusChange(value as DiningStatus)}
         />
       </div>
 
@@ -46,7 +59,7 @@ export function GroupDetailDiningSection({
                 date={dining.diningDate}
                 attendeeCount={dining.diningParticipantsCount}
                 status={dining.status}
-                onClick={() => onDiningClick?.(String(dining.diningId))}
+                onClick={() => handleDiningClick(String(dining.diningId))}
               />
             ))}
           </div>

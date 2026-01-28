@@ -110,6 +110,8 @@ export async function getGroupDiningSummaries(
       )}`,
       {
         method: "GET",
+        cache: "force-cache",
+        next: { revalidate: 300 },
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -119,8 +121,6 @@ export async function getGroupDiningSummaries(
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<DiningSummary[]>
       | null;
-
-    console.log(payload);
 
     if (!response.ok) {
       return {
