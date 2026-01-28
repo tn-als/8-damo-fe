@@ -42,6 +42,8 @@ export function KakaoMapView({
       }
 
       window.kakao.maps.load(() => {
+        if (!containerRef.current) return;
+
         const center = new window.kakao.maps.LatLng(
           location.lat,
           location.lng
@@ -67,7 +69,7 @@ export function KakaoMapView({
 
         /** 이후에는 위치만 갱신 */
         mapInstanceRef.current.setCenter(center);
-        markerRef.current.setPosition(center);
+        markerRef.current?.setPosition(center);
       });
     };
 
