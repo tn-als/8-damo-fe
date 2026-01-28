@@ -1,10 +1,10 @@
-import {GroupDetailContent} from "@/src/components/groups/group-detail-content";
+import GroupDetailPageClient from "@/src/components/groups/group-detail-page-client";
 
-interface GroupDetailPageProps {
-  params: Promise<{ groupId: string }>;
+interface PageProps {
+  params: Promise <{ groupId: string }>;
 }
 
-export default async function GroupDetailPage({ params }: GroupDetailPageProps) {
-  const { groupId } = await params;
-  return <GroupDetailContent groupId={groupId} />;
+export default async function Page({ params }: PageProps) {
+  const {groupId} = await params;
+  return <GroupDetailPageClient groupId={groupId} />;
 }

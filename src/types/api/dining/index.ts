@@ -5,3 +5,4 @@ export * from "./common";
 export * from "./attendance-vote";
 export * from "./restaurant-vote";
 export * from "./confirmed";
+export * from "./summary";
