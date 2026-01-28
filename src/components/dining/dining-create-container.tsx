@@ -16,9 +16,9 @@ export type DiningCreateFormValues = {
 };
 
 export interface DiningCreateRequest {
-  diningDate?: string;
-  voteDueDate?: string;
-  budget?: number;
+  diningDate: string;
+  voteDueDate: string;
+  budget: number;
 }
 
 interface DiningCreateContainerProps {
@@ -48,19 +48,32 @@ export function DiningCreateContainer({
     },
   });
 
+  const formatDateToMinute = (date: Date): string => {
+    const yyyy = date.getFullYear();
+    const MM = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const HH = String(date.getHours()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
+
+    return `${yyyy}-${MM}-${dd} ${HH}:${mm}`;
+  }
+
+
   const onFormSubmit = async (data: DiningCreateFormValues) => {
     try {
       const requestBody: DiningCreateRequest = {
-        diningDate: data.diningDate?.toISOString(),
-        voteDueDate: data.voteDueDate?.toISOString(),
+        diningDate: data.diningDate
+          ? formatDateToMinute(data.diningDate)
+          : "",
+        voteDueDate: data.voteDueDate
+          ? formatDateToMinute(data.voteDueDate)
+          : "",
         budget: data.budget ?? 0,
       };
 
-      console.log("Request body:", requestBody);
+      console.log(requestBody);
 
       const result = await createDining(groupId, requestBody);
-
-      console.log(result);
 
       if (!result.success) {
         toast.error(result.error || "회식 생성에 실패했습니다.");
