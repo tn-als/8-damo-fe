@@ -3,31 +3,18 @@
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import { Phone, ThumbsDown, ThumbsUp } from "lucide-react";
-
-export interface Restaurant {
-  id: number;
-  name: string;
-  description: string;
-  phoneNumber: string;
-}
-
-export type VoteAction = "LIKE" | "UNLIKE" | null;
-
-export interface RestaurantVoteState {
-  likeCount: number;
-  unlikeCount: number;
-  myVote: VoteAction;
-}
+import { Restaurant, RestaurantVoteSummary } from "@/src/types/api/dining";
+import { type RestaurantVoteOption } from "@/src/types/api/dining/enums";
 
 interface RestaurantVotingSectionProps {
   restaurants: Restaurant[];
-  voteStates: RestaurantVoteState[];
+  voteSummary: RestaurantVoteSummary[];
   activeIndex?: number;
   permissions: {
     canDecideRestaurant: boolean;
     canAttendAdditional: boolean;
   };
-  onVote?: (restaurantId: number, action: VoteAction) => void;
+  onVote?: (restaurantId: number, action: RestaurantVoteOption) => void;
   onDecideRestaurant?: (restaurantId: number) => void;
   onRerecommendRestaurant?: () => void;
   onAttendAdditional?: () => void;
@@ -35,7 +22,7 @@ interface RestaurantVotingSectionProps {
 
 export function RestaurantVotingSection({
   restaurants,
-  voteStates,
+  voteSummary,
   activeIndex = 0,
   permissions,
   onVote,
@@ -45,7 +32,7 @@ export function RestaurantVotingSection({
 }: RestaurantVotingSectionProps) {
   const safeIndex = Math.min(Math.max(activeIndex, 0), restaurants.length - 1);
   const restaurant = restaurants[safeIndex];
-  const voteState = voteStates[safeIndex];
+  const voteState = voteSummary[safeIndex];
 
   if (!restaurant || !voteState) {
     return null;
@@ -103,12 +90,12 @@ export function RestaurantVotingSection({
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => onVote?.(restaurant.id, "UNLIKE")}
+            onClick={() => onVote?.(restaurant.id, "DISLIKE")}
             className="flex items-center gap-2 px-2 text-base font-medium leading-[22px]"
-            aria-pressed={voteState.myVote === "UNLIKE"}
+            aria-pressed={voteState.myVote === "DISLIKE"}
           >
             <ThumbsDown className="size-5" />
-            <span>{voteState.unlikeCount}</span>
+            <span>{voteState.dislikeCount}</span>
           </Button>
         </div>
       </div>

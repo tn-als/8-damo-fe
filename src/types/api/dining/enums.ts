@@ -12,4 +12,4 @@ export type DiningStatus =
   | "COMPLETE";
 
 // 식당 투표 상태
-export type RestaurantVoteStatus = "LIKE" | "DISLIKE" | "NONE";
+export type RestaurantVoteOption = "LIKE" | "DISLIKE";
