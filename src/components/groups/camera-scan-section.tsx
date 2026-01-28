@@ -5,7 +5,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import { CameraPermissionFallback, type PermissionError } from "./camera-permission-fallback";
 
 interface CameraScanSectionProps {
-  onScanSuccess: (groupId: number) => void;
+  onScanSuccess: (groupId: string) => void;
   isScanning: boolean;
   onScanningChange: (scanning: boolean) => void;
 }
@@ -71,7 +71,7 @@ export function CameraScanSection({
             return;
           }
 
-          onScanSuccess(parsedGroupId);
+          onScanSuccess(groupId);
           onScanningChange(false);
           stopScanner();
         },

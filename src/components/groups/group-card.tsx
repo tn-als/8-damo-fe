@@ -6,25 +6,23 @@ import { GROUP_FALLBACK_IMAGE } from "@/src/constants/image";
 interface GroupCardProps {
   groupSummary: GroupSummary;
   className?: string;
-  onClick?: (groupId: number) => void;
+  onClick?: (groupId: string) => void;
 }
 
 export function GroupCard({
   groupSummary,
-  className,
   onClick,
 }: GroupCardProps) {
-  const description =
-    groupSummary.description?.trim().length ? groupSummary.description : "";
-
+  const introduction =
+    groupSummary.introduction?.trim().length ? groupSummary.introduction : "";
+  
   return (
     <div
       role="button"
       tabIndex={0}
       onClick={() => onClick?.(groupSummary.id)}
       className={cn(
-        "flex cursor-pointer items-center gap-2 rounded-lg bg-card p-3 shadow-xs transition-colors active:bg-card-pressed sm:gap-3 sm:p-4",
-        className
+        "flex cursor-pointer items-center gap-2 rounded-lg bg-card p-3 shadow-xs transition-colors active:bg-card-pressed sm:gap-3 sm:p-4"
       )}
     >
       <Avatar
@@ -40,7 +38,7 @@ export function GroupCard({
           {groupSummary.name}
         </h3>
         <p className="truncate text-xs text-muted-foreground sm:text-sm">
-          {description}
+          {introduction}
         </p>
       </div>
     </div>

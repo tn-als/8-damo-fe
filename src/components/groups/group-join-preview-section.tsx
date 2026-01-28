@@ -41,13 +41,6 @@ export function GroupJoinPreviewSection({
         <h2 className="text-xl font-bold text-foreground">{group.name}</h2>
 
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            {group.memberCount != null && (
-            <div className="flex items-center gap-1.5">
-                <Users className="size-4" />
-                <span>멤버 {group.memberCount}명</span>
-            </div>
-            )}
-
             {group.diningCountPerMonth != null && (
             <span>이번달 회식 횟수 {group.diningCountPerMonth}회</span>
             )}

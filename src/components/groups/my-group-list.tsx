@@ -28,8 +28,8 @@ export function MyGroupList({ groupSummaryList = [] }: MyGroupListProps) {
         <GroupCard
           key={groupSummary.id}
           groupSummary={groupSummary}
-          onClick={(groupId) => {
-            router.push(`/groups/${groupId}`);
+          onClick={() => {
+            router.push(`/groups/${groupSummary.id}`);
           }}
         />
       ))}

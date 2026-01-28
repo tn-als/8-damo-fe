@@ -17,7 +17,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
   const [imageError, setImageError] = useState(false);
 
   const qrImageUrl = `${process.env.NEXT_PUBLIC_S3_URL}/group/qr/${groupId}.png`;
-  const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/groups/join?groupId=${groupId}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/groups/join?id=${groupId}`;
 
   console.log(qrImageUrl);
 
