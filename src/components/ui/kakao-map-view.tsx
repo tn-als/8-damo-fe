@@ -1,32 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { cn } from "@/src/lib/utils";
-
-type KakaoMapInstance = {
-  setCenter: (center: unknown) => void;
-};
-
-type KakaoMarkerInstance = {
-  setMap: (map: unknown) => void;
-  setPosition: (position: unknown) => void;
-};
-
-type KakaoMapsSdk = {
-  maps: {
-    LatLng: new (lat: number, lng: number) => unknown;
-    Map: new (
-      container: HTMLElement,
-      options: { center: unknown; level: number }
-    ) => KakaoMapInstance;
-    Marker: new (options: { position: unknown }) => KakaoMarkerInstance;
-    load: (callback: () => void) => void;
-  };
-};
 
 declare global {
   interface Window {
-    kakao?: KakaoMapsSdk;
+    kakao: any;
   }
 }
 
@@ -37,104 +15,78 @@ interface KakaoMapViewProps {
   };
   level?: number;
   className?: string;
-  appKey?: string;
 }
-
-const KAKAO_MAP_SCRIPT_ID = "kakao-map-sdk";
-
-const loadKakaoMap = (appKey: string) => {
-  return new Promise<void>((resolve, reject) => {
-    if (typeof window === "undefined") {
-      resolve();
-      return;
-    }
-
-    if (window.kakao?.maps) {
-      window.kakao.maps.load(resolve);
-      return;
-    }
-
-    const existingScript = document.getElementById(
-      KAKAO_MAP_SCRIPT_ID
-    ) as HTMLScriptElement | null;
-
-    if (existingScript) {
-      existingScript.addEventListener("load", () => {
-        window.kakao?.maps.load(resolve);
-      });
-      existingScript.addEventListener("error", () => {
-        reject(new Error("Kakao map script failed to load"));
-      });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = KAKAO_MAP_SCRIPT_ID;
-    script.async = true;
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`;
-
-    script.onload = () => {
-      window.kakao?.maps.load(resolve);
-    };
-
-    script.onerror = () => {
-      reject(new Error("Kakao map script failed to load"));
-    };
-
-    document.head.appendChild(script);
-  });
-};
 
 export function KakaoMapView({
   location,
   level = 3,
   className,
-  appKey,
 }: KakaoMapViewProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<KakaoMapInstance | null>(null);
-  const markerRef = useRef<KakaoMarkerInstance | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
 
+  /** 1️⃣ SDK 로드 */
   useEffect(() => {
-    let cancelled = false;
-    const resolvedKey = appKey ?? process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+    if (document.getElementById("kakao-map-sdk")) return;
 
-    if (!resolvedKey) {
-      return undefined;
-    }
+    const script = document.createElement("script");
+    script.id = "kakao-map-sdk";
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
 
-    loadKakaoMap(resolvedKey)
-      .then(() => {
-        if (cancelled || !containerRef.current || !window.kakao?.maps) {
-          return;
-        }
+  /** 2️⃣ 지도 + 마커 초기화 및 업데이트 */
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
 
+    const initMap = () => {
+      if (!window.kakao?.maps || !containerRef.current) {
+        timer = setTimeout(initMap, 200);
+        return;
+      }
+
+      window.kakao.maps.load(() => {
         const center = new window.kakao.maps.LatLng(
           location.lat,
           location.lng
         );
 
-        if (!mapRef.current) {
-          mapRef.current = new window.kakao.maps.Map(containerRef.current, {
-            center,
-            level,
+        /** 최초 1회 생성 */
+        if (!mapInstanceRef.current) {
+          mapInstanceRef.current = new window.kakao.maps.Map(
+            containerRef.current,
+            {
+              center,
+              level,
+            }
+          );
+
+          markerRef.current = new window.kakao.maps.Marker({
+            position: center,
           });
-          markerRef.current = new window.kakao.maps.Marker({ position: center });
-          markerRef.current.setMap(mapRef.current);
+
+          markerRef.current.setMap(mapInstanceRef.current);
           return;
         }
 
-        mapRef.current.setCenter(center);
-        markerRef.current?.setPosition(center);
-      })
-      .catch(() => {
-        // Swallow script load errors to avoid breaking the page.
+        /** 이후에는 위치만 갱신 */
+        mapInstanceRef.current.setCenter(center);
+        markerRef.current.setPosition(center);
       });
-
-    return () => {
-      cancelled = true;
     };
-  }, [appKey, level, location.lat, location.lng]);
 
-  return <div ref={containerRef} className={cn("h-40 w-full", className)} />;
+    initMap();
+
+    return () => clearTimeout(timer);
+  }, [location.lat, location.lng, level]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={className}
+      style={{ width: "100%", height: "300px" }}
+    />
+  );
 }

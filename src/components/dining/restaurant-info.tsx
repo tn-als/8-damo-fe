@@ -19,10 +19,15 @@ export function RestaurantInfo({
   description,
   phoneNumber,
 }: RestaurantInfoProps) {
+  const newLocation = {
+    lat: 37.566295,
+    lng: 126.991773
+  }
+  
   return (
     <section className="flex w-full flex-col gap-3">
       <div className="w-full overflow-hidden rounded-[12px]">
-        <KakaoMapView location={location} className="h-40 w-full" />
+        <KakaoMapView location={newLocation} className="h-40 w-full" />
       </div>
       <div className="flex flex-col gap-1">
         <h2 className="text-[17px] font-semibold leading-[24px] text-[#1f2937]">

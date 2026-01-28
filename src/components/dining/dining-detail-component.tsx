@@ -39,7 +39,6 @@ export default function DiningDetailComponent({
   //   DINING_DETAIL_MOCK_LIST[0];
 
   const dining = DINING_DETAIL_MOCK_LIST[1];
-  console.log(dining);
 
   const date = dining.date.split(" ")[0];
   const myVoteStatus = "NON_ATTEND";
