@@ -43,4 +43,5 @@ export {
 export {
     DINING_DETAIL_MOCK_LIST,
     DINING_DETAIL_MOCK_BY_ID,
+    DINIG_DETAIL_RESTAURANT_VOTING,
 } from "./dining-detail";
