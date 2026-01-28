@@ -1,11 +1,9 @@
 "use client";
-
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { STATUS_BADGE_CONFIG } from "@/src/constants/dining-status-badge";
 import {
-  DINING_DETAIL_MOCK_BY_ID,
   DINING_DETAIL_MOCK_LIST,
+  DINIG_DETAIL_RESTAURANT_VOTING,
 } from "@/src/constants/mock-data";
 import {
   AttendanceVotingSection,
@@ -17,7 +15,6 @@ import {
 } from "@/src/components/dining";
 import { Header } from "@/src/components/layout";
 import { Badge } from "@/src/components/ui/badge";
-import { type RestaurantVoteOption } from "@/src/types/api/dining/enums";
 
 interface DiningDetailComponentProps {
   groupId: string;
@@ -43,53 +40,7 @@ export default function DiningDetailComponent({
   const date = dining.date.split(" ")[0];
   const myVoteStatus = "NON_ATTEND";
   const badgeConfig = STATUS_BADGE_CONFIG[dining.phase];
-  const restaurants = [dining.restaurant];
-  const [restaurantVotes, setRestaurantVotes] = useState(
-    dining.restaurantVotes
-  );
-
-  const handleVote = (restaurantId: number, action: RestaurantVoteOption) => {
-    setRestaurantVotes((prev) => {
-      const targetIndex = restaurants.findIndex(
-        (restaurant) => restaurant.id === restaurantId
-      );
-
-      if (targetIndex < 0 || !prev[targetIndex]) {
-        return prev;
-      }
-
-      const currentVote = prev[targetIndex];
-      let { likeCount, dislikeCount, myVote } = currentVote;
-
-      if (action === "LIKE") {
-        if (myVote === "LIKE") {
-          likeCount = Math.max(0, likeCount - 1);
-          myVote = null;
-        } else {
-          if (myVote === "DISLIKE") {
-            dislikeCount = Math.max(0, dislikeCount - 1);
-          }
-          likeCount += 1;
-          myVote = "LIKE";
-        }
-      } else {
-        if (myVote === "DISLIKE") {
-          dislikeCount = Math.max(0, dislikeCount - 1);
-          myVote = null;
-        } else {
-          if (myVote === "LIKE") {
-            likeCount = Math.max(0, likeCount - 1);
-          }
-          dislikeCount += 1;
-          myVote = "DISLIKE";
-        }
-      }
-
-      const nextVotes = [...prev];
-      nextVotes[targetIndex] = { ...currentVote, likeCount, dislikeCount, myVote };
-      return nextVotes;
-    });
-  };
+  const restaurants = DINIG_DETAIL_RESTAURANT_VOTING;
 
   const handleBack = () => {
     router.push(`/groups/${groupId}`);
@@ -120,9 +71,8 @@ export default function DiningDetailComponent({
           {dining.phase === "RESTAURANT_VOTING" && (
             <RestaurantVotingSection
               restaurants={restaurants}
-              voteSummary={restaurantVotes}
-              permissions={dining.permissions}
-              onVote={handleVote}
+              isGroupLeader={dining.permissions.canDecideRestaurant}
+              canAdditionalAttend={dining.permissions.canAttendAdditional}
             />
           )}
           {dining.phase === "CONFIRMED" && (
