@@ -4,3 +4,6 @@ export { ConfirmedSection } from "./confirmed-section";
 export { CompleteSection } from "./complete-section";
 export { DiningEventSection } from "./dining-event-section";
 export { DiningParticipantList } from "./dining-participant-list";
+export { RestaurantInfo } from "./restaurant-info";
+export { RestaurantAction } from "./restaurant-action";
+export { RestaurantPermissionAction } from "./restaurant-permission-action";

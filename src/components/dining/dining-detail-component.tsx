@@ -17,10 +17,11 @@ import {
 } from "@/src/components/dining";
 import { Header } from "@/src/components/layout";
 import { Badge } from "@/src/components/ui/badge";
+import { type RestaurantVoteOption } from "@/src/types/api/dining/enums";
 
-interface DiningDetailComponentProps{
-  groupId: string,
-  diningId: string
+interface DiningDetailComponentProps {
+  groupId: string;
+  diningId: string;
 }
 
 export default function DiningDetailComponent({
@@ -30,17 +31,66 @@ export default function DiningDetailComponent({
   const router = useRouter();
 
   /** 목업 데이터 쓰기 */
-  const numDiningId = Number(diningId);
-  const numGroupId = Number(groupId);
-  const dining =
-    DINING_DETAIL_MOCK_BY_ID[numDiningId] ??
-    DINING_DETAIL_MOCK_LIST.find((item) => item.groupId === numGroupId) ??
-    DINING_DETAIL_MOCK_LIST[0];
-  
+  // const numDiningId = Number(diningId);
+  // const numGroupId = Number(groupId);
+  // const dining =
+  //   DINING_DETAIL_MOCK_BY_ID[numDiningId] ??
+  //   DINING_DETAIL_MOCK_LIST.find((item) => item.groupId === numGroupId) ??
+  //   DINING_DETAIL_MOCK_LIST[0];
+
+  const dining = DINING_DETAIL_MOCK_LIST[1];
+  console.log(dining);
+
   const date = dining.date.split(" ")[0];
   const myVoteStatus = "NON_ATTEND";
-
   const badgeConfig = STATUS_BADGE_CONFIG[dining.phase];
+  const restaurants = [dining.restaurant];
+  const [restaurantVotes, setRestaurantVotes] = useState(
+    dining.restaurantVotes
+  );
+
+  const handleVote = (restaurantId: number, action: RestaurantVoteOption) => {
+    setRestaurantVotes((prev) => {
+      const targetIndex = restaurants.findIndex(
+        (restaurant) => restaurant.id === restaurantId
+      );
+
+      if (targetIndex < 0 || !prev[targetIndex]) {
+        return prev;
+      }
+
+      const currentVote = prev[targetIndex];
+      let { likeCount, dislikeCount, myVote } = currentVote;
+
+      if (action === "LIKE") {
+        if (myVote === "LIKE") {
+          likeCount = Math.max(0, likeCount - 1);
+          myVote = null;
+        } else {
+          if (myVote === "DISLIKE") {
+            dislikeCount = Math.max(0, dislikeCount - 1);
+          }
+          likeCount += 1;
+          myVote = "LIKE";
+        }
+      } else {
+        if (myVote === "DISLIKE") {
+          dislikeCount = Math.max(0, dislikeCount - 1);
+          myVote = null;
+        } else {
+          if (myVote === "LIKE") {
+            likeCount = Math.max(0, likeCount - 1);
+          }
+          dislikeCount += 1;
+          myVote = "DISLIKE";
+        }
+      }
+
+      const nextVotes = [...prev];
+      nextVotes[targetIndex] = { ...currentVote, likeCount, dislikeCount, myVote };
+      return nextVotes;
+    });
+  };
 
   const handleBack = () => {
     router.push(`/groups/${groupId}`);
@@ -70,9 +120,10 @@ export default function DiningDetailComponent({
           )}
           {dining.phase === "RESTAURANT_VOTING" && (
             <RestaurantVotingSection
-              restaurants={[dining.restaurant]}
-              voteSummary={dining.restaurantVotes}
+              restaurants={restaurants}
+              voteSummary={restaurantVotes}
               permissions={dining.permissions}
+              onVote={handleVote}
             />
           )}
           {dining.phase === "CONFIRMED" && (
