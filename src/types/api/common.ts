@@ -5,3 +5,5 @@ export interface ApiResponse<T> {
   data: T;
   errorMessage: string | null;
 }
+
+export type ApiNestedResponse<T> = ApiResponse<ApiResponse<T>>;

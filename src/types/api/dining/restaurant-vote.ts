@@ -6,10 +6,10 @@ export interface RestaurantVoteResponse {
   recommendRestaurantsId: number;
   restaurantsName: string;
   reasoningDescription: string;
-  restaurantVoteOption: RestaurantVoteOption;
+  restaurantVoteStatus: string;
   phoneNumber: string;
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
   likeCount: number;
   dislikeCount: number;
 }

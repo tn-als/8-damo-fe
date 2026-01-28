@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { type AttendanceVoteStatus } from "@/src/types/api/dining";
-import { AttendanceVoteProgress } from "./attendance-voting/attendance-vote-progress";
-import { AttendanceVotePrompt } from "./attendance-voting/attendance-vote-prompt";
-import { AttendanceVoteActions } from "./attendance-voting/attendance-vote-action";
+import { AttendanceVoteProgress } from "./attendance-vote-progress";
+import { AttendanceVotePrompt } from "./attendance-vote-prompt";
+import { AttendanceVoteActions } from "./attendance-vote-action";
 
 interface AttendanceVotingSectionProps {
   progress: {

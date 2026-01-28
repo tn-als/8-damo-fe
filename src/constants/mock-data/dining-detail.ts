@@ -9,6 +9,10 @@ export interface DiningRestaurant {
   name: string;
   description: string;
   phoneNumber: string;
+  location?: {
+    lat: number;
+    lng: number;
+  }
 }
 
 export interface DiningParticipant {
@@ -41,6 +45,65 @@ export interface DiningDetailMock {
   participants: DiningParticipant[];
 }
 
+export const DINIG_DETAIL_RESTAURANT_VOTING = [
+  {
+    "recommendRestaurantsId": 1,
+    "restaurantsName": "을지로 골목식당",
+    "reasoningDescription": "회식하기 좋은 넓은 좌석과 가성비 좋은 메뉴 구성으로 추천되었습니다.",
+    "restaurantVoteStatus": "LIKED",
+    "phoneNumber": "02-2278-1234",
+    "latitude": "37.566295",
+    "longitude": "126.991773",
+    "likeCount": 8,
+    "dislikeCount": 1
+  },
+  {
+    "recommendRestaurantsId": 2,
+    "restaurantsName": "홍대 불타는 삼겹살",
+    "reasoningDescription": "고기 질이 좋고 단체 예약이 가능해 회식 장소로 적합합니다.",
+    "restaurantVoteStatus": "NONE",
+    "phoneNumber": "02-332-5678",
+    "latitude": "37.557192",
+    "longitude": "126.924321",
+    "likeCount": 5,
+    "dislikeCount": 2
+  },
+  {
+    "recommendRestaurantsId": 3,
+    "restaurantsName": "강남 파스타 하우스",
+    "reasoningDescription": "분위기가 깔끔하고 조용해 팀 단위 식사에 적합합니다.",
+    "restaurantVoteStatus": "DISLIKED",
+    "phoneNumber": "02-556-8899",
+    "latitude": "37.498095",
+    "longitude": "127.027610",
+    "likeCount": 3,
+    "dislikeCount": 6
+  },
+  {
+    "recommendRestaurantsId": 4,
+    "restaurantsName": "성수 수제버거 클럽",
+    "reasoningDescription": "다양한 메뉴 선택지가 있어 취향 차이를 고려한 추천입니다.",
+    "restaurantVoteStatus": "LIKED",
+    "phoneNumber": "02-465-7744",
+    "latitude": "37.544581",
+    "longitude": "127.055961",
+    "likeCount": 10,
+    "dislikeCount": 0
+  },
+  {
+    "recommendRestaurantsId": 5,
+    "restaurantsName": "종로 전통 한정식",
+    "reasoningDescription": "연령대가 다양한 그룹에서도 무난하게 만족도가 높을 것으로 예상됩니다.",
+    "restaurantVoteStatus": "NONE",
+    "phoneNumber": "02-734-3321",
+    "latitude": "37.572876",
+    "longitude": "126.979401",
+    "likeCount": 6,
+    "dislikeCount": 3
+  }
+]
+
+
 export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
   {
     id: 1,
@@ -57,6 +120,10 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
       name: "음식점 1",
       phoneNumber: "음식점 1 전화번호",
       description: "음식점 1 설명",
+      location: {
+        lat: 30, 
+        lng: 20
+      }
     },
     restaurantVotes: [
       {

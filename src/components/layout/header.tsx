@@ -6,7 +6,7 @@ import { cn } from "@/src/lib/utils";
 import { Button } from "../ui/button";
 
 interface HeaderProps {
-  title?: string;
+  title?: React.ReactNode;
   onBack?: () => void;
   showBackButton?: boolean;
   showMoreButton?: boolean;

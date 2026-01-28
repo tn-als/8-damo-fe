@@ -1,11 +1,9 @@
 "use client";
-
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { STATUS_BADGE_CONFIG } from "@/src/constants/dining-status-badge";
 import {
-  DINING_DETAIL_MOCK_BY_ID,
   DINING_DETAIL_MOCK_LIST,
+  DINIG_DETAIL_RESTAURANT_VOTING,
 } from "@/src/constants/mock-data";
 import {
   AttendanceVotingSection,
@@ -18,9 +16,9 @@ import {
 import { Header } from "@/src/components/layout";
 import { Badge } from "@/src/components/ui/badge";
 
-interface DiningDetailComponentProps{
-  groupId: string,
-  diningId: string
+interface DiningDetailComponentProps {
+  groupId: string;
+  diningId: string;
 }
 
 export default function DiningDetailComponent({
@@ -30,17 +28,19 @@ export default function DiningDetailComponent({
   const router = useRouter();
 
   /** 목업 데이터 쓰기 */
-  const numDiningId = Number(diningId);
-  const numGroupId = Number(groupId);
-  const dining =
-    DINING_DETAIL_MOCK_BY_ID[numDiningId] ??
-    DINING_DETAIL_MOCK_LIST.find((item) => item.groupId === numGroupId) ??
-    DINING_DETAIL_MOCK_LIST[0];
-  
+  // const numDiningId = Number(diningId);
+  // const numGroupId = Number(groupId);
+  // const dining =
+  //   DINING_DETAIL_MOCK_BY_ID[numDiningId] ??
+  //   DINING_DETAIL_MOCK_LIST.find((item) => item.groupId === numGroupId) ??
+  //   DINING_DETAIL_MOCK_LIST[0];
+
+  const dining = DINING_DETAIL_MOCK_LIST[1];
+
   const date = dining.date.split(" ")[0];
   const myVoteStatus = "NON_ATTEND";
-
   const badgeConfig = STATUS_BADGE_CONFIG[dining.phase];
+  const restaurants = DINIG_DETAIL_RESTAURANT_VOTING;
 
   const handleBack = () => {
     router.push(`/groups/${groupId}`);
@@ -70,9 +70,9 @@ export default function DiningDetailComponent({
           )}
           {dining.phase === "RESTAURANT_VOTING" && (
             <RestaurantVotingSection
-              restaurants={[dining.restaurant]}
-              voteSummary={dining.restaurantVotes}
-              permissions={dining.permissions}
+              restaurants={restaurants}
+              isGroupLeader={dining.permissions.canDecideRestaurant}
+              canAdditionalAttend={dining.permissions.canAttendAdditional}
             />
           )}
           {dining.phase === "CONFIRMED" && (
