@@ -2,11 +2,11 @@
 
 import { Button } from "@/src/components/ui/button";
 import { Phone, ThumbsDown, ThumbsUp } from "lucide-react";
-import type { Restaurant, RestaurantVoteState } from "./restaurant-voting-section";
+import { Restaurant, RestaurantVoteSummary } from "@/src/types/api/dining";
 
 interface ConfirmedSectionProps {
   restaurant: Restaurant;
-  voteState: RestaurantVoteState;
+  voteSummary: RestaurantVoteSummary;
   onComplete?: () => void;
   isCompleting?: boolean;
   canComplete?: boolean;
@@ -14,7 +14,7 @@ interface ConfirmedSectionProps {
 
 export function ConfirmedSection({
   restaurant,
-  voteState,
+  voteSummary,
   onComplete,
   isCompleting = false,
   canComplete = true,
@@ -46,11 +46,11 @@ export function ConfirmedSection({
         <div className="mt-4 flex w-full items-center justify-end gap-6 text-black">
           <div className="flex items-center gap-2 text-[16px] font-medium leading-[22px]">
             <ThumbsUp className="size-5" />
-            <span>{voteState.likeCount}</span>
+            <span>{voteSummary.likeCount}</span>
           </div>
           <div className="flex items-center gap-2 text-[16px] font-medium leading-[22px]">
             <ThumbsDown className="size-5" />
-            <span>{voteState.unlikeCount}</span>
+            <span>{voteSummary.dislikeCount}</span>
           </div>
         </div>
       </div>

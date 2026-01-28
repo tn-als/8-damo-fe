@@ -2,7 +2,7 @@ import { GROUP_SUMMARY_MOCK_BY_ID } from "./group-summary";
 import { type DiningStatus } from "@/src/types/api/dining";
 
 export type AttendanceVoteStatus = "ATTEND" | "NON_ATTEND" | null;
-export type RestaurantVoteAction = "LIKE" | "UNLIKE" | null;
+export type RestaurantVoteAction = "LIKE" | "DISLIKE" | null;
 
 export interface DiningRestaurant {
   id: number;
@@ -30,7 +30,7 @@ export interface DiningDetailMock {
   restaurant: DiningRestaurant;
   restaurantVotes: {
     likeCount: number;
-    unlikeCount: number;
+    dislikeCount: number;
     myVote: RestaurantVoteAction;
   }[];
   permissions: {
@@ -61,7 +61,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     restaurantVotes: [
       {
         likeCount: 10,
-        unlikeCount: 2,
+        dislikeCount: 2,
         myVote: null,
       },
     ],
@@ -95,7 +95,7 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     restaurantVotes: [
       {
         likeCount: 7,
-        unlikeCount: 1,
+        dislikeCount: 1,
         myVote: null,
       },
     ],
@@ -128,8 +128,8 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     restaurantVotes: [
       {
         likeCount: 10,
-        unlikeCount: 2,
-        myVote: null,
+        dislikeCount: 2,
+        myVote: "DISLIKE",
       },
     ],
     permissions: {
@@ -162,8 +162,8 @@ export const DINING_DETAIL_MOCK_LIST: DiningDetailMock[] = [
     restaurantVotes: [
       {
         likeCount: 5,
-        unlikeCount: 0,
-        myVote: null,
+        dislikeCount: 0,
+        myVote: "LIKE",
       },
     ],
     permissions: {
