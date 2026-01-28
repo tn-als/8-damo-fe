@@ -19,7 +19,7 @@ export interface Restaurant {
   name: string;
   description: string;
   phoneNumber: string;
-  location: {
+  location?: {
     lat: number;
     lng: number;
   };
