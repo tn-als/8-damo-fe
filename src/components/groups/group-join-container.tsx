@@ -25,9 +25,10 @@ export function GroupJoinContainer() {
   const [isJoining, setIsJoining] = useState(false);
 
 
-  const handleScanSuccess = useCallback((groupId: number) => {
+  const handleScanSuccess = useCallback((groupId: string) => {
     // 목 데이터에서 그룹 조회
-    const group = GROUP_SUMMARY_MOCK_BY_ID[groupId];
+    const numGroupId = Number(groupId);
+    const group = GROUP_SUMMARY_MOCK_BY_ID[numGroupId];
     // const group = null;
     if (group){
         setScanResult({status: "success", group});
