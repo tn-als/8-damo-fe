@@ -2,12 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
-
 interface KakaoMapViewProps {
   location: {
     lat: number;
@@ -23,8 +17,8 @@ export function KakaoMapView({
   className,
 }: KakaoMapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
+  const mapInstanceRef = useRef<KakaoMap | null>(null);
+  const markerRef = useRef<KakaoMarker | null>(null);
 
   /** 1️⃣ SDK 로드 */
   useEffect(() => {
