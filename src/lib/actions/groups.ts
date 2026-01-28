@@ -1,6 +1,7 @@
 "use server";
 
 import { getAccessToken } from "../cookie";
+import type { ApiResponse } from "@/src/types/api/common";
 
 interface CreateGroupRequest {
   name: string;
@@ -12,6 +13,19 @@ interface CreateGroupRequest {
 interface CreateGroupResponse {
   success: boolean;
   groupId?: number;
+  error?: string;
+}
+
+interface GroupDetailResponse {
+  name: string;
+  introduction: string;
+  participantsCount: number;
+  isGroupLeader: boolean;
+}
+
+interface GetGroupDetailResult {
+  success: boolean;
+  data?: GroupDetailResponse;
   error?: string;
 }
 
@@ -95,6 +109,62 @@ export async function createGroup(
     return {
       success: false,
       error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function getGroupDetail(
+  groupId: string
+): Promise<GetGroupDetailResult> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    console.error("[getGroupDetail] Missing API base URL env");
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return { success: false, error: "인증 토큰이 없습니다." };
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}`, {
+      method: "GET",
+      cache: "force-cache",
+      next: { revalidate: 300 },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<GroupDetailResponse>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+      };
+    }
+
+    if (!payload?.data) {
+      return {
+        success: false,
+        error: "그룹 정보를 확인할 수 없습니다.",
+      };
+    }
+
+    return { success: true, data: payload.data };
+  } catch (error) {
+    console.error("[getGroupDetail] Request failed", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }

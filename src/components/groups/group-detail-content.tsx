@@ -1,11 +1,19 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GROUP_DETAIL_MOCK_BY_ID } from "@/src/constants/mock-data";
-import { GroupDetailHeader } from "@/src/components/groups/group-detail-header";
-import { GroupDetailInformationSection } from "@/src/components/groups/group-detail-information-section";
+import { GroupDetailHeaderContainer } from "@/src/components/groups/group-detail-header-container";
+import { GroupDetailInformationContainer } from "@/src/components/groups/group-detail-information-container";
 import { GroupDetailCreateDiningButton } from "@/src/components/groups/group-detail-create-dining-button";
+import { getGroupDetail } from "@/src/lib/actions/groups";
+
+interface GroupDetailState {
+  name: string;
+  introduction: string;
+  participantsCount: number;
+  isGroupLeader: boolean;
+}
 
 interface GroupDetailContentProps {
   groupId: string;
@@ -17,9 +25,34 @@ export function GroupDetailContent({
   diningSection,
 }: GroupDetailContentProps) {
   const router = useRouter();
-  const numericGroupId = Number(groupId);
-  const group =
-    GROUP_DETAIL_MOCK_BY_ID[numericGroupId] ?? GROUP_DETAIL_MOCK_BY_ID[1];
+  const [group, setGroup] = useState<GroupDetailState | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const run = async () => {
+      const result = await getGroupDetail(groupId);
+
+      if (!isActive) return;
+
+      if (!result.success) {
+        console.error(
+          "[GroupDetailContent] Failed to load group detail",
+          result.error
+        );
+        setGroup(null);
+        return;
+      }
+
+      setGroup(result.data ?? null);
+    };
+
+    run();
+
+    return () => {
+      isActive = false;
+    };
+  }, [groupId]);
 
   const handleBack = () => {
     router.push("/groups");
@@ -40,8 +73,8 @@ export function GroupDetailContent({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white">
-      <GroupDetailHeader
-        groupName={group.name}
+      <GroupDetailHeaderContainer
+        groupName={group?.name ?? ""}
         onBack={handleBack}
         onMoreClick={handleMoreClick}
       />
@@ -49,9 +82,9 @@ export function GroupDetailContent({
       {/* Header spacer */}
       <div className="h-14 sm:h-16" />
 
-      <GroupDetailInformationSection
-        description={group.description}
-        memberCount={group.memberCount}
+      <GroupDetailInformationContainer
+        description={group?.introduction ?? ""}
+        memberCount={group?.participantsCount ?? 0}
       />
 
       {diningSection}
