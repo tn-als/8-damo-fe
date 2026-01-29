@@ -4,10 +4,12 @@ import { Children, useEffect, useRef, useState } from "react";
 
 interface RestaurantVotingCarouselProps {
   children: React.ReactNode;
+  onIndexChange?: (index: number) => void;
 }
 
 export function RestaurantVotingCarousel({
   children,
+  onIndexChange,
 }: RestaurantVotingCarouselProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -22,7 +24,9 @@ export function RestaurantVotingCarousel({
     const updateIndex = () => {
       const width = viewport.clientWidth || 1;
       const nextIndex = Math.round(viewport.scrollLeft / width);
-      setActiveIndex(Math.max(0, Math.min(total - 1, nextIndex)));
+      const clampedIndex = Math.max(0, Math.min(total - 1, nextIndex));
+      setActiveIndex(clampedIndex);
+      onIndexChange?.(clampedIndex);
     };
 
     updateIndex();
@@ -33,7 +37,7 @@ export function RestaurantVotingCarousel({
       viewport.removeEventListener("scroll", updateIndex);
       window.removeEventListener("resize", updateIndex);
     };
-  }, []);
+  }, [onIndexChange, total]);
 
   return (
     <div className="w-full">

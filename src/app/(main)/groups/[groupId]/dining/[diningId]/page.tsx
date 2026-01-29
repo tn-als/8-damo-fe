@@ -16,7 +16,7 @@ import type {
   DiningStatus,
   RestaurantVoteResponse,
 } from "@/src/types/api/dining";
-import { DINIG_DETAIL_CONFIRMED } from "@/src/constants/mock-data/dining-detail";
+import { DINIG_DETAIL_CONFIRMED, MOCK_DINIG_DETAIL_RESTAURANT_VOTING } from "@/src/constants/mock-data/dining-detail";
 
 interface DiningDetailPageProps {
   params: Promise<{
@@ -74,6 +74,8 @@ export default async function DiningDetailPage({
     }
   }
 
+  restaurantVotes = MOCK_DINIG_DETAIL_RESTAURANT_VOTING;
+
   let attendanceVote: AttendanceVoteResponse | null = null;
 
   if (diningStatus === "ATTENDANCE_VOTING") {
@@ -127,8 +129,8 @@ export default async function DiningDetailPage({
       {diningStatus === "RESTAURANT_VOTING" && restaurantVotes && (
         <RestaurantVotingSection
           restaurants={restaurantVotes}
-          isGroupLeader={diningCommon.isGroupLeader}
-          canAdditionalAttend={false}
+          isGroupLeader={true}
+          canAdditionalAttend={true}
         />
       )}
       {diningStatus === "CONFIRMED" && (

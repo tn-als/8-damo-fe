@@ -208,6 +208,17 @@ interface VoteAttendanceResult {
   error?: string;
 }
 
+interface ConfirmRestaurantRequest {
+  groupId: string;
+  diningId: string;
+  recommendRestaurantsId: number;
+}
+
+interface ConfirmRestaurantResult {
+  success: boolean;
+  error?: string;
+}
+
 function isApiResponse<T>(value: unknown): value is ApiResponse<T> {
   return (
     typeof value === "object" &&
@@ -522,6 +533,59 @@ export async function voteAttendance({
     return { success: true };
   } catch (error) {
     console.error("[voteAttendance] Request failed", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function confirmRestaurant({
+  groupId,
+  diningId,
+  recommendRestaurantsId,
+}: ConfirmRestaurantRequest): Promise<ConfirmRestaurantResult> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    console.error("[confirmRestaurant] Missing API base URL env");
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return { success: false, error: "인증 토큰이 없습니다." };
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurants/${recommendRestaurantsId}/confirmed`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<unknown>
+      | ApiNestedResponse<unknown>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("[confirmRestaurant] Request failed", error);
     return {
       success: false,
       error:

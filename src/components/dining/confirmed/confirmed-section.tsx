@@ -24,7 +24,6 @@ export function ConfirmedSection({
       <RestaurantCard
         restaurant={restaurant}
         showActions={false}
-        showPermissionActions={false}
         badgeLabel="확정 장소"
       />
     </section>

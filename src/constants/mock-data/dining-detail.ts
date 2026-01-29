@@ -60,9 +60,9 @@ export const DINING_DETAIL_ATTENDANCE_VOTING = {
   totalGroupMemberCount: 20
 }
 
-export const DINIG_DETAIL_RESTAURANT_VOTING = [
+export const MOCK_DINIG_DETAIL_RESTAURANT_VOTING = [
   {
-    "recommendRestaurantsId": 1,
+    "recommendRestaurantsId": 109090,
     "restaurantsName": "을지로 골목식당",
     "reasoningDescription": "회식하기 좋은 넓은 좌석과 가성비 좋은 메뉴 구성으로 추천되었습니다.",
     "restaurantVoteStatus": "LIKED",
@@ -73,7 +73,7 @@ export const DINIG_DETAIL_RESTAURANT_VOTING = [
     "dislikeCount": 1
   },
   {
-    "recommendRestaurantsId": 2,
+    "recommendRestaurantsId": 2090909,
     "restaurantsName": "홍대 불타는 삼겹살",
     "reasoningDescription": "고기 질이 좋고 단체 예약이 가능해 회식 장소로 적합합니다.",
     "restaurantVoteStatus": "NONE",
@@ -84,7 +84,7 @@ export const DINIG_DETAIL_RESTAURANT_VOTING = [
     "dislikeCount": 2
   },
   {
-    "recommendRestaurantsId": 3,
+    "recommendRestaurantsId": 32213,
     "restaurantsName": "강남 파스타 하우스",
     "reasoningDescription": "분위기가 깔끔하고 조용해 팀 단위 식사에 적합합니다.",
     "restaurantVoteStatus": "DISLIKED",
@@ -95,7 +95,7 @@ export const DINIG_DETAIL_RESTAURANT_VOTING = [
     "dislikeCount": 6
   },
   {
-    "recommendRestaurantsId": 4,
+    "recommendRestaurantsId": 423232,
     "restaurantsName": "성수 수제버거 클럽",
     "reasoningDescription": "다양한 메뉴 선택지가 있어 취향 차이를 고려한 추천입니다.",
     "restaurantVoteStatus": "LIKED",
