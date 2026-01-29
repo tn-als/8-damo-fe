@@ -40,30 +40,30 @@ export function RestaurantVotingSection({
     Array.isArray(value) ? value[0] : value;
   const groupId = resolveParam(params?.groupId);
   const diningId = resolveParam(params?.diningId);
-  const [currentRestaurants, setCurrentRestaurants] =
-    useState<RestaurantVoteResponse[]>(restaurants);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetryingRecommendation, setIsRetryingRecommendation] = useState(false);
+  
   const activeRestaurantId = useMemo(() => {
-    if (!currentRestaurants.length) {
+    if (!restaurants.length) {
       return null;
     }
 
     const clampedIndex = Math.min(
       Math.max(activeIndex, 0),
-      currentRestaurants.length - 1
+      restaurants.length - 1
     );
-    return currentRestaurants[clampedIndex].recommendRestaurantsId;
-  }, [activeIndex, currentRestaurants]);
+    return restaurants[clampedIndex].recommendRestaurantsId;
+  }, [activeIndex, restaurants]);
 
   useEffect(() => {
-    setCurrentRestaurants(restaurants);
-    setActiveIndex(0);
+    if (activeIndex !== 0){
+      setActiveIndex(0);
+    }
   }, [restaurants]);
 
-  if (!currentRestaurants.length) {
+  if (!restaurants.length) {
     return <RestaurantVoteFallback />;
   }
 
@@ -102,7 +102,7 @@ export function RestaurantVotingSection({
       return;
     }
 
-    setCurrentRestaurants(result.data);
+    restaurants = result.data;
     setActiveIndex(0);
     onRetryRecommendation?.();
   };
@@ -152,7 +152,7 @@ export function RestaurantVotingSection({
   return (
     <section className="flex w-full flex-col items-center gap-4">
       <RestaurantVotingCarousel onIndexChange={setActiveIndex}>
-        {currentRestaurants.map((restaurant) => (
+        {restaurants.map((restaurant) => (
           <div
             key={restaurant.recommendRestaurantsId}
             className="flex w-full flex-col items-center gap-4"
