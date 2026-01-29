@@ -24,15 +24,15 @@ export default async function DiningDetailPage({
 
   const diningStatus: DiningStatus = diningCommon.diningStatus;
 
-  // const restaurantVotes =
-  //   diningStatus === "RESTAURANT_VOTING"
-  //     ? await queryClient.fetchQuery({
-  //         queryKey: ["dining-restaurant-vote", groupId, diningId],
-  //         queryFn: () => getDiningRestaurantVote({ groupId, diningId }),
-  //       })
-  //     : null;
+  const restaurantVotes =
+    diningStatus === "RESTAURANT_VOTING"
+      ? await queryClient.fetchQuery({
+          queryKey: ["dining-restaurant-vote", groupId, diningId],
+          queryFn: () => getDiningRestaurantVote({ groupId, diningId }),
+        })
+      : null;
 
-  const restaurantVotes = DINIG_DETAIL_RESTAURANT_VOTING;
+  // const restaurantVotes = DINIG_DETAIL_RESTAURANT_VOTING;
     
   return (
     <DiningCommonSection

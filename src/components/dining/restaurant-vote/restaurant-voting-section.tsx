@@ -2,6 +2,7 @@
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
 import { RestaurantCard } from "./restaurant-card";
 import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
+import { RestaurantVoteFallback } from "../restaurant-vote-fallback";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
@@ -21,7 +22,7 @@ export function RestaurantVotingSection({
   onAdditionalAttend,
 }: RestaurantVotingSectionProps) {
   if (!restaurants.length) {
-    return null;
+    return <RestaurantVoteFallback />;
   }
 
   const handleConfirmDining = (restaurantId: number) => {
