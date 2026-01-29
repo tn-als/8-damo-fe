@@ -7,6 +7,7 @@ interface RestaurantActionProps {
   dislikeCount: number;
   onLike: () => void;
   onDislike: () => void;
+  disabled?: boolean;
   isLiked?: boolean;
   isDisliked?: boolean;
 }
@@ -16,6 +17,7 @@ export function RestaurantAction({
   dislikeCount,
   onLike,
   onDislike,
+  disabled = false,
   isLiked = false,
   isDisliked = false,
 }: RestaurantActionProps) {
@@ -26,6 +28,7 @@ export function RestaurantAction({
         variant="ghost"
         size="sm"
         onClick={onLike}
+        disabled={disabled}
         aria-pressed={isLiked}
         className={cn(
           "flex items-center gap-1.5 px-2 text-[15px] font-medium leading-[22px]",
@@ -44,6 +47,7 @@ export function RestaurantAction({
         variant="ghost"
         size="sm"
         onClick={onDislike}
+        disabled={disabled}
         aria-pressed={isDisliked}
         className={cn(
           "flex items-center gap-1.5 px-2 text-[15px] font-medium leading-[22px]",

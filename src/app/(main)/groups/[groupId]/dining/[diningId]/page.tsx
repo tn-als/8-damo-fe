@@ -3,7 +3,7 @@ import { DiningCommonSection } from "@/src/components/dining/dining-common";
 import { RestaurantVotingSection } from "@/src/components/dining/restaurant-vote";
 import { getDiningCommon, getDiningRestaurantVote } from "@/src/lib/actions/dining";
 import type { DiningStatus } from "@/src/types/api/dining";
-
+import { DINIG_DETAIL_RESTAURANT_VOTING } from "@/src/constants/mock-data/dining-detail";
 interface DiningDetailPageProps {
   params: Promise<{
     groupId: string;
@@ -31,6 +31,8 @@ export default async function DiningDetailPage({
           queryFn: () => getDiningRestaurantVote({ groupId, diningId }),
         })
       : null;
+
+  // const restaurantVotes = DINIG_DETAIL_RESTAURANT_VOTING;
     
   return (
     <DiningCommonSection

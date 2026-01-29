@@ -1,13 +1,13 @@
+"use client"
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
 import { RestaurantCard } from "./restaurant-card";
 import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
+import { RestaurantVoteFallback } from "../restaurant-vote-fallback";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
   isGroupLeader: boolean;
   canAdditionalAttend?: boolean;
-  onLike?: (restaurantId: number) => void;
-  onDislike?: (restaurantId: number) => void;
   onConfirmDining?: (restaurantId: number) => void;
   onRetryRecommendation?: () => void;
   onAdditionalAttend?: () => void;
@@ -17,22 +17,14 @@ export function RestaurantVotingSection({
   restaurants,
   isGroupLeader,
   canAdditionalAttend = false,
-  onLike,
-  onDislike,
   onConfirmDining,
   onRetryRecommendation,
   onAdditionalAttend,
 }: RestaurantVotingSectionProps) {
   if (!restaurants.length) {
-    return null;
+    return <RestaurantVoteFallback />;
   }
 
-  const handleLike = (restaurantId: number) => {
-    onLike?.(restaurantId);
-  };
-  const handleDislike = (restaurantId: number) => {
-    onDislike?.(restaurantId);
-  };
   const handleConfirmDining = (restaurantId: number) => {
     onConfirmDining?.(restaurantId);
   };
@@ -52,8 +44,6 @@ export function RestaurantVotingSection({
             restaurant={restaurant}
             isGroupLeader={isGroupLeader}
             canAdditionalAttend={canAdditionalAttend}
-            onLike={() => handleLike(restaurant.recommendRestaurantsId)}
-            onDislike={() => handleDislike(restaurant.recommendRestaurantsId)}
             onConfirmDining={() =>
               handleConfirmDining(restaurant.recommendRestaurantsId)
             }
