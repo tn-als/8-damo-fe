@@ -45,6 +45,15 @@ export interface DiningDetailMock {
   participants: DiningParticipant[];
 }
 
+export const DINIG_DETAIL_CONFIRMED = {
+  recommendRestaurantsId: 1,
+  restaurantsName: "을지로 골목식당",
+  reasoningDescription: "회식하기 좋은 넓은 좌석과 가성비 좋은 메뉴 구성으로 추천되었습니다.",
+  phoneNumber: "02-2278-1234",
+  latitude: 37.566295,
+  longitude: 126.991773,
+};
+
 export const DINING_DETAIL_ATTENDANCE_VOTING = {
   attendanceVoteStatus: "PENDING",
   completedVoteCount: 8,

@@ -19,14 +19,15 @@ const statusConfig: Record<
       | "diningAttendance"
       | "diningRestaurant"
       | "confirmed"
-      | "completed";
+      | "completed"
+      | "diningCompleted";
   }
 > = {
   ATTENDANCE_VOTING: { label: "참석 투표", variant: "diningAttendance" },
   RECOMMENDATION_PENDING: { label: "추천 대기", variant: "diningRestaurant" },
   RESTAURANT_VOTING: { label: "장소 투표", variant: "diningRestaurant" },
   CONFIRMED: { label: "회식 확정", variant: "confirmed" },
-  COMPLETE: { label: "회식 완료", variant: "completed" },
+  COMPLETE: { label: "회식 완료", variant: "diningCompleted" },
 };
 
 export function DiningSummaryCard({

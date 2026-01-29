@@ -8,7 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const TAB_OPTIONS: { value: DiningStatus; label: string }[] = [
   { value: "ATTENDANCE_VOTING", label: "참석 투표" },
   { value: "RESTAURANT_VOTING", label: "장소 투표" },
-  { value: "COMPLETE", label: "회식 완료" },
+  { value: "CONFIRMED", label: "회식 확정" },
 ];
 
 interface GroupDetailDiningSectionProps {

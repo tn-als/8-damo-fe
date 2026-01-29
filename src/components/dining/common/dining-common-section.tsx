@@ -1,6 +1,6 @@
 import type { DiningParticipantResponse, DiningStatus } from "@/src/types/api/dining";
 import { DiningHeader } from "./dining-header";
-import { DiningParticipantList } from "../dining-participant-list";
+import { DiningParticipantList } from "./dining-participant-list";
 
 interface DiningCommonSectionProps {
   diningDate: string;

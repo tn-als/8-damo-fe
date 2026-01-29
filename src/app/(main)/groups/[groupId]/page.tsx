@@ -11,7 +11,7 @@ interface PageProps {
 const DINING_STATUS_OPTIONS: DiningStatus[] = [
   "ATTENDANCE_VOTING",
   "RESTAURANT_VOTING",
-  "COMPLETE",
+  "CONFIRMED",
 ];
 
 const isDiningStatus = (value?: string): value is DiningStatus =>

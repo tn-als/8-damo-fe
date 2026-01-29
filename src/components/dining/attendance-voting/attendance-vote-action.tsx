@@ -13,7 +13,7 @@ export function AttendanceVoteActions({
   isSubmitting,
   onSubmit,
 }: AttendanceVoteActionsProps) {
-  const isDisabled = isSubmitting || myVoteStatus !== "PENDING";
+  const isDisabled = isSubmitting;
 
   const baseButtonStyles =
     "h-16 flex-1 rounded-lg border-2 border-transparent text-[16px] font-semibold leading-[22px] transition-colors";

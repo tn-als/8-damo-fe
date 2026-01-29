@@ -1,20 +1,22 @@
 import { QueryClient } from "@tanstack/react-query";
-import { AttendanceVotingSection } from "@/src/components/dining";
-import { DiningCommonSection } from "@/src/components/dining/dining-common";
+import { AttendanceVotingSection, ConfirmedSection } from "@/src/components/dining";
+import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
 import { RestaurantVotingSection } from "@/src/components/dining/restaurant-vote";
 import {
   getDiningAttendanceVote,
+  getDiningConfirmed,
   getDiningCommon,
   getDiningRestaurantVote,
 } from "@/src/lib/actions/dining";
 import type {
   AttendanceVoteResponse,
+  ConfirmedRestaurantResponse,
   DiningCommonResponse,
   DiningStatus,
   RestaurantVoteResponse,
 } from "@/src/types/api/dining";
-import { DINIG_DETAIL_RESTAURANT_VOTING } from "@/src/constants/mock-data/dining-detail";
+import { DINIG_DETAIL_CONFIRMED } from "@/src/constants/mock-data/dining-detail";
 
 interface DiningDetailPageProps {
   params: Promise<{
@@ -87,7 +89,21 @@ export default async function DiningDetailPage({
     }
   }
 
-    
+  let confirmedRestaurant: ConfirmedRestaurantResponse | null = null;
+
+  if (diningStatus === "CONFIRMED") {
+    try {
+      confirmedRestaurant = await queryClient.fetchQuery({
+        queryKey: ["dining-confirmed", groupId, diningId],
+        queryFn: () => getDiningConfirmed({ groupId, diningId }),
+      });
+    } catch (error) {
+      errorMessages.push(
+        error instanceof Error ? error.message : fallbackErrorMessage
+      );
+    }
+  }
+ 
   return (
     <DiningCommonSection
       diningDate={diningCommon.diningDate}
@@ -113,6 +129,12 @@ export default async function DiningDetailPage({
           restaurants={restaurantVotes}
           isGroupLeader={diningCommon.isGroupLeader}
           canAdditionalAttend={false}
+        />
+      )}
+      {diningStatus === "CONFIRMED" && (
+        <ConfirmedSection
+          restaurant={confirmedRestaurant}
+          fallbackDescription="다시 시도해주세요"
         />
       )}
     </DiningCommonSection>
