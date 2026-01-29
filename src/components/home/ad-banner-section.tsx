@@ -14,7 +14,7 @@ const BANNER_IMAGES = [
     "/images/banner/image3.png",
 ];
 
-const AUTO_SLIDE_INTERVAL = 30000;
+const AUTO_SLIDE_INTERVAL = 3000;
 
 export function AdBannerSection({ className }: AdBannerSectionProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
