@@ -186,6 +186,11 @@ interface VoteAttendanceRequest {
   attendanceVoteStatus: "ATTEND" | "NON_ATTEND";
 }
 
+interface RefreshRecommendRestaurantsRequest {
+  groupId: string;
+  diningId: string;
+}
+
 type VoteRestaurantData =
   | {
       restaurantVoteStatus?: string;
@@ -202,6 +207,12 @@ interface VoteRestaurantResult {
 
 interface VoteAttendanceResult {
   success: boolean;
+  error?: string;
+}
+
+interface RefreshRecommendRestaurantsResult {
+  success: boolean;
+  data?: RestaurantVoteResponse[];
   error?: string;
 }
 
@@ -519,6 +530,67 @@ export async function voteAttendance({
     return { success: true };
   } catch (error) {
     console.error("[voteAttendance] Request failed", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function refreshRecommendRestaurants({
+  groupId,
+  diningId,
+}: RefreshRecommendRestaurantsRequest): Promise<RefreshRecommendRestaurantsResult> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    console.error("[refreshRecommendRestaurants] Missing API base URL env");
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    return { success: false, error: "인증 토큰이 없습니다." };
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurant/refresh`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<RestaurantVoteResponse[]>
+      | ApiNestedResponse<RestaurantVoteResponse[]>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+      };
+    }
+
+    const data = extractApiData(payload);
+
+    if (!data) {
+      return {
+        success: false,
+        error: "재추천 결과를 확인할 수 없습니다.",
+      };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("[refreshRecommendRestaurants] Request failed", error);
     return {
       success: false,
       error:
