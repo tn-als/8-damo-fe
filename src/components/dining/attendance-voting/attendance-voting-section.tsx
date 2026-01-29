@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
+import { toast } from "@/src/components/ui/sonner";
+import { voteAttendance } from "@/src/lib/actions/dining";
 import { type AttendanceVoteStatus } from "@/src/types/api/dining";
 import { AttendanceVoteProgress } from "./attendance-vote-progress";
 import { AttendanceVotePrompt } from "./attendance-vote-prompt";
@@ -20,17 +23,33 @@ export function AttendanceVotingSection({
   diningDate,
   myVoteStatus,
 }: AttendanceVotingSectionProps) {
-
+  const params = useParams<{ groupId: string; diningId: string }>();
+  const [currentVoteStatus, setCurrentVoteStatus] =
+    useState<AttendanceVoteStatus>(myVoteStatus);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (vote: "ATTEND" | "NON_ATTEND") => {
+  const handleSubmit = async (vote: "ATTEND" | "NON_ATTEND") => {
+    if (!params?.groupId || !params?.diningId) {
+      toast.error("경로 정보를 확인할 수 없습니다.");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // 임시 비동기 처리 
-    setTimeout(() => {
-      console.log("submitted: ", vote);
+    const result = await voteAttendance({
+      groupId: params.groupId,
+      diningId: params.diningId,
+      attendanceVoteStatus: vote,
+    });
+
+    if (!result.success) {
+      toast.error(result.error || "참석 투표에 실패했습니다.");
       setIsSubmitting(false);
-    }, 1500);
+      return;
+    }
+
+    setCurrentVoteStatus(vote);
+    setIsSubmitting(false);
   };
 
   return (
@@ -43,7 +62,7 @@ export function AttendanceVotingSection({
         <AttendanceVotePrompt diningDate={diningDate}/>
 
         <AttendanceVoteActions 
-          myVoteStatus={myVoteStatus}
+          myVoteStatus={currentVoteStatus}
           isSubmitting={isSubmitting}
           onSubmit={handleSubmit}/>
       </div>

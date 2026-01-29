@@ -45,6 +45,12 @@ export interface DiningDetailMock {
   participants: DiningParticipant[];
 }
 
+export const DINING_DETAIL_ATTENDANCE_VOTING = {
+  attendanceVoteStatus: "PENDING",
+  completedVoteCount: 8,
+  totalGroupMemberCount: 20
+}
+
 export const DINIG_DETAIL_RESTAURANT_VOTING = [
   {
     "recommendRestaurantsId": 1,
