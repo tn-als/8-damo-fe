@@ -1,6 +1,6 @@
 export { AttendanceVotingSection } from "./attendance-voting/attendance-voting-section";
 export { RestaurantVotingSection } from "./restaurant-vote";
-export { ConfirmedSection } from "./confirmed-section";
+export { ConfirmedSection } from "./confirmed/confirmed-section";
 export { CompleteSection } from "./complete-section";
 export { DiningEventSection } from "./dining-event-section";
 export { DiningParticipantList } from "./dining-participant-list";

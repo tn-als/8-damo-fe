@@ -131,8 +131,11 @@ export default async function DiningDetailPage({
           canAdditionalAttend={false}
         />
       )}
-      {diningStatus === "CONFIRMED" && confirmedRestaurant && (
-        <ConfirmedSection restaurant={confirmedRestaurant} />
+      {diningStatus === "CONFIRMED" && (
+        <ConfirmedSection
+          restaurant={confirmedRestaurant}
+          fallbackDescription="다시 시도해주세요"
+        />
       )}
     </DiningCommonSection>
   );
