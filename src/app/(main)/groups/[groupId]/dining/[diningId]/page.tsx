@@ -112,8 +112,8 @@ export default async function DiningDetailPage({
       {diningStatus === "RESTAURANT_VOTING" && restaurantVotes && (
         <RestaurantVotingSection
           restaurants={restaurantVotes}
-          isGroupLeader={true}
-          canAdditionalAttend={true}
+          isGroupLeader={diningCommon.isGroupLeader}
+          canAdditionalAttend={false}
         />
       )}
       {diningStatus === "CONFIRMED" && (
