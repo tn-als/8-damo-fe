@@ -1,14 +1,18 @@
+"use client";
+
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { RestaurantInfo } from "./restaurant-info";
 import { RestaurantAction } from "./restaurant-action";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
+import { voteRestaurant } from "@/src/lib/actions/dining";
+import { toast } from "@/src/components/ui/sonner";
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
 
 interface RestaurantCardProps {
   restaurant: RestaurantVoteResponse;
   isGroupLeader: boolean;
   canAdditionalAttend?: boolean;
-  onLike: () => void;
-  onDislike: () => void;
   onConfirmDining: () => void;
   onRetryRecommendation: () => void;
   onAdditionalAttend: () => void;
@@ -18,19 +22,134 @@ export function RestaurantCard({
   restaurant,
   isGroupLeader,
   canAdditionalAttend = false,
-  onLike,
-  onDislike,
   onConfirmDining,
   onRetryRecommendation,
   onAdditionalAttend,
 }: RestaurantCardProps) {
-  const status = restaurant.restaurantVoteStatus;
-  const isLiked = status === "LIKE" || status === "LIKED";
-  const isDisliked = status === "DISLIKE" || status === "DISLIKED";
+  const params = useParams<{ groupId?: string | string[]; diningId?: string | string[] }>();
+  const resolveParam = (value?: string | string[]) =>
+    Array.isArray(value) ? value[0] : value;
+  const groupId = resolveParam(params?.groupId);
+  const diningId = resolveParam(params?.diningId);
+
+  const initialStatus = restaurant.restaurantVoteStatus;
+  const normalizedStatus =
+    initialStatus === "LIKED"
+      ? "LIKE"
+      : initialStatus === "DISLIKED"
+      ? "DISLIKE"
+      : initialStatus === "LIKE" || initialStatus === "DISLIKE"
+      ? initialStatus
+      : "NONE";
+
+  const [voteStatus, setVoteStatus] = useState<
+    "LIKE" | "DISLIKE" | "NONE"
+  >(normalizedStatus);
+  const [likeCount, setLikeCount] = useState(restaurant.likeCount);
+  const [dislikeCount, setDislikeCount] = useState(restaurant.dislikeCount);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isLiked = voteStatus === "LIKE";
+  const isDisliked = voteStatus === "DISLIKE";
 
   const location = {
     lat: Number(restaurant.latitude),
     lng: Number(restaurant.longitude),
+  };
+
+  const applyLocalVote = (nextStatus: "LIKE" | "DISLIKE") => {
+    if (voteStatus === "NONE") {
+      if (nextStatus === "LIKE") {
+        setLikeCount((count) => count + 1);
+      } else {
+        setDislikeCount((count) => count + 1);
+      }
+      setVoteStatus(nextStatus);
+      return;
+    }
+
+    if (voteStatus === nextStatus) {
+      if (nextStatus === "LIKE") {
+        setLikeCount((count) => Math.max(0, count - 1));
+      } else {
+        setDislikeCount((count) => Math.max(0, count - 1));
+      }
+      setVoteStatus("NONE");
+      return;
+    }
+
+    if (nextStatus === "LIKE") {
+      setLikeCount((count) => count + 1);
+      setDislikeCount((count) => Math.max(0, count - 1));
+    } else {
+      setDislikeCount((count) => count + 1);
+      setLikeCount((count) => Math.max(0, count - 1));
+    }
+    setVoteStatus(nextStatus);
+  };
+
+  const syncServerVote = (data?: {
+    restaurantVoteStatus?: string;
+    likeCount?: number;
+    dislikeCount?: number;
+  }) => {
+    if (!data) {
+      return;
+    }
+
+    if (typeof data.likeCount === "number") {
+      setLikeCount(data.likeCount);
+    }
+    if (typeof data.dislikeCount === "number") {
+      setDislikeCount(data.dislikeCount);
+    }
+    if (data.restaurantVoteStatus === "LIKE") {
+      setVoteStatus("LIKE");
+    } else if (data.restaurantVoteStatus === "DISLIKE") {
+      setVoteStatus("DISLIKE");
+    } else if (data.restaurantVoteStatus === "NONE") {
+      setVoteStatus("NONE");
+    }
+  };
+
+  const submitVote = async (nextStatus: "LIKE" | "DISLIKE") => {
+    if (!groupId || !diningId || isSubmitting) {
+      return;
+    }
+
+    const prevStatus = voteStatus;
+    const prevLike = likeCount;
+    const prevDislike = dislikeCount;
+
+    setIsSubmitting(true);
+    applyLocalVote(nextStatus);
+
+    const result = await voteRestaurant({
+      groupId,
+      diningId,
+      recommendRestaurantsId: restaurant.recommendRestaurantsId,
+      restaurantVoteStatus: nextStatus,
+    });
+
+    setIsSubmitting(false);
+
+    if (!result.success) {
+      setVoteStatus(prevStatus);
+      setLikeCount(prevLike);
+      setDislikeCount(prevDislike);
+      toast.error(result.error || "식당 투표에 실패했습니다.");
+      return;
+    }
+
+    if (
+      typeof result.data === "object" &&
+      result.data !== null &&
+      !Array.isArray(result.data)
+    ) {
+      syncServerVote(result.data);
+    } else if (typeof result.data === "string") {
+      syncServerVote({ restaurantVoteStatus: result.data });
+    }
   };
 
   return (
@@ -45,12 +164,13 @@ export function RestaurantCard({
 
         <div className="mt-4 flex w-full items-center justify-end text-black">
           <RestaurantAction
-            likeCount={restaurant.likeCount}
-            dislikeCount={restaurant.dislikeCount}
+            likeCount={likeCount}
+            dislikeCount={dislikeCount}
             isLiked={isLiked}
             isDisliked={isDisliked}
-            onLike={onLike}
-            onDislike={onDislike}
+            disabled={isSubmitting}
+            onLike={() => submitVote("LIKE")}
+            onDislike={() => submitVote("DISLIKE")}
           />
         </div>
       </div>

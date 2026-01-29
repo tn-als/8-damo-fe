@@ -7,8 +7,6 @@ interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
   isGroupLeader: boolean;
   canAdditionalAttend?: boolean;
-  onLike?: (restaurantId: number) => void;
-  onDislike?: (restaurantId: number) => void;
   onConfirmDining?: (restaurantId: number) => void;
   onRetryRecommendation?: () => void;
   onAdditionalAttend?: () => void;
@@ -18,8 +16,6 @@ export function RestaurantVotingSection({
   restaurants,
   isGroupLeader,
   canAdditionalAttend = false,
-  onLike,
-  onDislike,
   onConfirmDining,
   onRetryRecommendation,
   onAdditionalAttend,
@@ -28,12 +24,6 @@ export function RestaurantVotingSection({
     return null;
   }
 
-  const handleLike = (restaurantId: number) => {
-    onLike?.(restaurantId);
-  };
-  const handleDislike = (restaurantId: number) => {
-    onDislike?.(restaurantId);
-  };
   const handleConfirmDining = (restaurantId: number) => {
     onConfirmDining?.(restaurantId);
   };
@@ -53,8 +43,6 @@ export function RestaurantVotingSection({
             restaurant={restaurant}
             isGroupLeader={isGroupLeader}
             canAdditionalAttend={canAdditionalAttend}
-            onLike={() => handleLike(restaurant.recommendRestaurantsId)}
-            onDislike={() => handleDislike(restaurant.recommendRestaurantsId)}
             onConfirmDining={() =>
               handleConfirmDining(restaurant.recommendRestaurantsId)
             }
