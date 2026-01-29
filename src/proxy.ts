@@ -6,8 +6,6 @@ const ONBOARDING_ROUTES = ['/onboarding'];
 
 export function proxy(request: NextRequest) {
   
-  return NextResponse.next();
-
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get('access_token')?.value;
 
