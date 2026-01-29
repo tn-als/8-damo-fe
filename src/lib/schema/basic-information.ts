@@ -2,7 +2,14 @@ import { z } from "zod/v4";
 import { GENDER, AGE_GROUP } from "@/src/constants/user";
 
 export const basicInfoSchema = z.object({
-  profileImage: z.string().nullable(),
+  profileImage: z
+    .custom<File | null>((value) => {
+      if (value === null) {
+        return true;
+      }
+      return typeof File !== "undefined" && value instanceof File;
+    })
+    .nullable(),
   nickname: z
     .string()
     .min(1, { error: "이름을 입력해 주세요." })
