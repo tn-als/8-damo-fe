@@ -12,9 +12,11 @@ import {
 } from "@/src/components/onboarding/basic";
 import { basicInfoSchema } from "@/src/lib/schema/basic-information";
 import { updateBasicInfo } from "@/src/lib/actions/user-basic-info";
+import { getPresignedUrl } from "@/src/lib/actions/s3";
 import { useRouter } from "next/navigation";
 import { Button } from "../../ui/button";
 import { toast } from "@/src/components/ui/sonner";
+import { EXTENSION_TO_MIME, ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3";
 
 interface BasicInfoFormProps {
   defaultValues?: Partial<BasicInfoFormProps>;
@@ -37,11 +39,76 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
     },
   });
 
+  const getImageContentType = (file: File) => {
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    if (!ext) return null;
+    const mime = EXTENSION_TO_MIME[ext];
+    if (!mime) return null;
+    return ALLOWED_IMAGE_CONTENT_TYPES.has(mime) ? mime : null;
+  };
+
   const onFormSubmit = async (data: BasicInfoFormValues) => {
     setIsSubmitting(true);
 
+    let imagePath = "";
+    const profileImage = data.profileImage;
+
+    if (profileImage) {
+      if (profileImage.size > 10 * 1024 * 1024) {
+        toast.error("최대 용량은 10MB입니다.");
+        setIsSubmitting(false);
+        return;
+      } else {
+        const profileImageContentType = getImageContentType(profileImage);
+
+        if (!profileImageContentType) {
+          toast.error("지원하지 않는 이미지 형식입니다.");
+          setIsSubmitting(false);
+          return;
+        } else {
+          try {
+            const presignedResult = await getPresignedUrl({
+              directory: "users/profile",
+              fileName: profileImage.name,
+              contentType: profileImageContentType,
+            });
+
+            if (!presignedResult.success || !presignedResult.data) {
+              toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
+              setIsSubmitting(false);
+              return;
+            } else {
+              const uploadResponse = await fetch(
+                presignedResult.data.presignedUrl,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": profileImageContentType,
+                  },
+                  body: profileImage,
+                }
+              );
+
+              if (!uploadResponse.ok) {
+                toast.error("업로드 실패, 재시도 해주세요.");
+                setIsSubmitting(false);
+                return;
+              } else {
+                imagePath = presignedResult.data.objectKey;
+              }
+            }
+          } catch (error) {
+            console.error("[BasicInfoForm] image upload failed", error);
+            toast.error("업로드 실패, 재시도 해주세요.");
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      }
+    }
+
     const result = await updateBasicInfo({
-      imagePath: "",
+      imagePath,
       nickname: data.nickname,
       gender: data.gender,
       ageGroup: data.ageGroup,

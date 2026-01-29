@@ -5,7 +5,7 @@ export { AgeGroupField } from "./age-group-field";
 export { BasicInfoForm } from "./basic-info-form";
 
 export type BasicInfoFormValues = {
-  profileImage: string | null;
+  profileImage: File | null;
   nickname: string;
   gender: "MALE" | "FEMALE";
   ageGroup: "TWENTIES" | "THIRTIES" | "FORTIES" | "FIFTIES_PLUS";

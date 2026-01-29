@@ -9,7 +9,8 @@ import { GroupNameInputField } from "./group-name-input-field";
 import { GroupIntroductionInputField } from "./group-introduction-input-field";
 import { GroupLocationInputField } from "./group-location-input-field";
 import { GroupCreateSubmitArea } from "./group-create-submit-area";
-import { createGroup, getGroupProfilePresignedUrl } from "@/src/lib/actions/groups";
+import { createGroup } from "@/src/lib/actions/groups";
+import { getPresignedUrl } from "@/src/lib/actions/s3";
 
 export type GroupCreateFormValues = {
   groupImage: string;
@@ -83,7 +84,7 @@ export function GroupCreateContainer({
           ? `image/${extension}`
           : profileImageFile.type;
 
-        const presignedResult = await getGroupProfilePresignedUrl({
+        const presignedResult = await getPresignedUrl({
           fileName,
           contentType,
           directory: "groups/profile",
