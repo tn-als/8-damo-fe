@@ -56,7 +56,7 @@ export function WeeklyDiningScheduleSection({
     const hasAnyDining = dinings.length > 0;
 
     return (
-        <section className={cn("flex flex-col gap-4", className)}>
+        <section className={cn("w-full max-w-[430px] flex flex-col gap-4", className)}>
             <h2 className="text-lg font-bold">이번 주 회식</h2>
 
             <WeeklyCalendar

@@ -5,6 +5,7 @@ export { HomeHeader } from "./home-header";
 export { AdBannerSection } from "./ad-banner-section";
 export { WeeklyDiningScheduleSection } from "./weekly-dining-schedule-section";
 export { LateDiningSummarySection } from "./late-dining-summary-section";
+export { WeeklyPopularRestaurantsSection } from "./weekly-popular-restaurants-section";
 
 // Sub-components
 export { WeeklyCalendar, type WeekDay } from "./weekly-calendar";
