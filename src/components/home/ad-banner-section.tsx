@@ -28,7 +28,7 @@ export function AdBannerSection({ className }: AdBannerSectionProps) {
     }, []);
 
     return (
-        <div className={cn("relative w-full", className)}>
+        <section className={cn("w-full max-w-[430px] flex flex-col gap-4", className)}>
             {/* 배너 이미지 */}
             <div className="relative aspect-[16/7] w-full overflow-hidden rounded-xl bg-muted">
                 {BANNER_IMAGES.map((src, index) => (
@@ -69,6 +69,6 @@ export function AdBannerSection({ className }: AdBannerSectionProps) {
                     />
                 ))}
             </div>
-        </div>
+        </section>
     );
 }

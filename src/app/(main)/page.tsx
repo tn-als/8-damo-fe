@@ -14,7 +14,7 @@ import {
 export default function HomePage() {
     return (
         <>
-            <main className="flex flex-col gap-6 px-4 pt-4 pb-20 sm:pt-4">
+            <main className="flex min-h-screen flex-col items-center gap-6 px-4 py-8 pb-24">
                 {/* 광고 배너 섹션 */}
                 <AdBannerSection/>
 
@@ -22,10 +22,7 @@ export default function HomePage() {
                 <WeeklyDiningScheduleSection dinings={mockWeeklyDinings} />
 
                 {/* 이번주 인기 식당 섹션 */}
-                <section>
-                    <h2 className="mb-4 text-lg font-bold">이번 주 인기 식당</h2>
-                    <WeeklyPopularRestaurantsSection />
-                </section>
+                <WeeklyPopularRestaurantsSection />
 
             </main>
             <BottomNavigationBar />

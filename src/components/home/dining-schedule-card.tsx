@@ -14,7 +14,7 @@ export function DiningScheduleCard({
     return (
         <div
             className={cn(
-                "flex flex-col gap-2 rounded-lg border border-border bg-card p-3",
+                "flex flex-col gap-2 rounded-lg bg-card p-3",
                 className
             )}
         >
