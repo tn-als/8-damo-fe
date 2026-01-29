@@ -6,6 +6,7 @@ interface RestaurantPermissionActionProps {
   onConfirmDining: () => void;
   onRetryRecommendation: () => void;
   onAdditionalAttend: () => void;
+  isRetryingRecommendation?: boolean;
 }
 
 export function RestaurantPermissionAction({
@@ -14,6 +15,7 @@ export function RestaurantPermissionAction({
   onConfirmDining,
   onRetryRecommendation,
   onAdditionalAttend,
+  isRetryingRecommendation = false,
 }: RestaurantPermissionActionProps) {
   return (
     <div className="flex w-full flex-col gap-2">
@@ -27,8 +29,9 @@ export function RestaurantPermissionAction({
             variant="secondary"
             onClick={onRetryRecommendation}
             className="w-full"
+            disabled={isRetryingRecommendation}
           >
-            추천 다시 받기
+            {isRetryingRecommendation ? "추천 다시 받는 중..." : "추천 다시 받기"}
           </Button>
         </>
       )}

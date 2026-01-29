@@ -6,7 +6,7 @@ import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
 import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
 import { toast } from "@/src/components/ui/sonner";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
+import { refreshRecommendRestaurants } from "@/src/lib/actions/dining";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
@@ -39,31 +40,73 @@ export function RestaurantVotingSection({
     Array.isArray(value) ? value[0] : value;
   const groupId = resolveParam(params?.groupId);
   const diningId = resolveParam(params?.diningId);
+  const [currentRestaurants, setCurrentRestaurants] =
+    useState<RestaurantVoteResponse[]>(restaurants);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRetryingRecommendation, setIsRetryingRecommendation] = useState(false);
   const activeRestaurantId = useMemo(() => {
-    if (!restaurants.length) {
+    if (!currentRestaurants.length) {
       return null;
     }
 
     const clampedIndex = Math.min(
       Math.max(activeIndex, 0),
-      restaurants.length - 1
+      currentRestaurants.length - 1
     );
-    return restaurants[clampedIndex].recommendRestaurantsId;
-  }, [activeIndex, restaurants]);
+    return currentRestaurants[clampedIndex].recommendRestaurantsId;
+  }, [activeIndex, currentRestaurants]);
 
-  if (!restaurants.length) {
+  useEffect(() => {
+    setCurrentRestaurants(restaurants);
+    setActiveIndex(0);
+  }, [restaurants]);
+
+  if (!currentRestaurants.length) {
     return <RestaurantVoteFallback />;
   }
 
   const handleConfirmDining = (restaurantId: number) => {
     onConfirmDining?.(restaurantId);
   };
-  const handleRetryRecommendation = () => {
+
+  const handleRetryRecommendation = async () => {
+    if (!isGroupLeader) {
+      toast.error("그룹장만 재추천 요청이 가능합니다.");
+      return;
+    }
+
+    if (!groupId || !diningId) {
+      toast.error("경로 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    if (isRetryingRecommendation) {
+      return;
+    }
+
+    setIsRetryingRecommendation(true);
+
+    const result = await refreshRecommendRestaurants({ groupId, diningId });
+
+    setIsRetryingRecommendation(false);
+
+    if (!result.success || !result.data) {
+      toast.error(result.error ?? "재추천 요청에 실패했습니다.");
+      return;
+    }
+
+    if (!result.data.length) {
+      toast.error("새 추천 결과가 없습니다.");
+      return;
+    }
+
+    setCurrentRestaurants(result.data);
+    setActiveIndex(0);
     onRetryRecommendation?.();
   };
+  
   const handleAdditionalAttend = () => {
     onAdditionalAttend?.();
   };
@@ -109,7 +152,7 @@ export function RestaurantVotingSection({
   return (
     <section className="flex w-full flex-col items-center gap-4">
       <RestaurantVotingCarousel onIndexChange={setActiveIndex}>
-        {restaurants.map((restaurant) => (
+        {currentRestaurants.map((restaurant) => (
           <div
             key={restaurant.recommendRestaurantsId}
             className="flex w-full flex-col items-center gap-4"
@@ -125,6 +168,7 @@ export function RestaurantVotingSection({
           onConfirmDining={handleConfirmClick}
           onRetryRecommendation={handleRetryRecommendation}
           onAdditionalAttend={handleAdditionalAttend}
+          isRetryingRecommendation={isRetryingRecommendation}
         />
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
