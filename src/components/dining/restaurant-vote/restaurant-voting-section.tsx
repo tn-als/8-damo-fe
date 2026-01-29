@@ -1,8 +1,21 @@
 "use client"
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
+import { useParams } from "next/navigation";
 import { RestaurantCard } from "./restaurant-card";
 import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
 import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
+import { RestaurantPermissionAction } from "./restaurant-permission-action";
+import { toast } from "@/src/components/ui/sonner";
+import { useMemo, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/src/components/ui/dialog";
+import { Button } from "@/src/components/ui/button";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
@@ -21,6 +34,26 @@ export function RestaurantVotingSection({
   onRetryRecommendation,
   onAdditionalAttend,
 }: RestaurantVotingSectionProps) {
+  const params = useParams<{ groupId?: string | string[]; diningId?: string | string[] }>();
+  const resolveParam = (value?: string | string[]) =>
+    Array.isArray(value) ? value[0] : value;
+  const groupId = resolveParam(params?.groupId);
+  const diningId = resolveParam(params?.diningId);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const activeRestaurantId = useMemo(() => {
+    if (!restaurants.length) {
+      return null;
+    }
+
+    const clampedIndex = Math.min(
+      Math.max(activeIndex, 0),
+      restaurants.length - 1
+    );
+    return restaurants[clampedIndex].recommendRestaurantsId;
+  }, [activeIndex, restaurants]);
+
   if (!restaurants.length) {
     return <RestaurantVoteFallback />;
   }
@@ -35,23 +68,94 @@ export function RestaurantVotingSection({
     onAdditionalAttend?.();
   };
 
+  const handleConfirmClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    if (!groupId || !diningId) {
+      toast.error("경로 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const response = await fetch(
+      `/api/groups/${groupId}/dining/${diningId}/recommend-restaurants/${activeRestaurantId}/confirmed`,
+      {
+        method: "PATCH",
+      }
+    );
+    const payload = await response.json().catch(() => null);
+    const errorMessage =
+      payload?.errorMessage ??
+      payload?.data?.errorMessage ??
+      "회식 장소 확정에 실패했습니다.";
+
+    setIsSubmitting(false);
+    setIsDialogOpen(false);
+
+    if (!response.ok) {
+      toast.error(errorMessage);
+      return;
+    }
+
+    toast.success("회식 장소가 확정되었습니다.");
+    if (activeRestaurantId !== null) {
+      handleConfirmDining(activeRestaurantId);
+    }
+  };
+
   return (
     <section className="flex w-full flex-col items-center gap-4">
-      <RestaurantVotingCarousel>
+      <RestaurantVotingCarousel onIndexChange={setActiveIndex}>
         {restaurants.map((restaurant) => (
-          <RestaurantCard
+          <div
             key={restaurant.recommendRestaurantsId}
-            restaurant={restaurant}
-            isGroupLeader={isGroupLeader}
-            canAdditionalAttend={canAdditionalAttend}
-            onConfirmDining={() =>
-              handleConfirmDining(restaurant.recommendRestaurantsId)
-            }
-            onRetryRecommendation={handleRetryRecommendation}
-            onAdditionalAttend={handleAdditionalAttend}
-          />
+            className="flex w-full flex-col items-center gap-4"
+          >
+            <RestaurantCard restaurant={restaurant} />
+          </div>
         ))}
       </RestaurantVotingCarousel>
+      <div className="w-full px-5">
+        <RestaurantPermissionAction
+          isGroupLeader={isGroupLeader}
+          canAdditionalAttend={canAdditionalAttend}
+          onConfirmDining={handleConfirmClick}
+          onRetryRecommendation={handleRetryRecommendation}
+          onAdditionalAttend={handleAdditionalAttend}
+        />
+      </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>회식 장소를 확정할까요?</DialogTitle>
+            <DialogDescription>
+              확정 후에는 다른 식당으로 변경할 수 없습니다.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              className="flex-1"
+              disabled={isSubmitting}
+            >
+              취소
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmSubmit}
+              className="flex-1 bg-[#ff8d28] text-white hover:bg-[#ff8d28]/90"
+              disabled={isSubmitting}
+            >
+              확정
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

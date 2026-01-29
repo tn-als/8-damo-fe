@@ -22,8 +22,7 @@ export type KakaoOAuthResult = KakaoOAuthResponse | KakaoOAuthError;
  * - onboardingStep 반환
  */
 export async function processKakaoOAuth(code: string): Promise<KakaoOAuthResult> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     console.error("[processKakaoOAuth] Missing API base URL env");

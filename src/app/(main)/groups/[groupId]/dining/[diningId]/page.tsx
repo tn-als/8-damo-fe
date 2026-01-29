@@ -1,4 +1,3 @@
-import { QueryClient } from "@tanstack/react-query";
 import { AttendanceVotingSection, ConfirmedSection } from "@/src/components/dining";
 import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
@@ -16,7 +15,6 @@ import type {
   DiningStatus,
   RestaurantVoteResponse,
 } from "@/src/types/api/dining";
-import { DINIG_DETAIL_CONFIRMED } from "@/src/constants/mock-data/dining-detail";
 
 interface DiningDetailPageProps {
   params: Promise<{
@@ -29,7 +27,6 @@ export default async function DiningDetailPage({
   params,
 }: DiningDetailPageProps) {
   const { groupId, diningId } = await params;
-  const queryClient = new QueryClient();
 
   const errorMessages: string[] = [];
   const fallbackErrorMessage = "요청 중 오류가 발생했습니다.";
@@ -37,10 +34,7 @@ export default async function DiningDetailPage({
   let diningCommon: DiningCommonResponse | null = null;
 
   try {
-    diningCommon = await queryClient.fetchQuery({
-      queryKey: ["dining-common", groupId, diningId],
-      queryFn: () => getDiningCommon({ groupId, diningId }),
-    });
+    diningCommon = await getDiningCommon({ groupId, diningId });
   } catch (error) {
     errorMessages.push(
       error instanceof Error ? error.message : fallbackErrorMessage
@@ -63,10 +57,7 @@ export default async function DiningDetailPage({
 
   if (diningStatus === "RESTAURANT_VOTING") {
     try {
-      restaurantVotes = await queryClient.fetchQuery({
-        queryKey: ["dining-restaurant-vote", groupId, diningId],
-        queryFn: () => getDiningRestaurantVote({ groupId, diningId }),
-      });
+      restaurantVotes = await getDiningRestaurantVote({ groupId, diningId });
     } catch (error) {
       errorMessages.push(
         error instanceof Error ? error.message : fallbackErrorMessage
@@ -78,10 +69,7 @@ export default async function DiningDetailPage({
 
   if (diningStatus === "ATTENDANCE_VOTING") {
     try {
-      attendanceVote = await queryClient.fetchQuery({
-        queryKey: ["dining-attendance-vote", groupId, diningId],
-        queryFn: () => getDiningAttendanceVote({ groupId, diningId }),
-      });
+      attendanceVote = await getDiningAttendanceVote({ groupId, diningId });
     } catch (error) {
       errorMessages.push(
         error instanceof Error ? error.message : fallbackErrorMessage
@@ -93,10 +81,7 @@ export default async function DiningDetailPage({
 
   if (diningStatus === "CONFIRMED") {
     try {
-      confirmedRestaurant = await queryClient.fetchQuery({
-        queryKey: ["dining-confirmed", groupId, diningId],
-        queryFn: () => getDiningConfirmed({ groupId, diningId }),
-      });
+      confirmedRestaurant = await getDiningConfirmed({ groupId, diningId });
     } catch (error) {
       errorMessages.push(
         error instanceof Error ? error.message : fallbackErrorMessage
@@ -127,8 +112,8 @@ export default async function DiningDetailPage({
       {diningStatus === "RESTAURANT_VOTING" && restaurantVotes && (
         <RestaurantVotingSection
           restaurants={restaurantVotes}
-          isGroupLeader={diningCommon.isGroupLeader}
-          canAdditionalAttend={false}
+          isGroupLeader={true}
+          canAdditionalAttend={true}
         />
       )}
       {diningStatus === "CONFIRMED" && (

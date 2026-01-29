@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { RestaurantInfo } from "./restaurant-info";
 import { RestaurantAction } from "./restaurant-action";
-import { RestaurantPermissionAction } from "./restaurant-permission-action";
 import { voteRestaurant } from "@/src/lib/actions/dining";
 import { toast } from "@/src/components/ui/sonner";
 import type {
@@ -14,25 +13,13 @@ import type {
 
 interface RestaurantCardProps {
   restaurant: RestaurantVoteResponse | ConfirmedRestaurantResponse;
-  isGroupLeader?: boolean;
-  canAdditionalAttend?: boolean;
-  onConfirmDining?: () => void;
-  onRetryRecommendation?: () => void;
-  onAdditionalAttend?: () => void;
   showActions?: boolean;
-  showPermissionActions?: boolean;
   badgeLabel?: string;
 }
 
 export function RestaurantCard({
   restaurant,
-  isGroupLeader = false,
-  canAdditionalAttend = false,
-  onConfirmDining,
-  onRetryRecommendation,
-  onAdditionalAttend,
   showActions = true,
-  showPermissionActions = true,
   badgeLabel,
 }: RestaurantCardProps) {
   const params = useParams<{ groupId?: string | string[]; diningId?: string | string[] }>();
@@ -192,18 +179,6 @@ export function RestaurantCard({
         )}
       </div>
 
-      {showPermissionActions &&
-        onConfirmDining &&
-        onRetryRecommendation &&
-        onAdditionalAttend && (
-          <RestaurantPermissionAction
-            isGroupLeader={isGroupLeader}
-            canAdditionalAttend={canAdditionalAttend}
-            onConfirmDining={onConfirmDining}
-            onRetryRecommendation={onRetryRecommendation}
-            onAdditionalAttend={onAdditionalAttend}
-          />
-        )}
     </div>
   );
 }

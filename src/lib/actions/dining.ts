@@ -33,8 +33,7 @@ export async function createDining(
   groupId: string,
   data: CreateDiningRequest
 ): Promise<CreateDiningResponse> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     console.error("[createDining] Missing API base URL env");
@@ -96,8 +95,7 @@ export async function getGroupDiningSummaries(
   groupId: string,
   status: DiningStatus
 ): Promise<GetGroupDiningSummariesResult> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     console.error("[getGroupDiningSummaries] Missing API base URL env");
@@ -117,8 +115,7 @@ export async function getGroupDiningSummaries(
       )}`,
       {
         method: "GET",
-        cache: "force-cache",
-        next: { revalidate: 300 },
+        cache: "no-store",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

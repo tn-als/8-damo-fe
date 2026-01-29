@@ -18,7 +18,7 @@ export async function updateCharacteristics(
   data: UpdateCharacteristicsRequest
 ): Promise<UpdateCharacteristicsResponse> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     console.error("[updateCharacteristics] Missing API base URL env");
