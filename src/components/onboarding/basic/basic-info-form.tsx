@@ -16,7 +16,7 @@ import { getPresignedUrl } from "@/src/lib/actions/s3";
 import { useRouter } from "next/navigation";
 import { Button } from "../../ui/button";
 import { toast } from "@/src/components/ui/sonner";
-import { EXTENSION_TO_MIME, ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3";
+import {getImageContentType} from "@/src/constants/s3/util";
 
 interface BasicInfoFormProps {
   defaultValues?: Partial<BasicInfoFormProps>;
@@ -38,14 +38,6 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
       ...defaultValues,
     },
   });
-
-  const getImageContentType = (file: File) => {
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    if (!ext) return null;
-    const mime = EXTENSION_TO_MIME[ext];
-    if (!mime) return null;
-    return ALLOWED_IMAGE_CONTENT_TYPES.has(mime) ? mime : null;
-  };
 
   const onFormSubmit = async (data: BasicInfoFormValues) => {
     setIsSubmitting(true);
