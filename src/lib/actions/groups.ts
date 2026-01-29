@@ -8,6 +8,7 @@ interface CreateGroupRequest {
   introduction: string;
   latitude: number;
   longitude: number;
+  imagePath: string;
 }
 
 interface CreateGroupResponse {
@@ -133,8 +134,7 @@ export async function getGroupDetail(
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}`, {
       method: "GET",
-      cache: "force-cache",
-      next: { revalidate: 300 },
+      cache: "no-store",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -59,6 +59,7 @@ export function GroupCreateContainer({
         introduction: data.introduction ?? "",
         latitude: location.latitude,
         longitude: location.longitude,
+        imagePath: ""
       });
 
       if (!result.success) {
@@ -81,8 +82,6 @@ export function GroupCreateContainer({
         const contentType = extension
           ? `image/${extension}`
           : profileImageFile.type;
-
-        console.log(fileName, contentType);
 
         const presignedResult = await getGroupProfilePresignedUrl({
           fileName,

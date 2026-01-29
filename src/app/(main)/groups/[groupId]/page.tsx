@@ -34,6 +34,8 @@ export default async function Page({ params, searchParams }: PageProps) {
   const status: DiningStatus = isDiningStatus(resolvedSearchParams?.status)
     ? resolvedSearchParams.status
     : "ATTENDANCE_VOTING";
+  
+  console.log(status);
 
   return (
     <GroupDetailContent

@@ -24,7 +24,6 @@ export function GroupLocationInputField({ onLocationChange }: GroupLocationInput
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log("위치 정보:", { latitude, longitude });
         setStatus("granted");
         onLocationChange?.({ latitude, longitude });
       },
