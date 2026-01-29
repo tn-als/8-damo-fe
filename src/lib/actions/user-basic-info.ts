@@ -17,7 +17,7 @@ export async function updateBasicInfo(
   data: UpdateBasicInfoRequest
 ): Promise<UpdateBasicInfoResponse> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     console.error("[updateBasicInfo] Missing API base URL env");

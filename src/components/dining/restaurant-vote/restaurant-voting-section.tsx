@@ -5,7 +5,6 @@ import { RestaurantCard } from "./restaurant-card";
 import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
 import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
-import { confirmRestaurant } from "@/src/lib/actions/dining";
 import { toast } from "@/src/components/ui/sonner";
 import { useMemo, useState } from "react";
 import {
@@ -43,6 +42,17 @@ export function RestaurantVotingSection({
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const activeRestaurantId = useMemo(() => {
+    if (!restaurants.length) {
+      return null;
+    }
+
+    const clampedIndex = Math.min(
+      Math.max(activeIndex, 0),
+      restaurants.length - 1
+    );
+    return restaurants[clampedIndex].recommendRestaurantsId;
+  }, [activeIndex, restaurants]);
 
   if (!restaurants.length) {
     return <RestaurantVoteFallback />;
@@ -58,14 +68,6 @@ export function RestaurantVotingSection({
     onAdditionalAttend?.();
   };
 
-  const activeRestaurantId = useMemo(() => {
-    const clampedIndex = Math.min(
-      Math.max(activeIndex, 0),
-      restaurants.length - 1
-    );
-    return restaurants[clampedIndex].recommendRestaurantsId;
-  }, [activeIndex, restaurants]);
-
   const handleConfirmClick = () => {
     setIsDialogOpen(true);
   };
@@ -78,22 +80,30 @@ export function RestaurantVotingSection({
 
     setIsSubmitting(true);
 
-    const result = await confirmRestaurant({
-      groupId,
-      diningId,
-      recommendRestaurantsId: activeRestaurantId,
-    });
+    const response = await fetch(
+      `/api/groups/${groupId}/dining/${diningId}/recommend-restaurants/${activeRestaurantId}/confirmed`,
+      {
+        method: "PATCH",
+      }
+    );
+    const payload = await response.json().catch(() => null);
+    const errorMessage =
+      payload?.errorMessage ??
+      payload?.data?.errorMessage ??
+      "회식 장소 확정에 실패했습니다.";
 
     setIsSubmitting(false);
     setIsDialogOpen(false);
 
-    if (!result.success) {
-      toast.error(result.error || "회식 장소 확정에 실패했습니다.");
+    if (!response.ok) {
+      toast.error(errorMessage);
       return;
     }
 
     toast.success("회식 장소가 확정되었습니다.");
-    handleConfirmDining(activeRestaurantId);
+    if (activeRestaurantId !== null) {
+      handleConfirmDining(activeRestaurantId);
+    }
   };
 
   return (

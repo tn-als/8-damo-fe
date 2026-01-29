@@ -24,7 +24,7 @@ interface GetMyGroupsResult {
 
 export async function getMyGroups(): Promise<GetMyGroupsResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     console.error("[getMyGroups] Missing API base URL env");
