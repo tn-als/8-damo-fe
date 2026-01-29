@@ -1,7 +1,7 @@
 "use server";
 
 import { getAccessToken } from "../cookie";
-import { ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3";
+import { ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3/mime";
 
 export interface PresignedUrlRequest {
   fileName: string;
