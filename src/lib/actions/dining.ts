@@ -4,6 +4,7 @@ import { getAccessToken } from "../cookie";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type {
   AttendanceVoteResponse,
+  ConfirmedRestaurantResponse,
   DiningCommonResponse,
   DiningStatus,
   DiningSummary,
@@ -166,6 +167,11 @@ interface GetDiningRestaurantVoteRequest {
 }
 
 interface GetDiningAttendanceVoteRequest {
+  groupId: string;
+  diningId: string;
+}
+
+interface GetDiningConfirmedRequest {
   groupId: string;
   diningId: string;
 }
@@ -360,6 +366,52 @@ export async function getDiningAttendanceVote({
 
   if (!data) {
     throw new Error("참석 투표 정보를 확인할 수 없습니다.");
+  }
+
+  return data;
+}
+
+export async function getDiningConfirmed({
+  groupId,
+  diningId,
+}: GetDiningConfirmedRequest): Promise<ConfirmedRestaurantResponse> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    throw new Error("API base URL이 설정되지 않았습니다.");
+  }
+
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    throw new Error("인증 토큰이 없습니다.");
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/confirmed`,
+    {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  const payload = (await response.json().catch(() => null)) as
+    | ApiResponse<ConfirmedRestaurantResponse>
+    | ApiNestedResponse<ConfirmedRestaurantResponse>
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
+  }
+
+  const data = extractApiData(payload);
+
+  if (!data) {
+    throw new Error("확정 식당 정보를 확인할 수 없습니다.");
   }
 
   return data;

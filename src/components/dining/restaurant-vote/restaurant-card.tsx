@@ -7,24 +7,33 @@ import { RestaurantAction } from "./restaurant-action";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
 import { voteRestaurant } from "@/src/lib/actions/dining";
 import { toast } from "@/src/components/ui/sonner";
-import type { RestaurantVoteResponse } from "@/src/types/api/dining";
+import type {
+  ConfirmedRestaurantResponse,
+  RestaurantVoteResponse,
+} from "@/src/types/api/dining";
 
 interface RestaurantCardProps {
-  restaurant: RestaurantVoteResponse;
-  isGroupLeader: boolean;
+  restaurant: RestaurantVoteResponse | ConfirmedRestaurantResponse;
+  isGroupLeader?: boolean;
   canAdditionalAttend?: boolean;
-  onConfirmDining: () => void;
-  onRetryRecommendation: () => void;
-  onAdditionalAttend: () => void;
+  onConfirmDining?: () => void;
+  onRetryRecommendation?: () => void;
+  onAdditionalAttend?: () => void;
+  showActions?: boolean;
+  showPermissionActions?: boolean;
+  badgeLabel?: string;
 }
 
 export function RestaurantCard({
   restaurant,
-  isGroupLeader,
+  isGroupLeader = false,
   canAdditionalAttend = false,
   onConfirmDining,
   onRetryRecommendation,
   onAdditionalAttend,
+  showActions = true,
+  showPermissionActions = true,
+  badgeLabel,
 }: RestaurantCardProps) {
   const params = useParams<{ groupId?: string | string[]; diningId?: string | string[] }>();
   const resolveParam = (value?: string | string[]) =>
@@ -32,7 +41,8 @@ export function RestaurantCard({
   const groupId = resolveParam(params?.groupId);
   const diningId = resolveParam(params?.diningId);
 
-  const initialStatus = restaurant.restaurantVoteStatus;
+  const isVoteRestaurant = "restaurantVoteStatus" in restaurant;
+  const initialStatus = isVoteRestaurant ? restaurant.restaurantVoteStatus : "NONE";
   const normalizedStatus =
     initialStatus === "LIKED"
       ? "LIKE"
@@ -45,8 +55,12 @@ export function RestaurantCard({
   const [voteStatus, setVoteStatus] = useState<
     "LIKE" | "DISLIKE" | "NONE"
   >(normalizedStatus);
-  const [likeCount, setLikeCount] = useState(restaurant.likeCount);
-  const [dislikeCount, setDislikeCount] = useState(restaurant.dislikeCount);
+  const [likeCount, setLikeCount] = useState(
+    "likeCount" in restaurant ? restaurant.likeCount : 0
+  );
+  const [dislikeCount, setDislikeCount] = useState(
+    "dislikeCount" in restaurant ? restaurant.dislikeCount : 0
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isLiked = voteStatus === "LIKE";
@@ -160,28 +174,36 @@ export function RestaurantCard({
           name={restaurant.restaurantsName}
           description={restaurant.reasoningDescription}
           phoneNumber={restaurant.phoneNumber}
+          badgeLabel={badgeLabel}
         />
 
-        <div className="mt-4 flex w-full items-center justify-end text-black">
-          <RestaurantAction
-            likeCount={likeCount}
-            dislikeCount={dislikeCount}
-            isLiked={isLiked}
-            isDisliked={isDisliked}
-            disabled={isSubmitting}
-            onLike={() => submitVote("LIKE")}
-            onDislike={() => submitVote("DISLIKE")}
-          />
-        </div>
+        {showActions && (
+          <div className="mt-4 flex w-full items-center justify-end text-black">
+            <RestaurantAction
+              likeCount={likeCount}
+              dislikeCount={dislikeCount}
+              isLiked={isLiked}
+              isDisliked={isDisliked}
+              disabled={isSubmitting}
+              onLike={() => submitVote("LIKE")}
+              onDislike={() => submitVote("DISLIKE")}
+            />
+          </div>
+        )}
       </div>
 
-      <RestaurantPermissionAction
-        isGroupLeader={isGroupLeader}
-        canAdditionalAttend={canAdditionalAttend}
-        onConfirmDining={onConfirmDining}
-        onRetryRecommendation={onRetryRecommendation}
-        onAdditionalAttend={onAdditionalAttend}
-      />
+      {showPermissionActions &&
+        onConfirmDining &&
+        onRetryRecommendation &&
+        onAdditionalAttend && (
+          <RestaurantPermissionAction
+            isGroupLeader={isGroupLeader}
+            canAdditionalAttend={canAdditionalAttend}
+            onConfirmDining={onConfirmDining}
+            onRetryRecommendation={onRetryRecommendation}
+            onAdditionalAttend={onAdditionalAttend}
+          />
+        )}
     </div>
   );
 }
