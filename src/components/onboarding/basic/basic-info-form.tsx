@@ -41,6 +41,7 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
     setIsSubmitting(true);
 
     const result = await updateBasicInfo({
+      imagePath: "",
       nickname: data.nickname,
       gender: data.gender,
       ageGroup: data.ageGroup,

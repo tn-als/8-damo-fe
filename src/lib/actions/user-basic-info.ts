@@ -3,6 +3,7 @@
 import { getAccessToken } from "../cookie";
 
 interface UpdateBasicInfoRequest {
+  imagePath: string;
   nickname: string;
   gender: "MALE" | "FEMALE";
   ageGroup: "TWENTIES" | "THIRTIES" | "FORTIES" | "FIFTIES_PLUS";
