@@ -1,5 +1,5 @@
 import { Header } from "@/src/components/layout/header";
-import { DiningCreateContainer } from "@/src/components/dining/dining-create-container";
+import { DiningCreateContainer } from "@/src/components/dining/create/dining-create-container";
 
 interface DiningCreatePageProps {
   params: Promise<{

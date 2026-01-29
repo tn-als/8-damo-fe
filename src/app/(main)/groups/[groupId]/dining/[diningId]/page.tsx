@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { AttendanceVotingSection, ConfirmedSection } from "@/src/components/dining";
-import { DiningCommonSection } from "@/src/components/dining/dining-common";
+import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
 import { RestaurantVotingSection } from "@/src/components/dining/restaurant-vote";
 import {

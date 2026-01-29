@@ -3,8 +3,9 @@
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 import { DiningDateTimeField } from "./dining-date-time-field";
-import { DiningVoteDeadlineField } from "./dining-vote-deadline-field";
+import { DiningVoteDeadlineField } from "./dining-vote-deadline-field"
 import { DiningBudgetField } from "./dining-budget-field";
 import { DiningCreateSubmitArea } from "./dining-create-submit-area";
 import { createDining } from "@/src/lib/actions/dining";

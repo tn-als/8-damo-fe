@@ -2,7 +2,7 @@
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
 import { RestaurantCard } from "./restaurant-card";
 import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
-import { RestaurantVoteFallback } from "../restaurant-vote-fallback";
+import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];

@@ -1,13 +1,10 @@
 export { AttendanceVotingSection } from "./attendance-voting/attendance-voting-section";
 export { RestaurantVotingSection } from "./restaurant-vote";
 export { ConfirmedSection } from "./confirmed/confirmed-section";
-export { CompleteSection } from "./complete-section";
-export { DiningEventSection } from "./dining-event-section";
-export { DiningParticipantList } from "./dining-participant-list";
-export { DiningCommonSection } from "./dining-common";
-export { DiningHeader } from "./dining-common";
-export { DiningStatusBadge } from "./dining-common";
-export { DiningDate } from "./dining-common";
+export { DiningCommonSection } from "./common";
+export { DiningHeader } from "./common";
+export { DiningStatusBadge } from "./common";
+export { DiningDate } from "./common";
 export { RestaurantVotingCarousel } from "./restaurant-vote";
 export { RestaurantCard } from "./restaurant-vote";
 export { RestaurantInfo } from "./restaurant-vote/restaurant-info";
