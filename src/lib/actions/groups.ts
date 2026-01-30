@@ -1,7 +1,7 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
-import type { ApiResponse } from "@/src/types/api/common";
+import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type { GroupSummary } from "@/src/types/groups";
 
 interface CreateGroupRequest {
@@ -44,6 +44,11 @@ interface GetMyGroupsResult {
   error?: string;
 }
 
+interface JoinGroupResult {
+  success: boolean;
+  data?: number;
+  error?: string;
+}
 
 export async function createGroup(
   data: CreateGroupRequest
@@ -194,6 +199,61 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
     return { success: true, data: mappedGroups };
   } catch (error) {
     console.error("[getMyGroups] Request failed", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    console.error("[joinGroup] Missing API base URL env");
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  if (!groupId) {
+    return { success: false, error: "groupId가 필요합니다." };
+  }
+
+  try {
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/groups/${groupId}/users/me`,
+      {
+        method: "POST",
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiNestedResponse<number>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+      };
+    }
+
+    const nestedError = payload?.data?.errorMessage;
+
+    if (nestedError) {
+      return { success: false, error: nestedError };
+    }
+
+    const result = payload?.data?.data;
+
+    if (result === null || result === undefined) {
+      return { success: false, error: "요청 결과를 확인할 수 없습니다." };
+    }
+
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("[joinGroup] Request failed", error);
     return {
       success: false,
       error:
