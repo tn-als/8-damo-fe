@@ -2,14 +2,7 @@
 
 import { getAccessToken } from "../cookie";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
-import type {
-  AttendanceVoteResponse,
-  ConfirmedRestaurantResponse,
-  DiningCommonResponse,
-  DiningStatus,
-  DiningSummary,
-  RestaurantVoteResponse,
-} from "@/src/types/api/dining";
+import type { RestaurantVoteResponse } from "@/src/types/api/dining";
 
 export interface CreateDiningRequest {
   diningDate?: string;
@@ -20,12 +13,6 @@ export interface CreateDiningRequest {
 interface CreateDiningResponse {
   success: boolean;
   diningId?: number;
-  error?: string;
-}
-
-interface GetGroupDiningSummariesResult {
-  success: boolean;
-  data?: DiningSummary[];
   error?: string;
 }
 
@@ -91,87 +78,6 @@ export async function createDining(
   }
 }
 
-export async function getGroupDiningSummaries(
-  groupId: string,
-  status: DiningStatus
-): Promise<GetGroupDiningSummariesResult> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  if (!API_BASE_URL) {
-    console.error("[getGroupDiningSummaries] Missing API base URL env");
-    return { success: false, error: "API base URL이 설정되지 않았습니다." };
-  }
-
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/groups/${groupId}/dining?status=${encodeURIComponent(
-        status
-      )}`,
-      {
-        method: "GET",
-        cache: "no-store",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    const payload = (await response.json().catch(() => null)) as
-      | ApiResponse<DiningSummary[]>
-      | null;
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
-      };
-    }
-
-    const dinings = Array.isArray(payload?.data) ? payload.data : null;
-
-    if (!dinings) {
-      return {
-        success: false,
-        error: "회식 목록을 확인할 수 없습니다.",
-      };
-    }
-
-    return { success: true, data: dinings };
-  } catch (error) {
-    console.error("[getGroupDiningSummaries] Request failed", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
-    };
-  }
-}
-
-interface GetDiningCommonRequest {
-  groupId: string;
-  diningId: string;
-}
-
-interface GetDiningRestaurantVoteRequest {
-  groupId: string;
-  diningId: string;
-}
-
-interface GetDiningAttendanceVoteRequest {
-  groupId: string;
-  diningId: string;
-}
-
-interface GetDiningConfirmedRequest {
-  groupId: string;
-  diningId: string;
-}
 
 interface VoteRestaurantRequest {
   groupId: string;
@@ -241,189 +147,9 @@ const extractApiData = <T>(
 };
 
 
-export async function getDiningCommon({
-  groupId,
-  diningId,
-}: GetDiningCommonRequest): Promise<DiningCommonResponse> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  if (!API_BASE_URL) {
-    throw new Error("API base URL이 설정되지 않았습니다.");
-  }
 
-  const accessToken = await getAccessToken();
 
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}`,
-    {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const payload = (await response.json().catch(() => null)) as
-    | ApiResponse<DiningCommonResponse>
-    | ApiNestedResponse<DiningCommonResponse>
-    | null;
-
-  if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
-  }
-
-  const data = extractApiData(payload);
-
-  if (!data) {
-    throw new Error("회식 정보를 확인할 수 없습니다.");
-  }
-
-  return data;
-}
-
-export async function getDiningRestaurantVote({
-  groupId,
-  diningId,
-}: GetDiningRestaurantVoteRequest): Promise<RestaurantVoteResponse[]> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  if (!API_BASE_URL) {
-    throw new Error("API base URL이 설정되지 않았습니다.");
-  }
-
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/restaurant-vote`,
-    {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const payload = (await response.json().catch(() => null)) as
-    | ApiResponse<RestaurantVoteResponse[]>
-    | ApiNestedResponse<RestaurantVoteResponse[]>
-    | null;
-
-  if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
-  }
-
-  const data = extractApiData(payload);
-
-  if (!data) {
-    throw new Error("식당 투표 정보를 확인할 수 없습니다.");
-  }
-
-  return data;
-}
-
-export async function getDiningAttendanceVote({
-  groupId,
-  diningId,
-}: GetDiningAttendanceVoteRequest): Promise<AttendanceVoteResponse> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  if (!API_BASE_URL) {
-    throw new Error("API base URL이 설정되지 않았습니다.");
-  }
-
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/attendance-vote`,
-    {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const payload = (await response.json().catch(() => null)) as
-    | ApiResponse<AttendanceVoteResponse>
-    | ApiNestedResponse<AttendanceVoteResponse>
-    | null;
-
-  if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
-  }
-
-  const data = extractApiData(payload);
-
-  if (!data) {
-    throw new Error("참석 투표 정보를 확인할 수 없습니다.");
-  }
-
-  return data;
-}
-
-export async function getDiningConfirmed({
-  groupId,
-  diningId,
-}: GetDiningConfirmedRequest): Promise<ConfirmedRestaurantResponse> {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  if (!API_BASE_URL) {
-    throw new Error("API base URL이 설정되지 않았습니다.");
-  }
-
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/confirmed`,
-    {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const payload = (await response.json().catch(() => null)) as
-    | ApiResponse<ConfirmedRestaurantResponse>
-    | ApiNestedResponse<ConfirmedRestaurantResponse>
-    | null;
-
-  if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
-  }
-
-  const data = extractApiData(payload);
-
-  if (!data) {
-    throw new Error("확정 식당 정보를 확인할 수 없습니다.");
-  }
-
-  return data;
-}
 
 export async function voteRestaurant({
   groupId,

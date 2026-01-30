@@ -1,44 +1,42 @@
+"use client";
+
 import { AttendanceVotingSection, ConfirmedSection } from "@/src/components/dining";
 import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
 import { RestaurantVotingSection } from "@/src/components/dining/restaurant-vote";
 import {
-  getDiningAttendanceVote,
-  getDiningConfirmed,
-  getDiningCommon,
-  getDiningRestaurantVote,
-} from "@/src/lib/actions/dining";
-import type {
-  AttendanceVoteResponse,
-  ConfirmedRestaurantResponse,
-  DiningCommonResponse,
-  DiningStatus,
-  RestaurantVoteResponse,
-} from "@/src/types/api/dining";
+  useDiningCommon,
+  useDiningRestaurantVote,
+  useDiningAttendanceVote,
+  useDiningConfirmed,
+} from "@/src/hooks/use-dining";
+import { useParams } from "next/navigation";
+import type { DiningStatus } from "@/src/types/api/dining";
 
-interface DiningDetailPageProps {
-  params: Promise<{
-    groupId: string;
-    diningId: string;
-  }>;
-}
-
-export default async function DiningDetailPage({
-  params,
-}: DiningDetailPageProps) {
-  const { groupId, diningId } = await params;
+export default function DiningDetailPage() {
+  const params = useParams<{ groupId: string; diningId: string }>();
+  const groupId = params?.groupId ?? "";
+  const diningId = params?.diningId ?? "";
 
   const errorMessages: string[] = [];
   const fallbackErrorMessage = "요청 중 오류가 발생했습니다.";
 
-  let diningCommon: DiningCommonResponse | null = null;
+  const {
+    data: diningCommon,
+    isLoading: isLoadingCommon,
+    error: errorCommon,
+  } = useDiningCommon(groupId, diningId);
 
-  try {
-    diningCommon = await getDiningCommon({ groupId, diningId });
-  } catch (error) {
+  if (errorCommon) {
     errorMessages.push(
-      error instanceof Error ? error.message : fallbackErrorMessage
+      errorCommon instanceof Error
+        ? errorCommon.message
+        : fallbackErrorMessage
     );
+  }
+
+  if (isLoadingCommon) {
+    return null;
   }
 
   if (!diningCommon) {
@@ -53,42 +51,45 @@ export default async function DiningDetailPage({
 
   const diningStatus: DiningStatus = diningCommon.diningStatus;
 
-  let restaurantVotes: RestaurantVoteResponse[] | null = null;
+  const {
+    data: restaurantVotes,
+    error: errorRestaurantVote,
+  } = useDiningRestaurantVote(groupId, diningId);
 
-  if (diningStatus === "RESTAURANT_VOTING") {
-    try {
-      restaurantVotes = await getDiningRestaurantVote({ groupId, diningId });
-    } catch (error) {
-      errorMessages.push(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
-    }
+  if (errorRestaurantVote && diningStatus === "RESTAURANT_VOTING") {
+    errorMessages.push(
+      errorRestaurantVote instanceof Error
+        ? errorRestaurantVote.message
+        : fallbackErrorMessage
+    );
   }
 
-  let attendanceVote: AttendanceVoteResponse | null = null;
+  const {
+    data: attendanceVote,
+    error: errorAttendanceVote,
+  } = useDiningAttendanceVote(groupId, diningId);
 
-  if (diningStatus === "ATTENDANCE_VOTING") {
-    try {
-      attendanceVote = await getDiningAttendanceVote({ groupId, diningId });
-    } catch (error) {
-      errorMessages.push(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
-    }
+  if (errorAttendanceVote && diningStatus === "ATTENDANCE_VOTING") {
+    errorMessages.push(
+      errorAttendanceVote instanceof Error
+        ? errorAttendanceVote.message
+        : fallbackErrorMessage
+    );
   }
 
-  let confirmedRestaurant: ConfirmedRestaurantResponse | null = null;
+  const {
+    data: confirmedRestaurant,
+    error: errorConfirmed,
+  } = useDiningConfirmed(groupId, diningId);
 
-  if (diningStatus === "CONFIRMED") {
-    try {
-      confirmedRestaurant = await getDiningConfirmed({ groupId, diningId });
-    } catch (error) {
-      errorMessages.push(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
-    }
+  if (errorConfirmed && diningStatus === "CONFIRMED") {
+    errorMessages.push(
+      errorConfirmed instanceof Error
+        ? errorConfirmed.message
+        : fallbackErrorMessage
+    );
   }
- 
+
   return (
     <DiningCommonSection
       diningDate={diningCommon.diningDate}
