@@ -9,9 +9,9 @@ interface AdBannerSectionProps {
 }
 
 const BANNER_IMAGES = [
-    "/images/banner/image1.png",
-    "/images/banner/image2.png",
-    "/images/banner/image3.png",
+    "/public/images/banner/image1.png",
+    "/public/images/banner/image2.png",
+    "/public/images/banner/image3.png",
 ];
 
 const AUTO_SLIDE_INTERVAL = 3000;
