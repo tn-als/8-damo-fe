@@ -16,9 +16,8 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
   const router = useRouter();
   const [imageError, setImageError] = useState(false);
 
-  const qrImageUrl = `${process.env.NEXT_PUBLIC_S3_URL}/group/qr/${groupId}.png`;
+  const qrImageUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/qr/${groupId}`;
   const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/groups/join?id=${groupId}`;
-
 
   const handleBack = () => {
     router.push(`/groups/${groupId}`)
