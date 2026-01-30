@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/src/components/ui/sonner";
-import { Providers } from "./providers";
 import localFont from 'next/font/local';
 
 const pretendard = localFont({
@@ -24,10 +23,8 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
       <body className="--font-pretendard antialiased bg-background">
-        <Providers>
-          {children}
-          <Toaster />
-        </Providers>
+        {children}
+        <Toaster />
       </body>
     </html>
   );
