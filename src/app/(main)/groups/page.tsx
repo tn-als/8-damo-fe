@@ -1,6 +1,5 @@
-import { getMyGroups } from '@/src/lib/api/groups';
 import { GroupsPageContent } from '@/src/components/groups/groups-page-content';
-import { GROUP_SUMMARY_MOCK_LIST } from '@/src/constants/mock-data';
+import { getMyGroups } from '@/src/lib/actions/groups';
 
 export default async function GroupsPage() {
   const result = await getMyGroups();

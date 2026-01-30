@@ -5,9 +5,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns:[
       {
-        protocol: 'https', 
-        hostname: 'damo.today',
-        pathname: '/s3/images/**',
+        protocol: "https",
+        hostname: "d3susamqetme5j.cloudfront.net",
       }
     ]
   }

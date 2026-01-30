@@ -35,6 +35,7 @@ interface MyGroupSummaryResponse {
   groupId: string;
   name: string;
   introduction?: string | null;
+  imagePath: string;
 }
 
 interface GetMyGroupsResult {
@@ -187,7 +188,7 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
       id: group.groupId,
       name: group.name,
       introduction: group.introduction ?? undefined,
-      imagePath: `groups/profile/${group.groupId}.png`,
+      imagePath: group.imagePath,
     }));
 
     return { success: true, data: mappedGroups };
