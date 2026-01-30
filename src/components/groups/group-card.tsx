@@ -18,7 +18,7 @@ export function GroupCard({
   
   const imageSrc = 
     groupSummary.imagePath?.trim()
-    ? `${process.env.NEXT_PUBLIC_S3_CDN}/groups/profile/${groupSummary.imagePath}`
+    ? `${process.env.NEXT_PUBLIC_S3_CDN}/${groupSummary.imagePath}`
     : GROUP_FALLBACK_IMAGE
 
   return (
