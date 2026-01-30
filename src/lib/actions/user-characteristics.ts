@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "../cookie";
+import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
 
 interface UpdateCharacteristicsRequest {
   allergies: string[];
@@ -25,20 +25,13 @@ export async function updateCharacteristics(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(
+    const response = await fetchWithAuthRetry(
       `${API_BASE_URL}/api/v1/users/me/characteristics`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(data),
       }
