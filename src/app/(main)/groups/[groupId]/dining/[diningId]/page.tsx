@@ -1,44 +1,89 @@
+"use client";
+
 import { AttendanceVotingSection, ConfirmedSection } from "@/src/components/dining";
 import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
 import { RestaurantVotingSection } from "@/src/components/dining/restaurant-vote";
 import {
-  getDiningAttendanceVote,
-  getDiningConfirmed,
-  getDiningCommon,
-  getDiningRestaurantVote,
-} from "@/src/lib/actions/dining";
-import type {
-  AttendanceVoteResponse,
-  ConfirmedRestaurantResponse,
-  DiningCommonResponse,
-  DiningStatus,
-  RestaurantVoteResponse,
-} from "@/src/types/api/dining";
+  useDiningCommon,
+  useDiningRestaurantVote,
+  useDiningAttendanceVote,
+  useDiningConfirmed,
+} from "@/src/hooks/use-dining";
+import { useParams } from "next/navigation";
+import type { DiningStatus } from "@/src/types/api/dining";
 
-interface DiningDetailPageProps {
-  params: Promise<{
-    groupId: string;
-    diningId: string;
-  }>;
-}
+export default function DiningDetailPage() {
+  const params = useParams<{ groupId: string; diningId: string }>();
+  const groupId = params?.groupId ?? "";
+  const diningId = params?.diningId ?? "";
 
-export default async function DiningDetailPage({
-  params,
-}: DiningDetailPageProps) {
-  const { groupId, diningId } = await params;
+  const {
+    data: diningCommon,
+    isLoading: isLoadingCommon,
+    error: errorCommon,
+  } = useDiningCommon(groupId, diningId);
+
+  const diningStatus: DiningStatus | undefined = diningCommon?.diningStatus;
+
+  const {
+    data: restaurantVotes,
+    error: errorRestaurantVote,
+  } = useDiningRestaurantVote(groupId, diningId, {
+    enabled: diningStatus === "RESTAURANT_VOTING",
+  });
+
+  const {
+    data: attendanceVote,
+    error: errorAttendanceVote,
+  } = useDiningAttendanceVote(groupId, diningId, {
+    enabled: diningStatus === "ATTENDANCE_VOTING",
+  });
+
+  const {
+    data: confirmedRestaurant,
+    error: errorConfirmed,
+  } = useDiningConfirmed(groupId, diningId, {
+    enabled: diningStatus === "CONFIRMED",
+  });
 
   const errorMessages: string[] = [];
   const fallbackErrorMessage = "요청 중 오류가 발생했습니다.";
 
-  let diningCommon: DiningCommonResponse | null = null;
-
-  try {
-    diningCommon = await getDiningCommon({ groupId, diningId });
-  } catch (error) {
+  if (errorCommon) {
     errorMessages.push(
-      error instanceof Error ? error.message : fallbackErrorMessage
+      errorCommon instanceof Error
+        ? errorCommon.message
+        : fallbackErrorMessage
     );
+  }
+
+  if (errorRestaurantVote && diningStatus === "RESTAURANT_VOTING") {
+    errorMessages.push(
+      errorRestaurantVote instanceof Error
+        ? errorRestaurantVote.message
+        : fallbackErrorMessage
+    );
+  }
+
+  if (errorAttendanceVote && diningStatus === "ATTENDANCE_VOTING") {
+    errorMessages.push(
+      errorAttendanceVote instanceof Error
+        ? errorAttendanceVote.message
+        : fallbackErrorMessage
+    );
+  }
+
+  if (errorConfirmed && diningStatus === "CONFIRMED") {
+    errorMessages.push(
+      errorConfirmed instanceof Error
+        ? errorConfirmed.message
+        : fallbackErrorMessage
+    );
+  }
+
+  if (isLoadingCommon) {
+    return null;
   }
 
   if (!diningCommon) {
@@ -51,55 +96,18 @@ export default async function DiningDetailPage({
     );
   }
 
-  const diningStatus: DiningStatus = diningCommon.diningStatus;
-
-  let restaurantVotes: RestaurantVoteResponse[] | null = null;
-
-  if (diningStatus === "RESTAURANT_VOTING") {
-    try {
-      restaurantVotes = await getDiningRestaurantVote({ groupId, diningId });
-    } catch (error) {
-      errorMessages.push(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
-    }
-  }
-
-  let attendanceVote: AttendanceVoteResponse | null = null;
-
-  if (diningStatus === "ATTENDANCE_VOTING") {
-    try {
-      attendanceVote = await getDiningAttendanceVote({ groupId, diningId });
-    } catch (error) {
-      errorMessages.push(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
-    }
-  }
-
-  let confirmedRestaurant: ConfirmedRestaurantResponse | null = null;
-
-  if (diningStatus === "CONFIRMED") {
-    try {
-      confirmedRestaurant = await getDiningConfirmed({ groupId, diningId });
-    } catch (error) {
-      errorMessages.push(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
-    }
-  }
- 
   return (
     <DiningCommonSection
       diningDate={diningCommon.diningDate}
-      diningStatus={diningStatus}
+      diningStatus={diningCommon.diningStatus}
       diningParticipants={diningCommon.diningParticipants}
       isGroupLeader={diningCommon.isGroupLeader}
     >
       {errorMessages.length > 0 && (
         <DiningErrorToast messages={errorMessages} />
       )}
-      {diningStatus === "ATTENDANCE_VOTING" && attendanceVote && (
+      
+      {diningCommon.diningStatus === "ATTENDANCE_VOTING" && attendanceVote && (
         <AttendanceVotingSection
           progress={{
             totalCount: attendanceVote.totalGroupMemberCount,
@@ -109,14 +117,14 @@ export default async function DiningDetailPage({
           myVoteStatus={attendanceVote.attendanceVoteStatus}
         />
       )}
-      {diningStatus === "RESTAURANT_VOTING" && restaurantVotes && (
+      {diningCommon.diningStatus === "RESTAURANT_VOTING" && restaurantVotes && (
         <RestaurantVotingSection
           restaurants={restaurantVotes}
           isGroupLeader={diningCommon.isGroupLeader}
           canAdditionalAttend={false}
         />
       )}
-      {diningStatus === "CONFIRMED" && (
+      {diningCommon.diningStatus === "CONFIRMED" && confirmedRestaurant && (
         <ConfirmedSection
           restaurant={confirmedRestaurant}
           fallbackDescription="다시 시도해주세요"

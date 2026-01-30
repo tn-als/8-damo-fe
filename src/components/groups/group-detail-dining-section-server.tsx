@@ -1,5 +1,7 @@
+"use client";
+
 import { GroupDetailDiningSection } from "@/src/components/groups/group-detail-dining-section";
-import { getGroupDiningSummaries } from "@/src/lib/actions/dining";
+import { useDiningSummaries } from "@/src/hooks/use-dining";
 import type { DiningStatus } from "@/src/types/api/dining";
 
 interface GroupDetailDiningSectionServerProps {
@@ -7,16 +9,20 @@ interface GroupDetailDiningSectionServerProps {
   status: DiningStatus;
 }
 
-export async function GroupDetailDiningSectionServer({
+export function GroupDetailDiningSectionServer({
   groupId,
   status,
 }: GroupDetailDiningSectionServerProps) {
-  const result = await getGroupDiningSummaries(groupId, status);
+  const { data: dinings, isLoading, error } = useDiningSummaries(groupId, status);
 
-  if (!result.success) {
+  if (isLoading) {
+    return null;
+  }
+
+  if (error) {
     console.error(
       "[GroupDetailDiningSectionServer] Failed to load dining summaries",
-      result.error
+      error
     );
     return (
       <GroupDetailDiningSection groupId={groupId} status={status} dinings={[]} />
@@ -27,7 +33,7 @@ export async function GroupDetailDiningSectionServer({
     <GroupDetailDiningSection
       groupId={groupId}
       status={status}
-      dinings={result.data ?? []}
+      dinings={dinings ?? []}
     />
   );
 }
