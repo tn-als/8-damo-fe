@@ -51,9 +51,9 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
             <Image
               src={qrImageUrl}
               alt={`${groupName} QR 코드`}
-              width={300}
-              height={300}
-              className="size-[300px] object-contain"
+              width={200}
+              height={200}
+              className="size-[200px] object-contain"
               onError={() => setImageError(true)}
               priority
             />
