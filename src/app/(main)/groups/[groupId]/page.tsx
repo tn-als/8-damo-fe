@@ -35,8 +35,6 @@ export default async function Page({ params, searchParams }: PageProps) {
     ? resolvedSearchParams.status
     : "ATTENDANCE_VOTING";
   
-  console.log(status);
-
   return (
     <GroupDetailContent
       groupId={groupId}
