@@ -68,7 +68,9 @@ export function GroupDetailContent({
   };
 
   const handleShareQR = () => {
-    router.push(`/groups/${groupId}/qr-share`);
+    const groupName = group?.name ?? "";
+    const query = groupName ? `?groupName=${encodeURIComponent(groupName)}` : "";
+    router.push(`/groups/${groupId}/qr-share${query}`);
   };
 
   return (
