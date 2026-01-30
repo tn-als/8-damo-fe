@@ -16,6 +16,11 @@ export function GroupCard({
   const introduction =
     groupSummary.introduction?.trim().length ? groupSummary.introduction : "";
   
+  const imageSrc = 
+    groupSummary.imagePath?.trim()
+    ? `${process.env.NEXT_PUBLIC_S3_CDN}/groups/profile/${groupSummary.imagePath}`
+    : GROUP_FALLBACK_IMAGE
+
   return (
     <div
       role="button"
@@ -25,8 +30,10 @@ export function GroupCard({
         "flex cursor-pointer items-center gap-2 rounded-lg bg-card p-3 shadow-xs transition-colors active:bg-card-pressed sm:gap-3 sm:p-4"
       )}
     >
+
+
       <Avatar
-        src={groupSummary.imageUrl}
+        src={imageSrc}
         alt={`${groupSummary.name} 그룹 이미지`}
         fallbackText={groupSummary.name}
         fallbackUrl={GROUP_FALLBACK_IMAGE}
