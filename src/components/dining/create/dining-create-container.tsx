@@ -72,8 +72,6 @@ export function DiningCreateContainer({
         budget: data.budget ?? 0,
       };
 
-      console.log(requestBody);
-
       const result = await createDining(groupId, requestBody);
 
       if (!result.success) {
