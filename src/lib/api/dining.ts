@@ -12,36 +12,7 @@ import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 const axiosInstance = axios.create({
   baseURL: "/api",
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
-
-// 요청 인터셉터: 쿠키 확인
-axiosInstance.interceptors.request.use(
-  (config) => {
-    // 브라우저 쿠키 확인 (디버깅용)
-    const cookies = document.cookie;
-    console.log("[Axios] Request cookies:", cookies);
-    console.log("[Axios] Request URL:", config.url);
-    console.log("[Axios] withCredentials:", config.withCredentials);
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// 응답 인터셉터: 에러 확인
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    console.error("[Axios] Response error:", error.response?.status, error.response?.data);
-    return Promise.reject(error);
-  }
-);
 
 function isApiResponse<T>(value: unknown): value is ApiResponse<T> {
   return typeof value === "object" && value !== null && "data" in value;
