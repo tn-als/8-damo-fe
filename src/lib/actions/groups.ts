@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "../cookie";
+import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
 import type { ApiResponse } from "@/src/types/api/common";
 
 interface CreateGroupRequest {
@@ -42,18 +42,11 @@ export async function createGroup(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/groups`, {
+    const response = await fetchWithAuthRetry(`${API_BASE_URL}/api/v1/groups`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     });
@@ -101,20 +94,14 @@ export async function getGroupDetail(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/groups/${groupId}`, {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/groups/${groupId}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
 
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<GroupDetailResponse>
