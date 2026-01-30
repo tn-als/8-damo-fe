@@ -22,18 +22,9 @@ export function GroupJoinPreviewSection({
     <div className="flex flex-col items-center gap-6 px-6 py-8">
       {/* 그룹 이미지 */}
       <div className="relative size-24 rounded-2xl overflow-hidden bg-muted">
-        {group.imageUrl ? (
-          <Image
-            src={group.imageUrl}
-            alt={group.name}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="flex items-center justify-center w-full h-full">
+        <div className="flex items-center justify-center w-full h-full">
             <Users className="size-10 text-muted-foreground" />
-          </div>
-        )}
+        </div>
       </div>
 
       {/* 그룹 정보 */}
