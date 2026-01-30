@@ -2,6 +2,7 @@
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
 import type { ApiResponse } from "@/src/types/api/common";
+import type { GroupSummary } from "@/src/types/groups";
 
 interface CreateGroupRequest {
   name: string;
@@ -27,6 +28,18 @@ interface GroupDetailResponse {
 interface GetGroupDetailResult {
   success: boolean;
   data?: GroupDetailResponse;
+  error?: string;
+}
+
+interface MyGroupSummaryResponse {
+  groupId: string;
+  name: string;
+  introduction?: string | null;
+}
+
+interface GetMyGroupsResult {
+  success: boolean;
+  data?: GroupSummary[];
   error?: string;
 }
 
@@ -124,6 +137,62 @@ export async function getGroupDetail(
     return { success: true, data: payload.data };
   } catch (error) {
     console.error("[getGroupDetail] Request failed", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function getMyGroups(): Promise<GetMyGroupsResult> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    console.error("[getMyGroups] Missing API base URL env");
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  try {
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/users/me/groups`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<MyGroupSummaryResponse[]>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+      };
+    }
+
+    const groupList = Array.isArray(payload?.data) ? payload.data : null;
+
+    if (!groupList) {
+      return {
+        success: false,
+        error: "그룹 목록을 확인할 수 없습니다.",
+      };
+    }
+
+    const mappedGroups: GroupSummary[] = groupList.map((group) => ({
+      id: group.groupId,
+      name: group.name,
+      introduction: group.introduction ?? undefined,
+      imagePath: `groups/profile/${group.groupId}.png`,
+    }));
+
+    return { success: true, data: mappedGroups };
+  } catch (error) {
+    console.error("[getMyGroups] Request failed", error);
     return {
       success: false,
       error:
