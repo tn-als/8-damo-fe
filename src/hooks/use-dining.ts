@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { diningApi } from "@/src/lib/api/dining";
-import type { DiningStatus } from "@/src/types/api/dining";
+import type {
+  DiningStatus,
+  RestaurantVoteResponse,
+  AttendanceVoteResponse,
+  ConfirmedRestaurantResponse,
+} from "@/src/types/api/dining";
 
 export const diningKeys = {
   all: ["dining"] as const,
@@ -32,23 +37,38 @@ export function useDiningCommon(groupId: string, diningId: string) {
   });
 }
 
-export function useDiningRestaurantVote(groupId: string, diningId: string) {
-  return useQuery({
+export function useDiningRestaurantVote(
+  groupId: string,
+  diningId: string,
+  options?: { enabled?: boolean }
+) {
+  return useQuery<RestaurantVoteResponse[], Error>({
     queryKey: diningKeys.restaurantVote(groupId, diningId),
     queryFn: () => diningApi.getDiningRestaurantVote(groupId, diningId),
+    ...options,
   });
 }
 
-export function useDiningAttendanceVote(groupId: string, diningId: string) {
-  return useQuery({
+export function useDiningAttendanceVote(
+  groupId: string,
+  diningId: string,
+  options?: { enabled?: boolean }
+) {
+  return useQuery<AttendanceVoteResponse, Error>({
     queryKey: diningKeys.attendanceVote(groupId, diningId),
     queryFn: () => diningApi.getDiningAttendanceVote(groupId, diningId),
+    ...options,
   });
 }
 
-export function useDiningConfirmed(groupId: string, diningId: string) {
-  return useQuery({
+export function useDiningConfirmed(
+  groupId: string,
+  diningId: string,
+  options?: { enabled?: boolean }
+) {
+  return useQuery<ConfirmedRestaurantResponse, Error>({
     queryKey: diningKeys.confirmed(groupId, diningId),
     queryFn: () => diningApi.getDiningConfirmed(groupId, diningId),
+    ...options,
   });
 }
