@@ -11,9 +11,12 @@ export function GroupJoinContainer() {
   const [scanResult, setScanResult] = useState<ScanResult>({ status: "idle" });
   const [isScanning, setIsScanning] = useState(false);
 
-  const handleScanSuccess = useCallback((groupId: string) => {
-    router.push(`/groups/preview/${groupId}`);
-  }, []);
+  const handleScanSuccess = useCallback(
+    (groupId: string) => {
+      router.push(`/groups/preview/${groupId}`);
+    },
+    [router]
+  );
 
   const handleRescan = useCallback(() => {
     setScanResult({ status: "idle" });
