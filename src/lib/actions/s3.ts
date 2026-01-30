@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "../cookie";
+import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
 import { ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3/mime";
 
 export interface PresignedUrlRequest {
@@ -40,21 +40,17 @@ export async function getPresignedUrl(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/s3/presigned-url`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/s3/presigned-url`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
 
     const payload = await response.json().catch(() => null);
     const responseData = payload?.data;

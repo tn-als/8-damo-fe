@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "../cookie";
+import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type {
   AttendanceVoteResponse,
@@ -40,20 +40,13 @@ export async function createDining(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(
+    const response = await fetchWithAuthRetry(
       `${API_BASE_URL}/api/v1/groups/${groupId}/dining`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(data),
       }
@@ -102,23 +95,14 @@ export async function getGroupDiningSummaries(
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(
+    const response = await fetchWithAuthRetry(
       `${API_BASE_URL}/api/v1/groups/${groupId}/dining?status=${encodeURIComponent(
         status
       )}`,
       {
         method: "GET",
         cache: "no-store",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
       }
     );
 
@@ -252,20 +236,11 @@ export async function getDiningCommon({
     throw new Error("API base URL이 설정되지 않았습니다.");
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
+  const response = await fetchWithAuthRetry(
     `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}`,
     {
       method: "GET",
       cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
     }
   );
 
@@ -298,20 +273,11 @@ export async function getDiningRestaurantVote({
     throw new Error("API base URL이 설정되지 않았습니다.");
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
+  const response = await fetchWithAuthRetry(
     `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/restaurant-vote`,
     {
       method: "GET",
       cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
     }
   );
 
@@ -344,20 +310,11 @@ export async function getDiningAttendanceVote({
     throw new Error("API base URL이 설정되지 않았습니다.");
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
+  const response = await fetchWithAuthRetry(
     `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/attendance-vote`,
     {
       method: "GET",
       cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
     }
   );
 
@@ -390,20 +347,11 @@ export async function getDiningConfirmed({
     throw new Error("API base URL이 설정되지 않았습니다.");
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
-
-  const response = await fetch(
+  const response = await fetchWithAuthRetry(
     `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/confirmed`,
     {
       method: "GET",
       cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
     }
   );
 
@@ -439,20 +387,13 @@ export async function voteRestaurant({
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(
+    const response = await fetchWithAuthRetry(
       `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/restaurants-vote/${recommendRestaurantsId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ restaurantVoteStatus }),
       }
@@ -496,20 +437,13 @@ export async function voteAttendance({
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(
+    const response = await fetchWithAuthRetry(
       `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/attendance-vote`,
       {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ attendanceVoteStatus }),
       }
@@ -550,20 +484,11 @@ export async function refreshRecommendRestaurants({
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return { success: false, error: "인증 토큰이 없습니다." };
-  }
-
   try {
-    const response = await fetch(
+    const response = await fetchWithAuthRetry(
       `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurant/refresh`,
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
       }
     );
 
