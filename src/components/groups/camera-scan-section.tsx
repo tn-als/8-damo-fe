@@ -17,6 +17,7 @@ export function CameraScanSection({
 }: CameraScanSectionProps) {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMountedRef = useRef(true);
   const [error, setError] = useState<PermissionError | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -24,6 +25,7 @@ export function CameraScanSection({
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
+        await scannerRef.current.clear();
       } catch {
         // 이미 멈춰있는 경우 무시
       }
@@ -31,7 +33,7 @@ export function CameraScanSection({
   }, []);
 
   const startScanner = useCallback(async () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isMountedRef.current) return;
 
     setError(null);
     setIsInitializing(true);
@@ -44,32 +46,25 @@ export function CameraScanSection({
       scannerRef.current = scanner;
 
       await scanner.start(
-        { facingMode: "environment" },
+        { facingMode: "environment" }, 
         {
           fps: 10,
           qrbox: { width: 200, height: 200 },
           aspectRatio: 1,
         },
         (decodedText) => {
-          // QR 코드에서 groupId 추출
-          // 예상 형식: https://damo.app/groups/join?id=xxx 또는 단순 groupId
-          let groupId = decodedText;
+
+          let groupId: string | null = null;
 
           try {
             const url = new URL(decodedText);
-            const idParam = url.searchParams.get("id");
-            if (idParam) {
-              groupId = idParam;
-            }
+            const match = url.pathname.match(/^\/groups\/preview\/([^/]+)$/);
+            groupId = match?.[1] ?? null;
           } catch {
-            // URL이 아닌 경우 그대로 groupId로 사용
+            groupId = null;
           }
 
-          const parsedGroupId = Number(groupId);
-
-          if (!Number.isFinite(parsedGroupId)) {
-            return;
-          }
+          if (!groupId || !isMountedRef.current) return;
 
           onScanSuccess(groupId);
           onScanningChange(false);
@@ -80,9 +75,19 @@ export function CameraScanSection({
         }
       );
 
+      if (!isMountedRef.current) return;
+
       setIsInitializing(false);
       onScanningChange(true);
     } catch (err) {
+      if (
+        err instanceof Error &&
+        err.name === "AbortError" &&
+        !isMountedRef.current
+      ) {
+        return;
+      }
+
       setIsInitializing(false);
       onScanningChange(false);
 
@@ -103,11 +108,14 @@ export function CameraScanSection({
   }, [onScanSuccess, onScanningChange, stopScanner]);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     queueMicrotask(() => {
       startScanner();
     });
 
     return () => {
+      isMountedRef.current = false;
       stopScanner();
     };
   }, [startScanner, stopScanner]);
