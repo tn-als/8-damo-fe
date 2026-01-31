@@ -36,9 +36,11 @@ export async function fetchWithAuthRetry(
     return response;
   }
 
-  const reissueSuccess = await reissueAccessToken();
+  const reissueSuccess = await fetch("/api/auth/reissue", {
+    method: "POST",
+  });
 
-  if (!reissueSuccess) {
+  if (!reissueSuccess.ok) {
     return response;
   }
 
