@@ -9,9 +9,7 @@ export const ROUTES = {
   GROUPS: '/groups',
 } as const;
 
-export const PUBLIC_ROUTES = [ROUTES.LOGIN, ROUTES.KAKAO_CALLBACK] as const;
-
-export const ONBOARDING_ROUTES = [
-  ROUTES.ONBOARDING.BASIC,
-  ROUTES.ONBOARDING.CHARACTERISTIC,
-] as const;
+export const PUBLIC_ROUTES = {
+  LOGIN: ROUTES.LOGIN,
+  KAKAO: ROUTES.KAKAO_CALLBACK
+};
