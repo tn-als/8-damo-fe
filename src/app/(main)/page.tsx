@@ -5,9 +5,7 @@ import {
 } from "@/src/components/home";
 import { BottomNavigationBar } from "@/src/components/layout";
 import {
-    mockAdBanner,
     mockWeeklyDinings,
-    mockLateDiningSummaries,
 } from "@/src/constants/mock-data";
 
 export default function HomePage() {
