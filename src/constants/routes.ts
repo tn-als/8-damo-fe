@@ -9,9 +9,15 @@ export const ROUTES = {
   GROUPS: '/groups',
 } as const;
 
-export const PUBLIC_ROUTES = [ROUTES.LOGIN, ROUTES.KAKAO_CALLBACK] as const;
+export const PUBLIC_ROUTES = {
+  LOGIN: ROUTES.LOGIN,
+  KAKAO: ROUTES.KAKAO_CALLBACK
+};
 
-export const ONBOARDING_ROUTES = [
-  ROUTES.ONBOARDING.BASIC,
-  ROUTES.ONBOARDING.CHARACTERISTIC,
-] as const;
+const PUBLIC_ROUTE_VALUES = Object.values(PUBLIC_ROUTES);
+
+export function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_ROUTE_VALUES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
