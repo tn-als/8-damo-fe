@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PUBLIC_ROUTES } from '@/src/constants/routes';
+import { PUBLIC_ROUTES, isPublicRoute } from '@/src/constants/routes';
 
 export function proxy(request: NextRequest) {
-  
   const { pathname, search } = request.nextUrl;
+
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
   const refreshToken = request.cookies.get('refresh_token')?.value;
 
   if (!refreshToken) {
