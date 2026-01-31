@@ -3,12 +3,12 @@ import { PUBLIC_ROUTES } from '@/src/constants/routes';
 
 export function proxy(request: NextRequest) {
   
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
   const refreshToken = request.cookies.get('refresh_token')?.value;
 
   if (!refreshToken) {
     const loginUrl = new URL(PUBLIC_ROUTES.LOGIN, request.nextUrl.origin);
-    loginUrl.searchParams.set("redirect", pathname);
+    loginUrl.searchParams.set("redirect", `${pathname}${search}`);
     return NextResponse.redirect(loginUrl);
   }
 
