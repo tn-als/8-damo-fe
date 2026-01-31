@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "d3susamqetme5j.cloudfront.net",
-        pathname: "/**", 
+        pathname: "/s3/images/**", 
       }
     ]
   }
