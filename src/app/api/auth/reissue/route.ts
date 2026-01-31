@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { parseCookie } from "@/src/lib/cookie";
 
 /**
  * POST /api/auth/reissue
@@ -32,11 +33,24 @@ export async function POST() {
     });
 
     if (!response.ok) {
-      return new Response(null, { status: response.status });
+      return new Response(null, { status: 401 });
     }
 
-    // 백엔드의 Set-Cookie를 클라이언트로 forward
+    // Set-Cookie 헤더 파싱 및 쿠키 설정
     const setCookieHeader = response.headers.get("set-cookie");
+    if (setCookieHeader) {
+      const cookieStore = await cookies();
+
+      // 여러 쿠키가 있을 수 있으므로 분리하여 처리
+      const cookieStrings = setCookieHeader.split(/,(?=\s*\w+=)/);
+
+      for (const cookieString of cookieStrings) {
+        const parsed = parseCookie(cookieString.trim());
+        if (parsed) {
+          cookieStore.set(parsed.name, parsed.value, parsed.options);
+        }
+      }
+    }
 
     return new Response(null, {
       status: 204,
