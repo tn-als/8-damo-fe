@@ -1,6 +1,7 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
+import { getErrorMessage } from "../api/error-handler";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type {
   AttendanceVoteResponse,
@@ -27,114 +28,6 @@ interface GetGroupDiningSummariesResult {
   success: boolean;
   data?: DiningSummary[];
   error?: string;
-}
-
-export async function createDining(
-  groupId: string,
-  data: CreateDiningRequest
-): Promise<CreateDiningResponse> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  if (!API_BASE_URL) {
-    console.error("[createDining] Missing API base URL env");
-    return { success: false, error: "API base URL이 설정되지 않았습니다." };
-  }
-
-  try {
-    const response = await fetchWithAuthRetry(
-      `${API_BASE_URL}/api/v1/groups/${groupId}/dining`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
-
-    const payload = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
-      };
-    }
-
-    const diningId = payload?.data;
-
-    if (diningId === null || diningId === undefined) {
-      return { success: false, error: "diningId를 확인할 수 없습니다." };
-    }
-
-    const parsedDiningId = Number(diningId);
-
-    if (!Number.isFinite(parsedDiningId)) {
-      return { success: false, error: "diningId를 확인할 수 없습니다." };
-    }
-
-    return { success: true, diningId: parsedDiningId };
-  } catch (error) {
-    console.error("[createDining] Request failed", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
-    };
-  }
-}
-
-export async function getGroupDiningSummaries(
-  groupId: string,
-  status: DiningStatus
-): Promise<GetGroupDiningSummariesResult> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-  if (!API_BASE_URL) {
-    console.error("[getGroupDiningSummaries] Missing API base URL env");
-    return { success: false, error: "API base URL이 설정되지 않았습니다." };
-  }
-
-  try {
-    const response = await fetchWithAuthRetry(
-      `${API_BASE_URL}/api/v1/groups/${groupId}/dining?status=${encodeURIComponent(
-        status
-      )}`,
-      {
-        method: "GET",
-        cache: "no-store",
-      }
-    );
-
-    const payload = (await response.json().catch(() => null)) as
-      | ApiResponse<DiningSummary[]>
-      | null;
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
-      };
-    }
-
-    const dinings = Array.isArray(payload?.data) ? payload.data : null;
-
-    if (!dinings) {
-      return {
-        success: false,
-        error: "회식 목록을 확인할 수 없습니다.",
-      };
-    }
-
-    return { success: true, data: dinings };
-  } catch (error) {
-    console.error("[getGroupDiningSummaries] Request failed", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
-    };
-  }
 }
 
 interface GetDiningCommonRequest {
@@ -201,11 +94,7 @@ interface RefreshRecommendRestaurantsResult {
 }
 
 function isApiResponse<T>(value: unknown): value is ApiResponse<T> {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "data" in value
-  );
+  return typeof value === "object" && value !== null && "data" in value;
 }
 
 const extractApiData = <T>(
@@ -224,6 +113,111 @@ const extractApiData = <T>(
   return data ?? null;
 };
 
+export async function createDining(
+  groupId: string,
+  data: CreateDiningRequest
+): Promise<CreateDiningResponse> {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  try {
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/groups/${groupId}/dining`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<number>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: getErrorMessage(payload, response.status),
+      };
+    }
+
+    const diningId = payload?.data;
+
+    if (diningId === null || diningId === undefined) {
+      return { success: false, error: "diningId를 확인할 수 없습니다." };
+    }
+
+    const parsedDiningId = Number(diningId);
+
+    if (!Number.isFinite(parsedDiningId)) {
+      return { success: false, error: "diningId를 확인할 수 없습니다." };
+    }
+
+    return { success: true, diningId: parsedDiningId };
+  } catch (error) {
+    console.error("[createDining] Request failed", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function getGroupDiningSummaries(
+  groupId: string,
+  status: DiningStatus
+): Promise<GetGroupDiningSummariesResult> {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  try {
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/groups/${groupId}/dining?status=${encodeURIComponent(
+        status
+      )}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<DiningSummary[]>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: getErrorMessage(payload, response.status),
+      };
+    }
+
+    const dinings = Array.isArray(payload?.data) ? payload.data : null;
+
+    if (!dinings) {
+      return {
+        success: false,
+        error: "회식 목록을 확인할 수 없습니다.",
+      };
+    }
+
+    return { success: true, data: dinings };
+  } catch (error) {
+    console.error("[getGroupDiningSummaries] Request failed", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
 
 export async function getDiningCommon({
   groupId,
@@ -250,7 +244,7 @@ export async function getDiningCommon({
     | null;
 
   if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
+    throw new Error(getErrorMessage(payload, response.status));
   }
 
   const data = extractApiData(payload);
@@ -287,7 +281,7 @@ export async function getDiningRestaurantVote({
     | null;
 
   if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
+    throw new Error(getErrorMessage(payload, response.status));
   }
 
   const data = extractApiData(payload);
@@ -324,7 +318,7 @@ export async function getDiningAttendanceVote({
     | null;
 
   if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
+    throw new Error(getErrorMessage(payload, response.status));
   }
 
   const data = extractApiData(payload);
@@ -361,7 +355,7 @@ export async function getDiningConfirmed({
     | null;
 
   if (!response.ok) {
-    throw new Error(payload?.errorMessage || `요청 실패 (${response.status})`);
+    throw new Error(getErrorMessage(payload, response.status));
   }
 
   const data = extractApiData(payload);
@@ -383,7 +377,6 @@ export async function voteRestaurant({
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[voteRestaurant] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -407,7 +400,7 @@ export async function voteRestaurant({
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -418,8 +411,7 @@ export async function voteRestaurant({
     console.error("[voteRestaurant] Request failed", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }
@@ -433,7 +425,6 @@ export async function voteAttendance({
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[voteAttendance] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -457,7 +448,7 @@ export async function voteAttendance({
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -466,8 +457,7 @@ export async function voteAttendance({
     console.error("[voteAttendance] Request failed", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }
@@ -480,7 +470,6 @@ export async function refreshRecommendRestaurants({
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[refreshRecommendRestaurants] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -500,7 +489,7 @@ export async function refreshRecommendRestaurants({
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -518,8 +507,7 @@ export async function refreshRecommendRestaurants({
     console.error("[refreshRecommendRestaurants] Request failed", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }

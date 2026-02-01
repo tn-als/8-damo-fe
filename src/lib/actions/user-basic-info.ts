@@ -1,6 +1,8 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
+import { getErrorMessage } from "../api/error-handler";
+import type { ApiResponse } from "@/src/types/api/common";
 
 interface UpdateBasicInfoRequest {
   imagePath: string;
@@ -17,11 +19,9 @@ interface UpdateBasicInfoResponse {
 export async function updateBasicInfo(
   data: UpdateBasicInfoRequest
 ): Promise<UpdateBasicInfoResponse> {
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[updateBasicInfo] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -37,11 +37,14 @@ export async function updateBasicInfo(
       }
     );
 
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<unknown>
+      | null;
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
       return {
         success: false,
-        error: errorData.message || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 

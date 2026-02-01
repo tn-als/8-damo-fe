@@ -1,7 +1,9 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
+import { getErrorMessage } from "../api/error-handler";
 import { ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3/mime";
+import type { ApiResponse } from "@/src/types/api/common";
 
 export interface PresignedUrlRequest {
   fileName: string;
@@ -24,7 +26,6 @@ export interface PresignedUrlResponse {
 export async function getPresignedUrl(
   data: PresignedUrlRequest
 ): Promise<PresignedUrlResponse> {
-
   if (!ALLOWED_IMAGE_CONTENT_TYPES.has(data.contentType)) {
     return {
       success: false,
@@ -36,7 +37,6 @@ export async function getPresignedUrl(
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[getGroupProfilePresignedUrl] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -52,33 +52,34 @@ export async function getPresignedUrl(
       }
     );
 
-    const payload = await response.json().catch(() => null);
-    const responseData = payload?.data;
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<PresignedUrlData>
+      | null;
 
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
-    if (!responseData) {
+    if (!payload?.data) {
       return {
         success: false,
-        error: payload?.errorMessage || "presigned url을 받을 수 없습니다.",
+        error: "presigned url을 받을 수 없습니다.",
       };
     }
 
     return {
       success: true,
       data: {
-        presignedUrl: responseData.presignedUrl,
-        objectKey: responseData.objectKey,
-        expiresIn: responseData.expiresIn,
+        presignedUrl: payload.data.presignedUrl,
+        objectKey: payload.data.objectKey,
+        expiresIn: payload.data.expiresIn,
       },
     };
   } catch (error) {
-    console.error("[getGroupProfilePresignedUrl] Request failed", error);
+    console.error("[getPresignedUrl] Request failed", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
