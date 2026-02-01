@@ -12,6 +12,22 @@ interface KakaoCallbackContentProps {
   code: string;
 }
 
+const RETURN_URL_KEY = "returnUrl";
+
+function getAndClearReturnUrl(): string | null {
+  if (typeof window === "undefined") return null;
+
+  const returnUrl = sessionStorage.getItem(RETURN_URL_KEY);
+  sessionStorage.removeItem(RETURN_URL_KEY);
+
+  if (!returnUrl) return null;
+
+  // 보안: 내부 URL만 허용 (외부 URL 방지)
+  if (!returnUrl.startsWith("/")) return null;
+
+  return returnUrl;
+}
+
 export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -32,9 +48,11 @@ export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
         case "CHARACTERISTIC":
           router.replace("/onboarding/characteristic");
           return;
-        case "DONE":
-          router.replace("/");
+        case "DONE": {
+          const returnUrl = getAndClearReturnUrl();
+          router.replace(returnUrl ?? "/");
           return;
+        }
       }
     };
 

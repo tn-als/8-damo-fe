@@ -71,9 +71,9 @@ export function GroupJoinPreviewPageContent({
     }
 
     toast.success(`${group.name} 그룹에 참여했습니다!`);
-    router.push("/groups");
+    router.push(`/groups/${groupId}`);
   };
-
+  
   if (isLoading) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">

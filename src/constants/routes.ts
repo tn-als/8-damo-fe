@@ -7,11 +7,13 @@ export const ROUTES = {
   },
   MAIN: '/',
   GROUPS: '/groups',
+  GROUP_PREVIEW: '/groups/preview',
 } as const;
 
 export const PUBLIC_ROUTES = {
   LOGIN: ROUTES.LOGIN,
-  KAKAO: ROUTES.KAKAO_CALLBACK
+  KAKAO: ROUTES.KAKAO_CALLBACK,
+  GROUP_PREVIEW: ROUTES.GROUP_PREVIEW,
 };
 
 const PUBLIC_ROUTE_VALUES = Object.values(PUBLIC_ROUTES);

@@ -17,7 +17,11 @@ function KakaoSymbol({ className }: { className?: string }) {
     );
 }
 
-export function LoginButton(){
+interface LoginButtonProps {
+    className?: string;
+}
+
+export function LoginButton({ className }: LoginButtonProps) {
     const handleLogin = () => {
         if (!kakaoClientId || !kakaoRedirectUri) {
             window.alert("카카오 로그인 설정이 필요합니다.");
@@ -36,7 +40,7 @@ export function LoginButton(){
         <Button
             variant="kakao"
             onClick={handleLogin}
-            className="fixed bottom-[35%] left-1/2 -translate-x-1/2 sm:bottom-[30%] px-6 py-3 h-auto gap-2"
+            className={className ?? "fixed bottom-[35%] left-1/2 -translate-x-1/2 sm:bottom-[30%] px-6 py-3 h-auto gap-2"}
         >
             <KakaoSymbol className="size-5" />
             카카오 로그인
