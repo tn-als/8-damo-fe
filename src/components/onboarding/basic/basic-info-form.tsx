@@ -58,43 +58,36 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
           setIsSubmitting(false);
           return;
         } else {
-          try {
-            const presignedResult = await getPresignedUrl({
-              directory: "users/profile",
-              fileName: profileImage.name,
-              contentType: profileImageContentType,
-            });
+          const presignedResult = await getPresignedUrl({
+            directory: "users/profile",
+            fileName: profileImage.name,
+            contentType: profileImageContentType,
+          });
 
-            if (!presignedResult.success || !presignedResult.data) {
-              toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
-              setIsSubmitting(false);
-              return;
-            } else {
-              const uploadResponse = await fetch(
-                presignedResult.data.presignedUrl,
-                {
-                  method: "PUT",
-                  headers: {
-                    "Content-Type": profileImageContentType,
-                  },
-                  body: profileImage,
-                }
-              );
+          if (!presignedResult.success || !presignedResult.data) {
+            toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
+            setIsSubmitting(false);
+            return;
+          }
 
-              if (!uploadResponse.ok) {
-                toast.error("업로드 실패, 재시도 해주세요.");
-                setIsSubmitting(false);
-                return;
-              } else {
-                imagePath = presignedResult.data.objectKey;
-              }
+          const uploadResponse = await fetch(
+            presignedResult.data.presignedUrl,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": profileImageContentType,
+              },
+              body: profileImage,
             }
-          } catch (error) {
-            console.error("[BasicInfoForm] image upload failed", error);
+          );
+
+          if (!uploadResponse.ok) {
             toast.error("업로드 실패, 재시도 해주세요.");
             setIsSubmitting(false);
             return;
           }
+
+          imagePath = presignedResult.data.objectKey;
         }
       }
     }
@@ -138,8 +131,4 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
       </div>
     </form>
   );
-
-
-
-
 }

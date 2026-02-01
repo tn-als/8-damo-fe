@@ -1,6 +1,7 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
+import { getErrorMessage } from "../api/error-handler";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type { GroupSummary } from "@/src/types/groups";
 
@@ -57,7 +58,6 @@ export async function createGroup(
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[createGroup] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -70,13 +70,14 @@ export async function createGroup(
       body: JSON.stringify(data),
     });
 
-    const payload = await response.json().catch(() => null);
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<number>
+      | null;
 
     if (!response.ok) {
       return {
         success: false,
-        error:
-          payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -109,7 +110,6 @@ export async function getGroupDetail(
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[getGroupDetail] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -129,7 +129,7 @@ export async function getGroupDetail(
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -145,8 +145,7 @@ export async function getGroupDetail(
     console.error("[getGroupDetail] Request failed", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }
@@ -156,7 +155,6 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[getMyGroups] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -176,7 +174,7 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -201,8 +199,7 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
     console.error("[getMyGroups] Request failed", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }
@@ -212,7 +209,6 @@ export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
-    console.error("[joinGroup] Missing API base URL env");
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
   }
 
@@ -235,7 +231,7 @@ export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
     if (!response.ok) {
       return {
         success: false,
-        error: payload?.errorMessage || `요청 실패 (${response.status})`,
+        error: getErrorMessage(payload, response.status),
       };
     }
 
@@ -256,8 +252,7 @@ export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
     console.error("[joinGroup] Request failed", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
 }

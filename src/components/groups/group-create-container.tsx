@@ -52,88 +52,72 @@ export function GroupCreateContainer({
   });
 
   const onFormSubmit = async (data: GroupCreateFormValues) => {
-    try {
-      if (!location) {
-        toast.error("그룹 위치를 제공해주세요.");
+    if (!location) {
+      toast.error("그룹 위치를 제공해주세요.");
+      return;
+    }
+
+    let imagePath = "";
+
+    if (profileImageFile) {
+      if (profileImageFile.size > 10 * 1024 * 1024) {
+        toast.error("최대 용량은 10MB입니다.");
         return;
       }
 
-      let imagePath = "";
+      const profileImageContentType = getImageContentType(profileImageFile);
 
-      if (profileImageFile) {
-        if (profileImageFile.size > 10 * 1024 * 1024) {
-          toast.error("최대 용량은 10MB입니다.");
-          return;
-        }
-
-        const profileImageContentType = getImageContentType(profileImageFile);
-
-        if (!profileImageContentType) {
-          toast.error("지원하지 않는 이미지 형식입니다.");
-          return;
-        }
-
-        try {
-          const presignedResult = await getPresignedUrl({
-            directory: "groups/profile",
-            fileName: profileImageFile.name,
-            contentType: profileImageContentType,
-          });
-
-          if (!presignedResult.success || !presignedResult.data) {
-            toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
-            return;
-          }
-
-          const uploadResponse = await fetch(presignedResult.data.presignedUrl, {
-            method: "PUT",
-            headers: {
-              "Content-Type": profileImageContentType,
-            },
-            body: profileImageFile,
-          });
-
-          if (!uploadResponse.ok) {
-            toast.error("업로드 실패, 재시도 해주세요.");
-            return;
-          }
-
-          imagePath = presignedResult.data.objectKey;
-        } catch (error) {
-          console.error("[GroupCreate] image upload failed", error);
-          toast.error("업로드 실패, 재시도 해주세요.");
-          return;
-        }
+      if (!profileImageContentType) {
+        toast.error("지원하지 않는 이미지 형식입니다.");
+        return;
       }
 
-      const result = await createGroup({
-        name: data.groupName,
-        introduction: data.introduction ?? "",
-        latitude: location.latitude,
-        longitude: location.longitude,
-        imagePath,
+      const presignedResult = await getPresignedUrl({
+        directory: "groups/profile",
+        fileName: profileImageFile.name,
+        contentType: profileImageContentType,
       });
 
-      if (!result.success) {
-        toast.error(result.error || "그룹 생성에 실패했습니다.");
+      if (!presignedResult.success || !presignedResult.data) {
+        toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
         return;
       }
 
-      if (result.groupId == null) {
-        toast.error("groupId를 확인할 수 없습니다.");
+      const uploadResponse = await fetch(presignedResult.data.presignedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": profileImageContentType,
+        },
+        body: profileImageFile,
+      });
+
+      if (!uploadResponse.ok) {
+        toast.error("업로드 실패, 재시도 해주세요.");
         return;
       }
 
-      if (onSubmit) {
-        await onSubmit(data);
-      }
-
-      toast.success("그룹이 생성되었습니다.");
-      router.push("/groups");
-    } catch (error) {
-      toast.error("그룹 생성에 실패했습니다.");
-      console.error("Group creation error:", error);
+      imagePath = presignedResult.data.objectKey;
     }
+
+    const result = await createGroup({
+      name: data.groupName,
+      introduction: data.introduction ?? "",
+      latitude: location.latitude,
+      longitude: location.longitude,
+      imagePath,
+    });
+
+    if (!result.success) {
+      toast.error(result.error || "그룹 생성에 실패했습니다.");
+      return;
+    }
+
+    if (onSubmit) {
+      await onSubmit(data);
+    }
+
+    toast.success("그룹이 생성되었습니다.");
+    router.push("/groups");
   };
 
   return (
