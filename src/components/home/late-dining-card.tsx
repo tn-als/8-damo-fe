@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { cn } from "@/src/lib/utils";
@@ -22,12 +21,12 @@ export function LateDiningCard({ dining, className }: LateDiningCardProps) {
             {/* 지도 이미지 영역 */}
             <div className="relative aspect-[4/3] w-full bg-muted">
                 {dining.mapImageUrl ? (
-                    <Image
+                    <img
                         src={dining.mapImageUrl}
                         alt={`${dining.restaurantName} 위치`}
-                        fill
-                        className="object-cover"
-                        sizes="192px"
+                        className="absolute inset-0 h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                     />
                 ) : (
                     <div className="flex h-full items-center justify-center">
