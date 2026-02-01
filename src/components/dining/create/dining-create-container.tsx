@@ -61,34 +61,29 @@ export function DiningCreateContainer({
 
 
   const onFormSubmit = async (data: DiningCreateFormValues) => {
-    try {
-      const requestBody: DiningCreateRequest = {
-        diningDate: data.diningDate
-          ? formatDateToMinute(data.diningDate)
-          : "",
-        voteDueDate: data.voteDueDate
-          ? formatDateToMinute(data.voteDueDate)
-          : "",
-        budget: data.budget ?? 0,
-      };
+    const requestBody: DiningCreateRequest = {
+      diningDate: data.diningDate
+        ? formatDateToMinute(data.diningDate)
+        : "",
+      voteDueDate: data.voteDueDate
+        ? formatDateToMinute(data.voteDueDate)
+        : "",
+      budget: data.budget ?? 0,
+    };
 
-      const result = await createDining(groupId, requestBody);
+    const result = await createDining(groupId, requestBody);
 
-      if (!result.success) {
-        toast.error(result.error || "회식 생성에 실패했습니다.");
-        return;
-      }
-
-      if (onSubmit) {
-        onSubmit(requestBody);
-      }
-
-      toast.success("회식이 생성되었습니다.");
-      router.push(`/groups/${groupId}`);
-    } catch (error) {
-      toast.error("회식 생성에 실패했습니다.");
-      console.error("Dining creation error:", error);
+    if (!result.success) {
+      toast.error(result.error || "회식 생성에 실패했습니다.");
+      return;
     }
+
+    if (onSubmit) {
+      onSubmit(requestBody);
+    }
+
+    toast.success("회식이 생성되었습니다.");
+    router.push(`/groups/${groupId}`);
   };
 
   return (

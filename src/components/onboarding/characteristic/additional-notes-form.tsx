@@ -35,23 +35,17 @@ export function AdditionalNotesForm() {
     setAdditionalNotes(data.additionalNotes);
     const characteristics = getCharacteristics();
 
-    try {
-      const result = await updateCharacteristics({
-        allergies: characteristics.allergies,
-        likeFoods: characteristics.foodTypes,
-        likeIngredients: characteristics.ingredients,
-        otherCharacteristics: data.additionalNotes,
-      });
+    const result = await updateCharacteristics({
+      allergies: characteristics.allergies,
+      likeFoods: characteristics.foodTypes,
+      likeIngredients: characteristics.ingredients,
+      otherCharacteristics: data.additionalNotes,
+    });
 
-      if (result.success) {
-        router.push("/");
-      } else {
-        toast.error(result.error || "재접속을 시도해주세요.");
-      }
-    } catch (error) {
-      console.error("[AdditionalNotesForm] Submit error:", error);
-      toast.error("재접속을 시도해주세요.");
-    } finally {
+    if (result.success) {
+      router.push("/");
+    } else {
+      toast.error(result.error || "재접속을 시도해주세요.");
       setIsSubmitting(false);
     }
   };
