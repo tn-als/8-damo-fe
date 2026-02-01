@@ -44,7 +44,7 @@ export function RestaurantVotingSection({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetryingRecommendation, setIsRetryingRecommendation] = useState(false);
-  
+
   const activeRestaurantId = useMemo(() => {
     if (!restaurants.length) {
       return null;
@@ -106,7 +106,7 @@ export function RestaurantVotingSection({
     setActiveIndex(0);
     onRetryRecommendation?.();
   };
-  
+
   const handleAdditionalAttend = () => {
     onAdditionalAttend?.();
   };

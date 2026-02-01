@@ -61,7 +61,7 @@ export function AttendanceVotingSection({
 
         <AttendanceVotePrompt diningDate={diningDate}/>
 
-        <AttendanceVoteActions 
+        <AttendanceVoteActions
           myVoteStatus={currentVoteStatus}
           isSubmitting={isSubmitting}
           onSubmit={handleSubmit}/>
