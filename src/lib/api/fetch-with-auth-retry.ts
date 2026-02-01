@@ -43,7 +43,7 @@ export async function fetchWithAuthRetry(
   .join("; ");
 
   const reissueResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/reissue`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/reissue`,
     {
       method: "POST",
       headers: {
