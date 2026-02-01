@@ -8,8 +8,7 @@ import { parseCookie } from "@/src/lib/cookie";
  * - 백엔드 응답의 Set-Cookie를 클라이언트로 forward
  */
 export async function POST(request: Request) {
-  const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   if (!API_BASE_URL) {
     return new Response(
