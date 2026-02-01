@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Users } from "lucide-react";
 import { Button } from "../ui/button";
 import { GroupSummary } from "@/src/types/groups";

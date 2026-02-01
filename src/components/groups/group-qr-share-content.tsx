@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Share2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "../layout";
@@ -93,14 +92,16 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
               <p className="text-sm text-muted-foreground">QR 코드를 불러올 수 없습니다</p>
             </div>
           ) : (
-            <Image
+            <img
               src={shareImageUrl}
               alt={`${groupName} 그룹 QR 코드`}
               width={200}
               height={200}
               className="size-[200px] object-contain"
               onError={() => setImageError(true)}
-              priority
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
             />
           )}
         </div>

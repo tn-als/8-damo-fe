@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { cn } from "@/src/lib/utils";
 
@@ -41,13 +40,13 @@ export function AdBannerSection({ className }: AdBannerSectionProps) {
                                 : "opacity-0"
                         )}
                     >
-                        <Image
+                        <img
                             src={src}
                             alt={`배너 ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 430px) 100vw, 430px"
-                            priority={index === 0}
+                            className="h-full w-full object-cover"
+                            loading={index === 0 ? "eager" : "lazy"}
+                            fetchPriority={index === 0 ? "high" : "auto"}
+                            decoding="async"
                         />
                     </div>
                 ))}
