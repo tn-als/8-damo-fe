@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import Image from "next/image";
 import { useState } from "react";
 
 const sizeStyles = {
@@ -79,22 +78,20 @@ export function Avatar({
       )}
     >
       {renderType === "image" && (
-        <Image
+        <img
           src={src!}
           alt={alt}
-          fill 
-          className="object-cover"
-          onError={()=>setHasError(true)}
+          className="absolute inset-0 h-full w-full object-cover"
+          onError={() => setHasError(true)}
         />
       )}
 
       {renderType === "fallbackImage" && (
-        <Image
+        <img
           src={fallbackUrl!}
           alt={alt}
-          fill 
-          className="object-cover"
-          onError={()=>setHasFallbackError(true)}
+          className="absolute inset-0 h-full w-full object-cover"
+          onError={() => setHasFallbackError(true)}
         />
       )}
 
