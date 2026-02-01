@@ -19,7 +19,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
   const kakaoButtonRef = useRef<HTMLButtonElement>(null);
 
   const shareImageUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/qr/${groupId}`;
-  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/groups/preview/${groupId}`;
+  const previewUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/share/preview.png`;
 
   useEffect(() => {
     const initKakaoButton = async () => {
