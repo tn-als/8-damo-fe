@@ -1,5 +1,3 @@
-// types/api/common.ts
-
 export interface ApiResponse<T> {
   httpStatus: string;
   data: T;
