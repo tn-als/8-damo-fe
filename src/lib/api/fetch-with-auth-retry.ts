@@ -1,7 +1,7 @@
 import "server-only";
 
-import { getAccessToken } from "../cookie";
-import { reissueAccessToken } from "../auth/reissue";
+import { getAccessToken, getRefreshToken } from "../cookie";
+import { cookies } from "next/headers";
 
 /**
  * 인증이 필요한 API 요청을 수행하는 fetch wrapper
@@ -22,7 +22,7 @@ export async function fetchWithAuthRetry(
     const headers = new Headers(init?.headers);
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
-    }
+    } 
 
     return fetch(input, {
       ...init,
@@ -30,17 +30,32 @@ export async function fetchWithAuthRetry(
     });
   };
 
+
   const response = await makeRequest(accessToken);
 
-  if (response.status !== 401) {
+  if (response.ok) {
     return response;
   }
 
-  const reissueSuccess = await fetch("/api/auth/reissue", {
-    method: "POST",
-  });
+  const c = await cookies();
+  const cookieHeader = c.getAll()
+  .map(c => `${c.name}=${c.value}`)
+  .join("; ");
 
-  if (!reissueSuccess.ok) {
+  const reissueResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/reissue`,
+    {
+      method: "POST",
+      headers: {
+        Cookie: cookieHeader
+      },
+      credentials: "include",
+    }
+  );
+
+  // console.log("reissueResponse:", reissueResponse);
+
+  if (!reissueResponse.ok) {
     return response;
   }
 
