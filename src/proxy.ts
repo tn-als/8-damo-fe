@@ -4,6 +4,8 @@ import { PUBLIC_ROUTES, isPublicRoute } from '@/src/constants/routes';
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
+  return NextResponse.next();
+
   if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }

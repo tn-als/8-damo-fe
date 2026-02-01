@@ -11,6 +11,10 @@ export async function getAccessToken(): Promise<string | null> {
   return getCookieValue("access_token");
 }
 
+export async function getRefreshToken(): Promise<string | null> {
+  return getCookieValue("refresh_token");
+}
+
 export async function deleteRefreshToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete("refresh_token");

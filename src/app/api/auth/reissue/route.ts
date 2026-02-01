@@ -7,7 +7,7 @@ import { parseCookie } from "@/src/lib/cookie";
  * - 현재 요청의 쿠키를 백엔드로 전달
  * - 백엔드 응답의 Set-Cookie를 클라이언트로 forward
  */
-export async function POST() {
+export async function POST(request: Request) {
   const API_BASE_URL =
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -18,19 +18,23 @@ export async function POST() {
     );
   }
 
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
-  const cookieHeader = allCookies
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  const cookieHeader = request.headers.get("Cookie");
+  // console.log(`cookieHeader ${cookieHeader}`) // cookieHeader refresh_token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpYXQiOjE3Njk5NDAzNDYsImV4cCI6MTc3MTE0OTk0Nn0.j1CoKs6-RIT8ytygPzSK13oiGjgBwR2Uk4KIvtt4I98; __next_hmr_refresh_hash__=243
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/reissue`, {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/auth/reissue`, {
       method: "POST",
       headers: {
-        Cookie: cookieHeader,
+        Cookie: cookieHeader ?? "",
       },
     });
+
+    // console.log(response);
+
+    const data = await response.json();
+
+    console.log(data);
 
     if (!response.ok) {
       return new Response(null, { status: 401 });

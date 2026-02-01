@@ -58,7 +58,7 @@ function parseCookie(cookieString: string): ParsedCookie | null {
 }
 
 /**
- * 서버 액션에서 access token 재발급 수행
+ * 서버 액션에서 access token 재발급 수행 (Server Action 전용)
  * - 현재 쿠키의 refresh_token을 백엔드로 전달
  * - 성공 시 새 access_token, refresh_token을 쿠키에 설정
  * @returns 성공 여부
