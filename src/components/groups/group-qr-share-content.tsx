@@ -18,8 +18,9 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
   const [isKakaoReady, setIsKakaoReady] = useState(false);
   const kakaoButtonRef = useRef<HTMLButtonElement>(null);
 
-  const shareImageUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/qr/${groupId}`;
-  const previewUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/share/preview.png`;
+  const shareImageUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/share/preview.png`;
+  const qrImageUrl = `https://${process.env.NEXT_PUBLIC_S3_CDN}/s3/images/groups/qr/${groupId}`;
+  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/groups/preview/${groupId}`;
 
   useEffect(() => {
     const initKakaoButton = async () => {
@@ -61,7 +62,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
     };
 
     initKakaoButton();
-  }, [groupName, previewUrl, previewUrl]);
+  }, [groupName, previewUrl, qrImageUrl]);
 
   const handleBack = () => {
     router.push(`/groups/${groupId}`);
@@ -93,7 +94,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
             </div>
           ) : (
             <img
-              src={shareImageUrl}
+              src={qrImageUrl}
               alt={`${groupName} 그룹 QR 코드`}
               width={200}
               height={200}
