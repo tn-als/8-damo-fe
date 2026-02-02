@@ -15,23 +15,23 @@ export function useCompleteOnboarding() {
    * 다음 온보딩 단계로 전이
    * @param nextStep 다음 온보딩 상태
    */
-  const advanceToNextStep = (nextStep: OnboardingStatus) => {
+  const advanceToNextStep = async (nextStep: OnboardingStatus): Promise<boolean> => {
     const { user } = useUserStore.getState();
 
     if (!user) {
-      void (async () => {
-        const result = await getMe();
-        if (result.httpStatus === "200 OK" && result.data) {
-          setUser(result.data);
-          updateOnboardingStep(nextStep);
-        } else {
-          toast.error("사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
-        }
-      })();
-      return;
+      const result = await getMe();
+      if (result.httpStatus === "200 OK" && result.data) {
+        setUser(result.data);
+        updateOnboardingStep(nextStep);
+        return true;
+      }
+
+      toast.error("사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
+      return false;
     }
 
     updateOnboardingStep(nextStep);
+    return true;
   };
 
   return { advanceToNextStep };

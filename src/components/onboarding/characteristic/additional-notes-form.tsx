@@ -43,7 +43,11 @@ export function AdditionalNotesForm() {
     });
 
     if (result.success) {
-      advanceToNextStep("DONE");
+      const advanced = await advanceToNextStep("DONE");
+      if (!advanced) {
+        setIsSubmitting(false);
+        return;
+      }
     } else {
       toast.error(result.error || "재접속을 시도해주세요.");
       setIsSubmitting(false);
