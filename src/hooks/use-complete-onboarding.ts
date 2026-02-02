@@ -1,3 +1,7 @@
+'use client';
+
+import { toast } from '@/src/components/ui/sonner';
+import { getMe } from '@/src/lib/actions/user';
 import { useUserStore, type OnboardingStatus } from '@/src/stores/user-store';
 
 /**
@@ -5,13 +9,28 @@ import { useUserStore, type OnboardingStatus } from '@/src/stores/user-store';
  * - Zustand 상태만 갱신하고, 실제 라우팅은 RouteGuard가 처리
  */
 export function useCompleteOnboarding() {
-  const { updateOnboardingStep } = useUserStore();
+  const { updateOnboardingStep, setUser } = useUserStore();
 
   /**
    * 다음 온보딩 단계로 전이
    * @param nextStep 다음 온보딩 상태
    */
   const advanceToNextStep = (nextStep: OnboardingStatus) => {
+    const { user } = useUserStore.getState();
+
+    if (!user) {
+      void (async () => {
+        const result = await getMe();
+        if (result.httpStatus === "200 OK" && result.data) {
+          setUser(result.data);
+          updateOnboardingStep(nextStep);
+        } else {
+          toast.error("사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
+        }
+      })();
+      return;
+    }
+
     updateOnboardingStep(nextStep);
   };
 
