@@ -13,10 +13,10 @@ import {
 import { basicInfoSchema } from "@/src/lib/schema/basic-information";
 import { updateBasicInfo } from "@/src/lib/actions/user-basic-info";
 import { getPresignedUrl } from "@/src/lib/actions/s3";
-import { useRouter } from "next/navigation";
 import { Button } from "../../ui/button";
 import { toast } from "@/src/components/ui/sonner";
-import {getImageContentType} from "@/src/constants/s3/util";
+import { getImageContentType } from "@/src/constants/s3/util";
+import { useCompleteOnboarding } from "@/src/hooks/use-complete-onboarding";
 
 interface BasicInfoFormProps {
   defaultValues?: Partial<BasicInfoFormProps>;
@@ -24,7 +24,7 @@ interface BasicInfoFormProps {
 }
 
 export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
-  const router = useRouter();
+  const { advanceToNextStep } = useCompleteOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { control, handleSubmit, formState: { isValid } } = useForm<BasicInfoFormValues>({
@@ -101,7 +101,7 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
 
     if (result.success) {
       onSubmit?.(data);
-      router.push("/onboarding/characteristic");
+      advanceToNextStep("CHARACTERISTIC");
     } else {
       toast.error(result.error || "저장에 실패했습니다.");
       setIsSubmitting(false);

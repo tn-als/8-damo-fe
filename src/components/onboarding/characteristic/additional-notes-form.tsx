@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { AdditionalNotesField } from "./additional-notes-field";
 import {
@@ -13,9 +12,10 @@ import {
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
 import { updateCharacteristics } from "@/src/lib/actions/user-characteristics";
 import { toast } from "@/src/components/ui/sonner";
+import { useCompleteOnboarding } from "@/src/hooks/use-complete-onboarding";
 
 export function AdditionalNotesForm() {
-  const router = useRouter();
+  const { advanceToNextStep } = useCompleteOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { additionalNotes, setAdditionalNotes, getCharacteristics } =
     useOnboardingStore();
@@ -43,7 +43,7 @@ export function AdditionalNotesForm() {
     });
 
     if (result.success) {
-      router.push("/");
+      advanceToNextStep("DONE");
     } else {
       toast.error(result.error || "재접속을 시도해주세요.");
       setIsSubmitting(false);
