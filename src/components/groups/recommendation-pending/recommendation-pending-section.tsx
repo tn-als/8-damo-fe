@@ -126,7 +126,7 @@ export function RecommendationPendingSection({
             <div
               className={`flex flex-col ${
                 enableTransition
-                  ? "transition-transform duration-800 ease-out"
+                  ? "transition-transform duration-1200 ease-out"
                   : ""
               }`}
               style={{
@@ -143,8 +143,8 @@ export function RecommendationPendingSection({
 
           <span className="flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse [animation-delay:200ms]" />
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse [animation-delay:400ms]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse [animation-delay:600ms]" />
           </span>
         </div>
 
@@ -153,18 +153,28 @@ export function RecommendationPendingSection({
             ? "추천이 예상보다 오래 걸리고 있습니다. 잠시 후 다시 시도해주세요."
             : "잠시만 기다려주세요."}
         </p>
-      </div>
 
-      <div className="flex flex-col gap-4">
-        {pendingDinings.map((dining) => (
-          <DiningSummaryCard
-            key={dining.diningId}
-            date={dining.diningDate}
-            attendeeCount={dining.diningParticipantsCount}
-            status={dining.status}
-            disabled
-          />
-        ))}
+        <div className="flex flex-col">
+          {pendingDinings.map((dining, index) => {
+            const isLast = index === pendingDinings.length - 1;
+
+            return (
+              <div key={dining.diningId} className="flex flex-col">
+                <DiningSummaryCard
+                  date={dining.diningDate}
+                  attendeeCount={dining.diningParticipantsCount}
+                  status={dining.status}
+                  disabled
+                />
+
+                {!isLast && (
+                  <div className="my-4 h-px bg-[#e5e5ea]" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
       </div>
     </section>
   );
