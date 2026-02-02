@@ -1,5 +1,6 @@
 export const ROUTES = {
   LOGIN: '/login',
+  LOGIN_TEST: '/login-test',
   KAKAO_CALLBACK: '/kakao/callback',
   ONBOARDING: {
     BASIC: '/onboarding/basic',
@@ -12,6 +13,7 @@ export const ROUTES = {
 
 export const PUBLIC_ROUTES = {
   LOGIN: ROUTES.LOGIN,
+  LOGIN_TEST: ROUTES.LOGIN_TEST,
   KAKAO: ROUTES.KAKAO_CALLBACK,
   GROUP_PREVIEW: ROUTES.GROUP_PREVIEW,
 };
