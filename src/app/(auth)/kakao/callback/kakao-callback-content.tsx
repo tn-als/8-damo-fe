@@ -7,6 +7,7 @@ import { EmptyState } from "@/src/components/ui/empty-state";
 import { PageHeader } from "@/src/components/ui/page-header";
 import { processKakaoOAuth } from "@/src/lib/actions/auth";
 import { KakaoCallbackError } from "./kakao-callback-error";
+import { useUserStore } from "@/src/stores/user-store";
 
 interface KakaoCallbackContentProps {
   code: string;
@@ -31,6 +32,7 @@ function getAndClearReturnUrl(): string | null {
 export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const { setInitialized } = useUserStore();
 
   useEffect(() => {
     const run = async () => {
@@ -40,6 +42,9 @@ export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
         setError(result.error);
         return;
       }
+
+      // 로그인 성공 후 UserProvider가 다시 fetch하도록 리셋
+      setInitialized(false);
 
       switch (result.onboardingStep) {
         case "BASIC":
