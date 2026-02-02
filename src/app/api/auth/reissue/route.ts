@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     });
 
     const payload = await response.json().catch(() => null);
-    console.log(response.ok, payload);
+    // console.log(response.ok, payload);
 
     if (!response.ok) {
       return new Response(null, { status: 401 });
