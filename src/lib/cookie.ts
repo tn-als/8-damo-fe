@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export async function getCookieValue(name: string): Promise<string | null> {
   const cookieStore = await cookies();
@@ -8,6 +8,14 @@ export async function getCookieValue(name: string): Promise<string | null> {
 }
 
 export async function getAccessToken(): Promise<string | null> {
+  // 1. 헤더에서 먼저 확인 (proxy에서 토큰 갱신 시 전달)
+  const headerStore = await headers();
+  const tokenFromHeader = headerStore.get("access_token");
+  if (tokenFromHeader) {
+    return tokenFromHeader;
+  }
+
+  // 2. 쿠키에서 확인
   return getCookieValue("access_token");
 }
 
@@ -20,57 +28,4 @@ export async function deleteRefreshToken(): Promise<void> {
   cookieStore.delete("refresh_token");
 }
 
-interface ParsedCookie {
-  name: string;
-  value: string;
-  options: {
-    path?: string;
-    maxAge?: number;
-    expires?: Date;
-    httpOnly?: boolean;
-    secure?: boolean;
-    sameSite?: "strict" | "lax" | "none";
-  };
-}
-
-export function parseCookie(cookieString: string): ParsedCookie | null {
-  const parts = cookieString.split(";").map((p) => p.trim());
-  if (parts.length === 0) return null;
-
-  const [nameValue, ...attributes] = parts;
-  const [name, ...valueParts] = nameValue.split("=");
-  const value = valueParts.join("="); // value에 = 문자가 포함될 수 있음
-
-  if (!name || value === undefined) return null;
-
-  const options: ParsedCookie["options"] = {};
-
-  for (const attr of attributes) {
-    const [attrName, ...attrValueParts] = attr.split("=");
-    const attrValue = attrValueParts.join("=");
-    const lowerName = attrName.toLowerCase();
-
-    switch (lowerName) {
-      case "path":
-        options.path = attrValue;
-        break;
-      case "max-age":
-        options.maxAge = parseInt(attrValue, 10);
-        break;
-      case "expires":
-        options.expires = new Date(attrValue);
-        break;
-      case "httponly":
-        options.httpOnly = true;
-        break;
-      case "secure":
-        options.secure = true;
-        break;
-      case "samesite":
-        options.sameSite = attrValue.toLowerCase() as "strict" | "lax" | "none";
-        break;
-    }
-  }
-
-  return { name, value, options };
-}
+export { parseCookie } from "./parse-cookie";
