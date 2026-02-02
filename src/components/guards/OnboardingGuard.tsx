@@ -23,7 +23,13 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
   useEffect(() => {
     if (!isInitialized || isLoading) return;
-    if (!user) return;
+
+    // 인증되지 않은 사용자는 로그인으로
+    if (!user) {
+      router.replace(ROUTES.LOGIN);
+      return;
+    }
+
     if (user.onboardingStep === 'DONE') return;
 
     const redirectPath = ONBOARDING_REDIRECT_MAP[user.onboardingStep];
@@ -36,7 +42,12 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     return <OnboardingGuardSkeleton />;
   }
 
-  if (user && user.onboardingStep !== 'DONE') {
+  // user가 null이면 로그인으로 리다이렉트 중
+  if (!user) {
+    return <OnboardingGuardSkeleton />;
+  }
+
+  if (user.onboardingStep !== 'DONE') {
     return <OnboardingGuardSkeleton />;
   }
 
