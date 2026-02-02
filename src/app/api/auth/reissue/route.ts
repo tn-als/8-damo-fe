@@ -18,7 +18,6 @@ export async function POST(request: Request) {
   }
 
   const cookieHeader = request.headers.get("Cookie");
-  // console.log(`cookieHeader ${cookieHeader}`) // cookieHeader refresh_token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpYXQiOjE3Njk5NDAzNDYsImV4cCI6MTc3MTE0OTk0Nn0.j1CoKs6-RIT8ytygPzSK13oiGjgBwR2Uk4KIvtt4I98; __next_hmr_refresh_hash__=243
 
   try {
     const response = await fetch(

@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PUBLIC_ROUTES, isPublicRoute } from '@/src/constants/routes';
 import { parseCookie } from './lib/parse-cookie';
+import { ROUTES } from '@/src/constants/routes';
+
+/**
+ * 인증이 필요 없는 공개 경로
+ */
+const PUBLIC_ROUTES = [
+  ROUTES.LOGIN,
+  ROUTES.LOGIN_TEST,
+  ROUTES.KAKAO_CALLBACK,
+  ROUTES.GROUP_PREVIEW,
+] as const;
+
+function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -14,7 +30,7 @@ export async function proxy(request: NextRequest) {
 
   // refresh_token도 없으면 로그인 페이지로
   if (!refreshToken) {
-    const loginUrl = new URL(PUBLIC_ROUTES.LOGIN, request.nextUrl.origin);
+    const loginUrl = new URL(ROUTES.LOGIN, request.nextUrl.origin);
     loginUrl.searchParams.set("redirect", `${pathname}${search}`);
     return NextResponse.redirect(loginUrl);
   }
@@ -59,13 +75,13 @@ export async function proxy(request: NextRequest) {
 
         return NextResponse.next();
       } else {
-        const loginUrl = new URL(PUBLIC_ROUTES.LOGIN, request.nextUrl.origin);
+        const loginUrl = new URL(ROUTES.LOGIN, request.nextUrl.origin);
         loginUrl.searchParams.set("redirect", `${pathname}${search}`);
         return NextResponse.redirect(loginUrl);
       }
     } catch (error) {
       console.error("[proxy] Token reissue failed:", error);
-      const loginUrl = new URL(PUBLIC_ROUTES.LOGIN, request.nextUrl.origin);
+      const loginUrl = new URL(ROUTES.LOGIN, request.nextUrl.origin);
       return NextResponse.redirect(loginUrl);
     }
   }

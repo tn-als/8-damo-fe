@@ -1,38 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { PageHeader } from "@/src/components/ui/page-header";
 import { processKakaoOAuth } from "@/src/lib/actions/auth";
 import { KakaoCallbackError } from "./kakao-callback-error";
 import { useUserStore } from "@/src/stores/user-store";
+import { getMe } from "@/src/lib/actions/user";
 
 interface KakaoCallbackContentProps {
   code: string;
 }
 
-const RETURN_URL_KEY = "returnUrl";
-
-function getAndClearReturnUrl(): string | null {
-  if (typeof window === "undefined") return null;
-
-  const returnUrl = sessionStorage.getItem(RETURN_URL_KEY);
-  sessionStorage.removeItem(RETURN_URL_KEY);
-
-  if (!returnUrl) return null;
-
-  // 보안: 내부 URL만 허용 (외부 URL 방지)
-  if (!returnUrl.startsWith("/")) return null;
-
-  return returnUrl;
-}
-
 export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const { setInitialized } = useUserStore();
+  const { setUser } = useUserStore();
 
   useEffect(() => {
     const run = async () => {
@@ -43,26 +26,18 @@ export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
         return;
       }
 
-      // 로그인 성공 후 UserProvider가 다시 fetch하도록 리셋
-      setInitialized(false);
-
-      switch (result.onboardingStep) {
-        case "BASIC":
-          router.replace("/onboarding/basic");
-          return;
-        case "CHARACTERISTIC":
-          router.replace("/onboarding/characteristic");
-          return;
-        case "DONE": {
-          const returnUrl = getAndClearReturnUrl();
-          router.replace(returnUrl ?? "/");
-          return;
-        }
+      // OAuth 성공 후 getMe로 사용자 정보 조회하여 setUser
+      // RouteGuard가 user 상태 변경을 감지하여 자동으로 리다이렉트 처리
+      const meResult = await getMe();
+      if (meResult.httpStatus === "200 OK" && meResult.data) {
+        setUser(meResult.data);
+      } else {
+        setError("사용자 정보를 불러올 수 없습니다.");
       }
     };
 
     run();
-  }, [code, router]);
+  }, [code, setUser]);
 
   if (error) {
     return <KakaoCallbackError message={error} />;

@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "@/src/components/ui/sonner";
 import localFont from 'next/font/local';
 import { UserProvider } from "@/src/components/providers/UserProvider";
+import { RouteGuard } from "@/src/components/guards/RouteGuard";
 
 const pretendard = localFont({
   src: 'fonts/PretendardVariable.woff2',
@@ -25,7 +26,9 @@ export default function RootLayout({
     <html lang="ko" className={`${pretendard.variable}`}>
       <body className="--font-pretendard antialiased bg-background">
         <UserProvider>
-          {children}
+          <RouteGuard>
+            {children}
+          </RouteGuard>
         </UserProvider>
         <Toaster />
       </body>
