@@ -16,7 +16,7 @@ export const STATUS_BADGE_CONFIG: Record<
     variant: "diningAttendance",
   },
   RECOMMENDATION_PENDING: {
-    label: "추천 대기",
+    label: "장소 추천중",
     variant: "diningRestaurant",
   },
   RESTAURANT_VOTING: {
