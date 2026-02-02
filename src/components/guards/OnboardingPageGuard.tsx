@@ -18,7 +18,13 @@ export function OnboardingPageGuard({
   const { user, isLoading, isInitialized } = useUserStore();
 
   useEffect(() => {
-    if (!isInitialized || isLoading || !user) return;
+    if (!isInitialized || isLoading) return;
+
+    // 인증되지 않은 사용자는 로그인으로
+    if (!user) {
+      router.replace(ROUTES.LOGIN);
+      return;
+    }
 
     if (user.onboardingStep === 'DONE') {
       router.replace(ROUTES.MAIN);
@@ -38,10 +44,12 @@ export function OnboardingPageGuard({
     return <OnboardingPageGuardSkeleton />;
   }
 
-  if (
-    user?.onboardingStep === 'DONE' ||
-    user?.onboardingStep !== requiredStatus
-  ) {
+  // user가 null이면 로그인으로 리다이렉트 중
+  if (!user) {
+    return <OnboardingPageGuardSkeleton />;
+  }
+
+  if (user.onboardingStep === 'DONE' || user.onboardingStep !== requiredStatus) {
     return <OnboardingPageGuardSkeleton />;
   }
 
