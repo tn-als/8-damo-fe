@@ -17,6 +17,7 @@ import { Button } from "../../ui/button";
 import { toast } from "@/src/components/ui/sonner";
 import { getImageContentType } from "@/src/constants/s3/util";
 import { useCompleteOnboarding } from "@/src/hooks/use-complete-onboarding";
+import { useRouter } from "next/navigation";
 
 interface BasicInfoFormProps {
   defaultValues?: Partial<BasicInfoFormProps>;
@@ -26,6 +27,7 @@ interface BasicInfoFormProps {
 export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
   const { advanceToNextStep } = useCompleteOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const { control, handleSubmit, formState: { isValid } } = useForm<BasicInfoFormValues>({
     resolver: zodResolver(basicInfoSchema),
@@ -104,7 +106,7 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
       const advanced = await advanceToNextStep("CHARACTERISTIC");
       if (!advanced) {
         setIsSubmitting(false);
-        return;
+        router.push("/onboarding/characteristic");
       }
       setIsSubmitting(false);
     } else {
