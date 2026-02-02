@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
-import { refreshRecommendRestaurants } from "@/src/lib/actions/dining";
+import { confirmRestaurant, refreshRecommendRestaurants } from "@/src/lib/actions/dining";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
@@ -121,32 +121,29 @@ export function RestaurantVotingSection({
       return;
     }
 
+    if (activeRestaurantId === null) {
+      toast.error("확정할 식당을 선택할 수 없습니다.");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const response = await fetch(
-      `/api/groups/${groupId}/dining/${diningId}/recommend-restaurants/${activeRestaurantId}/confirmed`,
-      {
-        method: "PATCH",
-      }
-    );
-    const payload = await response.json().catch(() => null);
-    const errorMessage =
-      payload?.errorMessage ??
-      payload?.data?.errorMessage ??
-      "회식 장소 확정에 실패했습니다.";
+    const result = await confirmRestaurant({
+      groupId,
+      diningId,
+      recommendRestaurantsId: activeRestaurantId,
+    });
 
     setIsSubmitting(false);
     setIsDialogOpen(false);
 
-    if (!response.ok) {
-      toast.error(errorMessage);
+    if (!result.success) {
+      toast.error(result.error ?? "회식 장소 확정에 실패했습니다.");
       return;
     }
 
     toast.success("회식 장소가 확정되었습니다.");
-    if (activeRestaurantId !== null) {
-      handleConfirmDining(activeRestaurantId);
-    }
+    handleConfirmDining(activeRestaurantId);
   };
 
   return (

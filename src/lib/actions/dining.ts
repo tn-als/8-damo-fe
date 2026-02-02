@@ -68,6 +68,12 @@ interface RefreshRecommendRestaurantsRequest {
   diningId: string;
 }
 
+interface ConfirmRestaurantRequest {
+  groupId: string;
+  diningId: string;
+  recommendRestaurantsId: number;
+}
+
 type VoteRestaurantData =
   | {
       restaurantVoteStatus?: string;
@@ -90,6 +96,12 @@ interface VoteAttendanceResult {
 interface RefreshRecommendRestaurantsResult {
   success: boolean;
   data?: RestaurantVoteResponse[];
+  error?: string;
+}
+
+interface ConfirmRestaurantResult {
+  success: boolean;
+  data?: ConfirmedRestaurantResponse;
   error?: string;
 }
 
@@ -505,6 +517,57 @@ export async function refreshRecommendRestaurants({
     return { success: true, data };
   } catch (error) {
     console.error("[refreshRecommendRestaurants] Request failed", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
+    };
+  }
+}
+
+export async function confirmRestaurant({
+  groupId,
+  diningId,
+  recommendRestaurantsId,
+}: ConfirmRestaurantRequest): Promise<ConfirmRestaurantResult> {
+  const API_BASE_URL =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!API_BASE_URL) {
+    return { success: false, error: "API base URL이 설정되지 않았습니다." };
+  }
+
+  try {
+    const response = await fetchWithAuthRetry(
+      `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurants/${recommendRestaurantsId}/confirmed`,
+      {
+        method: "PATCH",
+      }
+    );
+
+    const payload = (await response.json().catch(() => null)) as
+      | ApiResponse<ConfirmedRestaurantResponse>
+      | ApiNestedResponse<ConfirmedRestaurantResponse>
+      | null;
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: getErrorMessage(payload, response.status),
+      };
+    }
+
+    const data = extractApiData(payload);
+
+    if (!data) {
+      return {
+        success: false,
+        error: "확정된 식당 정보를 확인할 수 없습니다.",
+      };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("[confirmRestaurant] Request failed", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
