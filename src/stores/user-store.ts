@@ -4,10 +4,10 @@ export type OnboardingStatus = 'BASIC' | 'CHARACTERISTIC' | 'DONE';
 
 export interface User {
   userId: string;
-  nickname: string;
+  nickname: string | null;
   gender: string | null;
   ageGroup: string | null;
-  imagePath: string;
+  imagePath: string | null;
   onboardingStep: OnboardingStatus;
 }
 

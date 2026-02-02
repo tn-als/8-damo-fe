@@ -1,7 +1,6 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
-import { redirectIfUnauthorized } from "../api/redirect-on-unauthorized";
 import type { User } from "@/src/stores/user-store";
 
 interface GetMeResponse {
@@ -26,13 +25,20 @@ export async function getMe(): Promise<GetMeResponse> {
       }
     );
 
-    redirectIfUnauthorized(response);
-    const data = await response.json();
+    const data = (await response.json().catch(() => null)) as
+      | { httpStatus?: string; data?: User; errorMessage?: string }
+      | null;
 
     if (!response.ok) {
-      return { httpStatus: data.httpStatus, error: `HTTP ${response.status}` };
+      return {
+        httpStatus: data?.httpStatus ?? String(response.status),
+        error: data?.errorMessage ?? `HTTP ${response.status}`,
+      };
     }
-    return { httpStatus: data.httpStatus, data: data.data };
+    return {
+      httpStatus: data?.httpStatus ?? "200 OK",
+      data: data?.data,
+    };
   } catch (error) {
     console.error("[getMe] Request failed", error);
     return {
