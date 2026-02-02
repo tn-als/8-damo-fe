@@ -9,6 +9,7 @@ interface DiningSummaryCardProps {
   status?: DiningStatus;
   className?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 const statusConfig: Record<
@@ -24,7 +25,7 @@ const statusConfig: Record<
   }
 > = {
   ATTENDANCE_VOTING: { label: "참석 투표", variant: "diningAttendance" },
-  RECOMMENDATION_PENDING: { label: "추천 대기", variant: "diningRestaurant" },
+  RECOMMENDATION_PENDING: { label: "장소 추천중", variant: "diningRestaurant" },
   RESTAURANT_VOTING: { label: "장소 투표", variant: "diningRestaurant" },
   CONFIRMED: { label: "회식 확정", variant: "confirmed" },
   COMPLETE: { label: "회식 완료", variant: "diningCompleted" },
@@ -36,15 +37,18 @@ export function DiningSummaryCard({
   status = "ATTENDANCE_VOTING",
   className,
   onClick,
+  disabled = false,
 }: DiningSummaryCardProps) {
   const { label, variant } = statusConfig[status];
 
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      aria-disabled={disabled}
       className={cn(
-        "flex h-[88px] w-full items-start gap-2 rounded-lg bg-white p-4 text-left transition-colors active:bg-gray-50",
+        "flex h-[88px] w-full items-start gap-2 rounded-lg bg-white p-4 text-left transition-colors active:bg-gray-50 disabled:cursor-default disabled:bg-white disabled:opacity-60 disabled:active:bg-white",
         className
       )}
     >
