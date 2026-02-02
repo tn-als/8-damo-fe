@@ -8,12 +8,14 @@ import { processKakaoOAuth } from "@/src/lib/actions/auth";
 import { KakaoCallbackError } from "./kakao-callback-error";
 import { useUserStore } from "@/src/stores/user-store";
 import { getMe } from "@/src/lib/actions/user";
+import { useRouter } from "next/navigation";
 
 interface KakaoCallbackContentProps {
   code: string;
 }
 
 export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const { setUser } = useUserStore();
 
@@ -31,6 +33,9 @@ export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
       const meResult = await getMe();
       if (meResult.httpStatus === "200 OK" && meResult.data) {
         setUser(meResult.data);
+        window.location.replace(
+          process.env.NEXT_PUBLIC_BASE_URL ?? "/"
+        );
       } else {
         setError("사용자 정보를 불러올 수 없습니다.");
       }
