@@ -101,6 +101,7 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
 
     if (result.success) {
       onSubmit?.(data);
+      setIsSubmitting(false);
       advanceToNextStep("CHARACTERISTIC");
     } else {
       toast.error(result.error || "저장에 실패했습니다.");
