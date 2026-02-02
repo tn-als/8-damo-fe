@@ -1,5 +1,4 @@
 import "server-only";
-import { redirect } from "next/navigation";
 import { getAccessToken } from "../cookie";
 
 export async function fetchWithAuthRetry(
@@ -14,10 +13,6 @@ export async function fetchWithAuthRetry(
   }
 
   const response = await fetch(input, { ...init, headers });
-
-  if (response.status === 401 || response.status === 403) {
-    redirect(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`);
-  }
 
   return response;
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
+import { redirectIfUnauthorized } from "../api/redirect-on-unauthorized";
 import type { User } from "@/src/stores/user-store";
 
 interface GetMeResponse {
@@ -25,6 +26,7 @@ export async function getMe(): Promise<GetMeResponse> {
       }
     );
 
+    redirectIfUnauthorized(response);
     const data = await response.json();
 
     if (!response.ok) {

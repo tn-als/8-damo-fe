@@ -1,6 +1,7 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
+import { redirectIfUnauthorized } from "../api/redirect-on-unauthorized";
 import { getErrorMessage } from "../api/error-handler";
 import { ALLOWED_IMAGE_CONTENT_TYPES } from "@/src/constants/s3/mime";
 import type { ApiResponse } from "@/src/types/api/common";
@@ -52,6 +53,7 @@ export async function getPresignedUrl(
       }
     );
 
+    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<PresignedUrlData>
       | null;
