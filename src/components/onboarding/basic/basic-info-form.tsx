@@ -102,13 +102,8 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
     });
 
     if (result.success) {
-      onSubmit?.(data);
-      const advanced = await advanceToNextStep("CHARACTERISTIC");
-      if (!advanced) {
-        setIsSubmitting(false);
-        router.push("/onboarding/characteristic");
-      }
-      setIsSubmitting(false);
+      await advanceToNextStep("CHARACTERISTIC");
+      router.replace("/onboarding/characteristic");
     } else {
       toast.error(result.error || "저장에 실패했습니다.");
       setIsSubmitting(false);
