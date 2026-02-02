@@ -16,7 +16,7 @@ export async function fetchWithAuthRetry(
   const response = await fetch(input, { ...init, headers });
 
   if (response.status === 401 || response.status === 403) {
-    redirect("/login");
+    redirect(`${process.env.NEXT_PUBLIC_API_BASE_URL}/login`);
   }
 
   return response;
