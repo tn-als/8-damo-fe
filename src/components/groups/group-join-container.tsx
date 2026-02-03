@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CameraScanSection } from "./camera-scan-section";
 
@@ -10,16 +10,23 @@ export function GroupJoinContainer() {
   const router = useRouter();
   const [scanResult, setScanResult] = useState<ScanResult>({ status: "idle" });
   const [isScanning, setIsScanning] = useState(false);
+  const [scannedGroupId, setScannedGroupId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!scannedGroupId) return;
+    router.push(`/groups/preview/${scannedGroupId}`);
+  }, [router, scannedGroupId]);
 
   const handleScanSuccess = useCallback(
     (groupId: string) => {
-      router.push(`/groups/preview/${groupId}`);
+      setScannedGroupId(groupId);
     },
-    [router]
+    []
   );
 
   const handleRescan = useCallback(() => {
     setScanResult({ status: "idle" });
+    setScannedGroupId(null);
   }, []);
 
   return (
