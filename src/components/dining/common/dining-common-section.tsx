@@ -1,4 +1,9 @@
-import type { DiningParticipantResponse, DiningStatus } from "@/src/types/api/dining";
+"use client";
+
+import type {
+  DiningParticipantResponse,
+  DiningStatus,
+} from "@/src/types/api/dining";
 import { DiningHeader } from "./dining-header";
 import { DiningParticipantList } from "./dining-participant-list";
 

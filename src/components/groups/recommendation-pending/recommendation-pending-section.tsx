@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { DiningSummaryCard } from "@/src/components/groups/dining-summary-card";
 import { getGroupDiningSummaries } from "@/src/lib/actions/dining";
 import type { DiningSummary } from "@/src/types/api/dining";
@@ -29,6 +30,7 @@ interface RecommendationPendingSectionProps {
 export function RecommendationPendingSection({
   groupId,
 }: RecommendationPendingSectionProps) {
+  const router = useRouter();
   const [pendingDinings, setPendingDinings] = useState<DiningSummary[]>([]);
   const [isExpired, setIsExpired] = useState(false);
 
@@ -118,6 +120,10 @@ export function RecommendationPendingSection({
 
   if (pendingDinings.length === 0) return null;
 
+  const handleDiningClick = (diningId: string) => {
+    router.push(`/groups/${groupId}/dining/${diningId}`);
+  };
+
   return (
     <section className="flex flex-col gap-4 px-5 pt-4">
       <div className="rounded-xl bg-white px-4 py-3">
@@ -164,7 +170,7 @@ export function RecommendationPendingSection({
                   date={dining.diningDate}
                   attendeeCount={dining.diningParticipantsCount}
                   status={dining.status}
-                  disabled
+                  onClick={() => handleDiningClick(String(dining.diningId))}
                 />
 
                 {!isLast && (

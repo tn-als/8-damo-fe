@@ -1,3 +1,5 @@
+"use client";
+
 import { Header } from "@/src/components/layout";
 import type { DiningStatus } from "@/src/types/api/dining";
 import { DiningDate } from "./dining-date";
