@@ -17,6 +17,7 @@ import type {
   DiningStatus,
   RestaurantVoteResponse,
 } from "@/src/types/api/dining";
+import { Toaster } from "../ui/sonner";
 
 const POLLING_INTERVAL_MS = 5_000;
 
@@ -37,7 +38,6 @@ export function DiningDetailClient({
     useState<RestaurantVoteResponse[] | null>(null);
   const [confirmedRestaurant, setConfirmedRestaurant] =
     useState<ConfirmedRestaurantResponse | null>(null);
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   const lastStatusRef = useRef<DiningStatus>(initialDiningCommon.diningStatus);
   const initializedRef = useRef(false);
@@ -86,21 +86,15 @@ export function DiningDetailClient({
       query.state.data?.diningStatus === "CONFIRMED"
         ? false
         : POLLING_INTERVAL_MS,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false
   });
-
-  const pushError = (error: unknown) => {
-    const message =
-      error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.";
-    setErrorMessages((prev) => [...prev, message]);
-  };
 
   const resetSectionData = () => {
     setAttendanceVote(null);
     setRestaurantVotes(null);
     setConfirmedRestaurant(null);
   };
-
+  
   const fetchSectionData = async (status: DiningStatus) => {
     resetSectionData();
 
@@ -115,7 +109,9 @@ export function DiningDetailClient({
         );
         setAttendanceVote(data);
       } catch (error) {
-        pushError(error);
+        {diningCommonError && (
+          <DiningErrorToast messages={[diningCommonError.message]}/>
+        )}
       }
     }
 
@@ -126,7 +122,9 @@ export function DiningDetailClient({
         );
         setRestaurantVotes(data);
       } catch (error) {
-        pushError(error);
+        {diningCommonError && (
+          <DiningErrorToast messages={[diningCommonError.message]}/>
+        )}
       }
     }
 
@@ -137,16 +135,12 @@ export function DiningDetailClient({
         );
         setConfirmedRestaurant(data);
       } catch (error) {
-        pushError(error);
+        {diningCommonError && (
+          <DiningErrorToast messages={[diningCommonError.message]}/>
+        )}
       }
     }
   };
-
-  useEffect(() => {
-    if (diningCommonError) {
-      pushError(diningCommonError);
-    }
-  }, [diningCommonError]);
 
   useEffect(() => {
     if (!diningCommon) return;
@@ -158,15 +152,17 @@ export function DiningDetailClient({
     if (isInitial || isChanged) {
       lastStatusRef.current = nextStatus;
       initializedRef.current = true;
-      void fetchSectionData(nextStatus);
+      queueMicrotask(() => {
+        void fetchSectionData(nextStatus);
+      });
     }
   }, [diningCommon?.diningStatus]);
 
   if (!diningCommon) {
     return (
       <>
-        {errorMessages.length > 0 && (
-          <DiningErrorToast messages={errorMessages} />
+        {diningCommonError && (
+          <DiningErrorToast messages={[diningCommonError.message]}/>
         )}
       </>
     );
@@ -181,8 +177,8 @@ export function DiningDetailClient({
       diningParticipants={diningCommon.diningParticipants}
       isGroupLeader={diningCommon.isGroupLeader}
     >
-      {errorMessages.length > 0 && (
-        <DiningErrorToast messages={errorMessages} />
+      {diningCommonError && (
+        <DiningErrorToast messages={[diningCommonError.message]}/>
       )}
       {diningStatus === "ATTENDANCE_VOTING" && attendanceVote && (
         <AttendanceVotingSection
