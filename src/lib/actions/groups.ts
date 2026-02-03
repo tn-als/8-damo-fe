@@ -1,7 +1,6 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
-import { redirectIfUnauthorized } from "../api/redirect-on-unauthorized";
 import { getErrorMessage } from "../api/error-handler";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type { GroupSummary } from "@/src/types/groups";
@@ -71,7 +70,6 @@ export async function createGroup(
       body: JSON.stringify(data),
     });
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<number>
       | null;
@@ -124,7 +122,6 @@ export async function getGroupDetail(
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<GroupDetailResponse>
       | null;
@@ -170,7 +167,6 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<MyGroupSummaryResponse[]>
       | null;
@@ -228,7 +224,6 @@ export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiNestedResponse<number>
       | null;

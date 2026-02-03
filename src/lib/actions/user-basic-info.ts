@@ -1,7 +1,6 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
-import { redirectIfUnauthorized } from "../api/redirect-on-unauthorized";
 import { getErrorMessage } from "../api/error-handler";
 import type { ApiResponse } from "@/src/types/api/common";
 
@@ -38,7 +37,6 @@ export async function updateBasicInfo(
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<unknown>
       | null;
