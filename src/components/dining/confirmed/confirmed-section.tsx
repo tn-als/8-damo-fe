@@ -1,3 +1,5 @@
+"use client";
+
 import { RestaurantCard } from "../restaurant-vote/restaurant-card";
 import { ConfirmedFallback } from "./confirmed-fallback";
 import type { ConfirmedRestaurantResponse } from "@/src/types/api/dining";
