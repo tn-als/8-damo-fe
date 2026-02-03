@@ -1,7 +1,6 @@
 "use server";
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
-import { redirectIfUnauthorized } from "../api/redirect-on-unauthorized";
 import { getErrorMessage } from "../api/error-handler";
 import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
 import type {
@@ -148,7 +147,6 @@ export async function createDining(
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<number>
       | null;
@@ -203,7 +201,6 @@ export async function getGroupDiningSummaries(
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<DiningSummary[]>
       | null;
@@ -253,7 +250,6 @@ export async function getDiningCommon({
     }
   );
 
-  redirectIfUnauthorized(response);
   const payload = (await response.json().catch(() => null)) as
     | ApiResponse<DiningCommonResponse>
     | ApiNestedResponse<DiningCommonResponse>
@@ -291,7 +287,6 @@ export async function getDiningRestaurantVote({
     }
   );
 
-  redirectIfUnauthorized(response);
   const payload = (await response.json().catch(() => null)) as
     | ApiResponse<RestaurantVoteResponse[]>
     | ApiNestedResponse<RestaurantVoteResponse[]>
@@ -329,7 +324,6 @@ export async function getDiningAttendanceVote({
     }
   );
 
-  redirectIfUnauthorized(response);
   const payload = (await response.json().catch(() => null)) as
     | ApiResponse<AttendanceVoteResponse>
     | ApiNestedResponse<AttendanceVoteResponse>
@@ -367,7 +361,6 @@ export async function getDiningConfirmed({
     }
   );
 
-  redirectIfUnauthorized(response);
   const payload = (await response.json().catch(() => null)) as
     | ApiResponse<ConfirmedRestaurantResponse>
     | ApiNestedResponse<ConfirmedRestaurantResponse>
@@ -411,7 +404,6 @@ export async function voteRestaurant({
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<VoteRestaurantData>
       | ApiNestedResponse<VoteRestaurantData>
@@ -460,7 +452,6 @@ export async function voteAttendance({
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<unknown>
       | ApiNestedResponse<unknown>
@@ -502,7 +493,6 @@ export async function refreshRecommendRestaurants({
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<RestaurantVoteResponse[]>
       | ApiNestedResponse<RestaurantVoteResponse[]>
@@ -554,7 +544,6 @@ export async function confirmRestaurant({
       }
     );
 
-    redirectIfUnauthorized(response);
     const payload = (await response.json().catch(() => null)) as
       | ApiResponse<ConfirmedRestaurantResponse>
       | ApiNestedResponse<ConfirmedRestaurantResponse>

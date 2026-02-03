@@ -8,51 +8,84 @@ interface CameraScanSectionProps {
   onScanSuccess: (groupId: string) => void;
   isScanning: boolean;
   onScanningChange: (scanning: boolean) => void;
+  disabled?: boolean;
 }
 
 export function CameraScanSection({
   onScanSuccess,
   isScanning,
   onScanningChange,
+  disabled = false,
 }: CameraScanSectionProps) {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(true);
+  const isStartingRef = useRef(false);
+  const isStoppingRef = useRef(false);
+  const isRunningRef = useRef(false);
+  const hasHandledSuccessRef = useRef(false);
+  const onScanSuccessRef = useRef(onScanSuccess);
+  const onScanningChangeRef = useRef(onScanningChange);
   const [error, setError] = useState<PermissionError | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    onScanSuccessRef.current = onScanSuccess;
+    onScanningChangeRef.current = onScanningChange;
+  }, [onScanSuccess, onScanningChange]);
+
   const stopScanner = useCallback(async () => {
-    if (scannerRef.current) {
-      try {
+    if (!scannerRef.current || isStoppingRef.current) return;
+
+    isStoppingRef.current = true;
+
+    try {
+      if (isRunningRef.current) {
         await scannerRef.current.stop();
-        await scannerRef.current.clear();
-      } catch {
-        // 이미 멈춰있는 경우 무시
       }
+      await scannerRef.current.clear();
+      isRunningRef.current = false;
+    } catch {
+      // 이미 멈춰있는 경우 무시
+    } finally {
+      isStoppingRef.current = false;
     }
   }, []);
 
   const startScanner = useCallback(async () => {
     if (!containerRef.current || !isMountedRef.current) return;
+    if (disabled) return;
+    if (isStartingRef.current || isStoppingRef.current || isRunningRef.current) return;
 
     setError(null);
     setIsInitializing(true);
+
+    isStartingRef.current = true;
+    hasHandledSuccessRef.current = false;
 
     try {
       // 기존 스캐너 정리
       await stopScanner();
 
-      const scanner = new Html5Qrcode("qr-reader");
-      scannerRef.current = scanner;
+      if (!scannerRef.current) {
+        scannerRef.current = new Html5Qrcode("qr-reader");
+      }
 
-      await scanner.start(
+      await scannerRef.current.start(
         { facingMode: "environment" }, 
         {
           fps: 10,
           qrbox: { width: 200, height: 200 },
           aspectRatio: 1,
         },
-        (decodedText) => {
+        async (decodedText) => {
 
           let groupId: string | null = null;
 
@@ -65,10 +98,14 @@ export function CameraScanSection({
           }
 
           if (!groupId || !isMountedRef.current) return;
+          if (hasHandledSuccessRef.current) return;
 
-          onScanSuccess(groupId);
-          onScanningChange(false);
-          stopScanner();
+          hasHandledSuccessRef.current = true;
+
+          await stopScanner();
+          if (!isMountedRef.current) return;
+          onScanningChangeRef.current(false);
+          onScanSuccessRef.current(groupId);
         },
         () => {
           // QR 코드 미감지 - 무시
@@ -78,7 +115,8 @@ export function CameraScanSection({
       if (!isMountedRef.current) return;
 
       setIsInitializing(false);
-      onScanningChange(true);
+      onScanningChangeRef.current(true);
+      isRunningRef.current = true;
     } catch (err) {
       if (
         err instanceof Error &&
@@ -89,7 +127,7 @@ export function CameraScanSection({
       }
 
       setIsInitializing(false);
-      onScanningChange(false);
+      onScanningChangeRef.current(false);
 
       if (err instanceof Error) {
         if (err.name === "NotAllowedError" || err.message.includes("Permission denied")) {
@@ -104,21 +142,23 @@ export function CameraScanSection({
       } else {
         setError("unknown");
       }
+    } finally {
+      isStartingRef.current = false;
     }
-  }, [onScanSuccess, onScanningChange, stopScanner]);
+  }, [disabled, stopScanner]);
 
   useEffect(() => {
-    isMountedRef.current = true;
-
-    queueMicrotask(() => {
-      startScanner();
-    });
+    startScanner();
 
     return () => {
-      isMountedRef.current = false;
       stopScanner();
     };
   }, [startScanner, stopScanner]);
+
+  useEffect(() => {
+    if (!disabled) return;
+    stopScanner();
+  }, [disabled, stopScanner]);
 
   const handleRetry = () => {
     startScanner();
