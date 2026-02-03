@@ -505,13 +505,9 @@ export async function refreshRecommendRestaurants({
       };
     }
 
-    const data = extractApiData(payload);
-
-    if (!data) {
-      return {
-        success: false,
-        error: "재추천 결과를 확인할 수 없습니다.",
-      };
+    let data = extractApiData(payload);
+    if (!data){
+      data = [];
     }
 
     return { success: true, data };

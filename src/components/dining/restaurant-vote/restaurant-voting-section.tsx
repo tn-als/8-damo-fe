@@ -89,21 +89,18 @@ export function RestaurantVotingSection({
     setIsRetryingRecommendation(true);
 
     const result = await refreshRecommendRestaurants({ groupId, diningId });
-
     setIsRetryingRecommendation(false);
 
-    if (!result.success || !result.data) {
+    if (!result.success) {
       toast.error(result.error ?? "재추천 요청에 실패했습니다.");
       return;
     }
 
-    if (!result.data.length) {
-      toast.error("새 추천 결과가 없습니다.");
+    if (result.data?.length === 0) {
+      window.location.reload(); 
       return;
     }
 
-    restaurants = result.data;
-    setActiveIndex(0);
     onRetryRecommendation?.();
   };
 
