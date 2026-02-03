@@ -1,4 +1,8 @@
-import { AttendanceVotingSection, ConfirmedSection } from "@/src/components/dining";
+import {
+  AttendanceVotingSection,
+  ConfirmedSection,
+  RecommendationPendingSection,
+} from "@/src/components/dining";
 import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
 import { RestaurantVotingSection } from "@/src/components/dining/restaurant-vote";
@@ -115,6 +119,9 @@ export default async function DiningDetailPage({
           isGroupLeader={diningCommon.isGroupLeader}
           canAdditionalAttend={false}
         />
+      )}
+      {diningStatus === "RECOMMENDATION_PENDING" && (
+        <RecommendationPendingSection />
       )}
       {diningStatus === "CONFIRMED" && (
         <ConfirmedSection
