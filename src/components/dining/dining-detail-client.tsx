@@ -79,7 +79,7 @@ export function DiningDetailClient({
     queryKey: ["dining-common", groupId, diningId],
     queryFn: () =>
       fetchJson<DiningCommonResponse>(
-        `/api/proxy/groups/${groupId}/dining/${diningId}/common`
+        `/bff/groups/${groupId}/dining/${diningId}/common`
       ),
     initialData: initialDiningCommon,
     refetchInterval: (query) =>
@@ -105,7 +105,7 @@ export function DiningDetailClient({
     if (status === "ATTENDANCE_VOTING") {
       try {
         const data = await fetchJson<AttendanceVoteResponse>(
-          `/api/proxy/groups/${groupId}/dining/${diningId}/attendance-vote`
+          `/bff/groups/${groupId}/dining/${diningId}/attendance-vote`
         );
         setAttendanceVote(data);
       } catch (error) {
@@ -118,7 +118,7 @@ export function DiningDetailClient({
     if (status === "RESTAURANT_VOTING") {
       try {
         const data = await fetchJson<RestaurantVoteResponse[]>(
-          `/api/proxy/groups/${groupId}/dining/${diningId}/restaurant-vote`
+          `/bff/groups/${groupId}/dining/${diningId}/restaurant-vote`
         );
         setRestaurantVotes(data);
       } catch (error) {
@@ -131,7 +131,7 @@ export function DiningDetailClient({
     if (status === "CONFIRMED") {
       try {
         const data = await fetchJson<ConfirmedRestaurantResponse>(
-          `/api/proxy/groups/${groupId}/dining/${diningId}/confirmed`
+          `/bff/groups/${groupId}/dining/${diningId}/confirmed`
         );
         setConfirmedRestaurant(data);
       } catch (error) {
