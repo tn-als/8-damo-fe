@@ -10,12 +10,6 @@ import {
 } from "@/src/components/dining";
 import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
-import {
-  getDiningAttendanceVote,
-  getDiningCommon,
-  getDiningConfirmed,
-  getDiningRestaurantVote,
-} from "@/src/lib/actions/dining";
 import type {
   AttendanceVoteResponse,
   ConfirmedRestaurantResponse,
@@ -48,12 +42,45 @@ export function DiningDetailClient({
   const lastStatusRef = useRef<DiningStatus>(initialDiningCommon.diningStatus);
   const initializedRef = useRef(false);
 
+  const fetchJson = async <T,>(url: string): Promise<T> => {
+    const response = await fetch(url, { cache: "no-store" });
+    const payload = (await response.json().catch(() => null)) as
+      | { data?: T | { data?: T }; errorMessage?: string }
+      | T
+      | null;
+
+    if (!response.ok) {
+      const message =
+        payload && typeof payload === "object" && "errorMessage" in payload
+          ? payload.errorMessage
+          : "요청 중 오류가 발생했습니다.";
+      throw new Error(message || "요청 중 오류가 발생했습니다.");
+    }
+
+    if (payload && typeof payload === "object" && "data" in payload) {
+      if (
+        payload.data &&
+        typeof payload.data === "object" &&
+        "data" in payload.data
+      ) {
+        return (payload.data.data ?? payload.data) as T;
+      }
+
+      return (payload.data ?? payload) as T;
+    }
+
+    return payload as T;
+  };
+
   const {
     data: diningCommon,
     error: diningCommonError,
   } = useQuery({
     queryKey: ["dining-common", groupId, diningId],
-    queryFn: () => getDiningCommon({ groupId, diningId }),
+    queryFn: () =>
+      fetchJson<DiningCommonResponse>(
+        `/api/groups/${groupId}/dining/${diningId}/common`
+      ),
     initialData: initialDiningCommon,
     refetchInterval: (query) =>
       query.state.data?.diningStatus === "CONFIRMED"
@@ -83,7 +110,9 @@ export function DiningDetailClient({
 
     if (status === "ATTENDANCE_VOTING") {
       try {
-        const data = await getDiningAttendanceVote({ groupId, diningId });
+        const data = await fetchJson<AttendanceVoteResponse>(
+          `/api/groups/${groupId}/dining/${diningId}/attendance-vote`
+        );
         setAttendanceVote(data);
       } catch (error) {
         pushError(error);
@@ -92,7 +121,9 @@ export function DiningDetailClient({
 
     if (status === "RESTAURANT_VOTING") {
       try {
-        const data = await getDiningRestaurantVote({ groupId, diningId });
+        const data = await fetchJson<RestaurantVoteResponse[]>(
+          `/api/groups/${groupId}/dining/${diningId}/restaurant-vote`
+        );
         setRestaurantVotes(data);
       } catch (error) {
         pushError(error);
@@ -101,7 +132,9 @@ export function DiningDetailClient({
 
     if (status === "CONFIRMED") {
       try {
-        const data = await getDiningConfirmed({ groupId, diningId });
+        const data = await fetchJson<ConfirmedRestaurantResponse>(
+          `/api/groups/${groupId}/dining/${diningId}/confirmed`
+        );
         setConfirmedRestaurant(data);
       } catch (error) {
         pushError(error);
