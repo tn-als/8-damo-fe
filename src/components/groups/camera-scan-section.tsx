@@ -21,6 +21,7 @@ export function CameraScanSection({
   const isStartingRef = useRef(false);
   const isStoppingRef = useRef(false);
   const isRunningRef = useRef(false);
+  const hasHandledSuccessRef = useRef(false);
   const [error, setError] = useState<PermissionError | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -57,6 +58,7 @@ export function CameraScanSection({
     setIsInitializing(true);
 
     isStartingRef.current = true;
+    hasHandledSuccessRef.current = false;
 
     try {
       // 기존 스캐너 정리
@@ -73,7 +75,7 @@ export function CameraScanSection({
           qrbox: { width: 200, height: 200 },
           aspectRatio: 1,
         },
-        (decodedText) => {
+        async (decodedText) => {
 
           let groupId: string | null = null;
 
@@ -86,10 +88,14 @@ export function CameraScanSection({
           }
 
           if (!groupId || !isMountedRef.current) return;
+          if (hasHandledSuccessRef.current) return;
 
-          onScanSuccess(groupId);
+          hasHandledSuccessRef.current = true;
+
+          await stopScanner();
+          if (!isMountedRef.current) return;
           onScanningChange(false);
-          stopScanner();
+          onScanSuccess(groupId);
         },
         () => {
           // QR 코드 미감지 - 무시
