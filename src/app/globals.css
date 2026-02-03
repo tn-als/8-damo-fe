@@ -3,8 +3,16 @@
 
 html,
 body {
-  overflow-y: auto;
+  height: 100%;
+  overflow: hidden;
   -webkit-overflow-scrolling: touch;
+}
+
+#app-root,
+.app-root {
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* sm breakpoint (360px) 이상에서 네비게이션 바 높이 변경 */
