@@ -12,9 +12,18 @@ import { useRouter } from "next/navigation";
 
 interface KakaoCallbackContentProps {
   code: string;
+  redirectPath?: string;
 }
 
-export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
+function normalizeRedirectPath(path?: string): string | null {
+  if (!path) return null;
+  return path.startsWith("/") ? path : null;
+}
+
+export function KakaoCallbackContent({
+  code,
+  redirectPath,
+}: KakaoCallbackContentProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const { setUser } = useUserStore();
@@ -33,16 +42,16 @@ export function KakaoCallbackContent({ code }: KakaoCallbackContentProps) {
       const meResult = await getMe();
       if (meResult.httpStatus === "200 OK" && meResult.data) {
         setUser(meResult.data);
-        window.location.replace(
-          process.env.NEXT_PUBLIC_BASE_URL ?? "/"
-        );
+        const fallbackUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "/";
+        const nextPath = normalizeRedirectPath(redirectPath);
+        window.location.replace(nextPath ?? fallbackUrl);
       } else {
         setError("사용자 정보를 불러올 수 없습니다.");
       }
     };
 
     run();
-  }, [code, setUser]);
+  }, [code, redirectPath, setUser]);
 
   if (error) {
     return <KakaoCallbackError message={error} />;
