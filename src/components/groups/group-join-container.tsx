@@ -37,6 +37,7 @@ export function GroupJoinContainer() {
             onScanSuccess={handleScanSuccess}
             isScanning={isScanning}
             onScanningChange={setIsScanning}
+            disabled={Boolean(scannedGroupId)}
           />
         </>
       )}
