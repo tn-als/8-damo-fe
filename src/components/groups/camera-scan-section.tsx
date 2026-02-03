@@ -24,6 +24,13 @@ export function CameraScanSection({
   const [error, setError] = useState<PermissionError | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const stopScanner = useCallback(async () => {
     if (!scannerRef.current || isStoppingRef.current) return;
 
@@ -125,14 +132,9 @@ export function CameraScanSection({
   }, [onScanSuccess, onScanningChange, stopScanner]);
 
   useEffect(() => {
-    isMountedRef.current = true;
-
-    queueMicrotask(() => {
-      startScanner();
-    });
+    startScanner();
 
     return () => {
-      isMountedRef.current = false;
       stopScanner();
     };
   }, [startScanner, stopScanner]);
