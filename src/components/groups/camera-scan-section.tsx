@@ -18,34 +18,48 @@ export function CameraScanSection({
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isMountedRef = useRef(true);
+  const isStartingRef = useRef(false);
+  const isStoppingRef = useRef(false);
+  const isRunningRef = useRef(false);
   const [error, setError] = useState<PermissionError | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
   const stopScanner = useCallback(async () => {
-    if (scannerRef.current) {
-      try {
+    if (!scannerRef.current || isStoppingRef.current) return;
+
+    isStoppingRef.current = true;
+
+    try {
+      if (isRunningRef.current) {
         await scannerRef.current.stop();
-        await scannerRef.current.clear();
-      } catch {
-        // 이미 멈춰있는 경우 무시
       }
+      await scannerRef.current.clear();
+      isRunningRef.current = false;
+    } catch {
+      // 이미 멈춰있는 경우 무시
+    } finally {
+      isStoppingRef.current = false;
     }
   }, []);
 
   const startScanner = useCallback(async () => {
     if (!containerRef.current || !isMountedRef.current) return;
+    if (isStartingRef.current || isStoppingRef.current || isRunningRef.current) return;
 
     setError(null);
     setIsInitializing(true);
+
+    isStartingRef.current = true;
 
     try {
       // 기존 스캐너 정리
       await stopScanner();
 
-      const scanner = new Html5Qrcode("qr-reader");
-      scannerRef.current = scanner;
+      if (!scannerRef.current) {
+        scannerRef.current = new Html5Qrcode("qr-reader");
+      }
 
-      await scanner.start(
+      await scannerRef.current.start(
         { facingMode: "environment" }, 
         {
           fps: 10,
@@ -79,6 +93,7 @@ export function CameraScanSection({
 
       setIsInitializing(false);
       onScanningChange(true);
+      isRunningRef.current = true;
     } catch (err) {
       if (
         err instanceof Error &&
@@ -104,6 +119,8 @@ export function CameraScanSection({
       } else {
         setError("unknown");
       }
+    } finally {
+      isStartingRef.current = false;
     }
   }, [onScanSuccess, onScanningChange, stopScanner]);
 
