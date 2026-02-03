@@ -36,7 +36,10 @@ export default function GroupPreviewClient({
                 로그인 후 바로 참여할 수 있어요.
               </p>
 
-              <LoginButton className="h-14 w-full px-6 text-base font-medium" />
+              <LoginButton
+                className="h-14 w-full px-6 text-base font-medium"
+                redirectTo={`/groups/preview/${groupId}`}
+              />
             </div>
           </div>
         </div>

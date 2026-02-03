@@ -19,9 +19,10 @@ function KakaoSymbol({ className }: { className?: string }) {
 
 interface LoginButtonProps {
     className?: string;
+    redirectTo?: string;
 }
 
-export function LoginButton({ className }: LoginButtonProps) {
+export function LoginButton({ className, redirectTo }: LoginButtonProps) {
     const handleLogin = () => {
         if (!kakaoClientId || !kakaoRedirectUri) {
             window.alert("카카오 로그인 설정이 필요합니다.");
@@ -32,6 +33,9 @@ export function LoginButton({ className }: LoginButtonProps) {
         authorizeUrl.searchParams.set("client_id", kakaoClientId);
         authorizeUrl.searchParams.set("redirect_uri", kakaoRedirectUri);
         authorizeUrl.searchParams.set("response_type", "code");
+        if (redirectTo) {
+            authorizeUrl.searchParams.set("state", redirectTo);
+        }
 
         window.location.assign(authorizeUrl.toString());
     };
