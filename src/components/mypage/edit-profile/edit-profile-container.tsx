@@ -111,7 +111,7 @@ export function EditProfileContainer({ initialData }: EditProfileContainerProps)
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-border bg-background p-4">
+      <div className="sticky w-full inset-x-0 bottom-0 border-t border-border bg-background p-4">
         <Button
           type="submit"
           className="w-full"
