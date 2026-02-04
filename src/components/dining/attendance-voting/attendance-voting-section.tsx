@@ -53,8 +53,8 @@ export function AttendanceVotingSection({
   };
 
   return (
-    <section className="w-full rounded-[20px] bg-white p-5">
-      <div className="flex flex-col items-center gap-[52px]">
+    <section className="w-full rounded-[20px] bg-white p-4 sm:p-5">
+      <div className="flex flex-col items-center gap-10 sm:gap-[52px]">
         <AttendanceVoteProgress
           totalCount={progress.totalCount}
           voteCount={progress.voteCount} />

@@ -15,14 +15,14 @@ export function ConfirmedSection({
 }: ConfirmedSectionProps) {
   if (!restaurant) {
     return (
-      <section className="flex w-full flex-col items-center gap-4">
+      <section className="flex w-full flex-col items-center gap-4 px-4 sm:px-5">
         <ConfirmedFallback description={fallbackDescription} />
       </section>
     );
   }
 
   return (
-    <section className="flex w-full flex-col items-center gap-4">
+    <section className="flex w-full flex-col items-center gap-4 px-4 sm:px-5">
       <RestaurantCard
         restaurant={restaurant}
         showActions={false}

@@ -37,8 +37,8 @@ export function DiningBudgetField({
         },
       }}
       render={({ field, fieldState: { error } }) => (
-        <div className="flex flex-col gap-3">
-          <Label htmlFor={name} className="text-lg font-bold text-[#333]">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
+          <Label htmlFor={name} className="text-base font-bold text-[#333] sm:text-lg">
             예산 <span className="text-destructive">*</span>
           </Label>
           <div className="relative">
@@ -52,7 +52,7 @@ export function DiningBudgetField({
               allowDecimal={false}
               formatNumber={true}
               aria-invalid={!!error}
-              className="h-[54px] rounded-[8px] bg-[#f2f2f7] px-4 py-4 text-base font-semibold leading-[22px] placeholder:text-[#aeaeb2]"
+              className="h-[52px] rounded-[8px] bg-[#f2f2f7] px-4 py-4 text-base font-semibold leading-[22px] placeholder:text-[#aeaeb2] sm:h-[54px]"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-base font-semibold text-[#333]">
               원

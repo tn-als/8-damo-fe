@@ -22,7 +22,7 @@ export function RestaurantAction({
   isDisliked = false,
 }: RestaurantActionProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center justify-end gap-2.5 sm:gap-3">
       <Button
         type="button"
         variant="ghost"
@@ -31,7 +31,7 @@ export function RestaurantAction({
         disabled={disabled}
         aria-pressed={isLiked}
         className={cn(
-          "flex items-center gap-1.5 px-2 text-[15px] font-medium leading-[22px]",
+          "h-9 min-w-[88px] flex-1 items-center justify-center gap-1.5 px-2 text-[14px] font-medium leading-5 sm:h-10 sm:min-w-[98px] sm:flex-none sm:text-[15px] sm:leading-[22px]",
           isLiked && "bg-primary/10 text-primary"
         )}
       >
@@ -50,7 +50,7 @@ export function RestaurantAction({
         disabled={disabled}
         aria-pressed={isDisliked}
         className={cn(
-          "flex items-center gap-1.5 px-2 text-[15px] font-medium leading-[22px]",
+          "h-9 min-w-[88px] flex-1 items-center justify-center gap-1.5 px-2 text-[14px] font-medium leading-5 sm:h-10 sm:min-w-[98px] sm:flex-none sm:text-[15px] sm:leading-[22px]",
           isDisliked && "bg-primary/10 text-primary"
         )}
       >

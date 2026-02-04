@@ -12,8 +12,12 @@ export function RecommendationPendingMessage({
 }: RecommendationPendingMessageProps) {
   return (
     <div className="flex flex-col gap-1">
-      <h2 className="text-base font-semibold text-[#333]">{title}</h2>
-      <p className="text-sm text-[#8e8e93]">{description}</p>
+      <h2 className="text-[15px] font-semibold leading-5 text-[#333] sm:text-base">
+        {title}
+      </h2>
+      <p className="text-[13px] leading-5 text-[#8e8e93] sm:text-sm">
+        {description}
+      </p>
     </div>
   );
 }

@@ -18,17 +18,17 @@ export function RestaurantPermissionAction({
   isRetryingRecommendation = false,
 }: RestaurantPermissionActionProps) {
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full flex-col gap-2.5">
       {isGroupLeader && (
         <>
-          <Button type="button" onClick={onConfirmDining} className="w-full">
+          <Button type="button" onClick={onConfirmDining} className="h-12 w-full sm:h-14">
             회식 확정하기
           </Button>
           <Button
             type="button"
             variant="secondary"
             onClick={onRetryRecommendation}
-            className="w-full"
+            className="h-12 w-full sm:h-14"
             disabled={isRetryingRecommendation}
           >
             {isRetryingRecommendation ? "추천 다시 받는 중..." : "추천 다시 받기"}
@@ -40,7 +40,7 @@ export function RestaurantPermissionAction({
           type="button"
           variant="secondary"
           onClick={onAdditionalAttend}
-          className="w-full"
+          className="h-12 w-full sm:h-14"
         >
           추가 참석하기
         </Button>

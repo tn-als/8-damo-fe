@@ -143,13 +143,13 @@ export function RestaurantVotingSection({
         {restaurants.map((restaurant) => (
           <div
             key={restaurant.recommendRestaurantsId}
-            className="flex w-full flex-col items-center gap-4"
+            className="flex w-full flex-col items-center"
           >
             <RestaurantCard restaurant={restaurant} />
           </div>
         ))}
       </RestaurantVotingCarousel>
-      <div className="w-full px-5">
+      <div className="w-full px-4 sm:px-5">
         <RestaurantPermissionAction
           isGroupLeader={isGroupLeader}
           canAdditionalAttend={canAdditionalAttend}
@@ -180,7 +180,7 @@ export function RestaurantVotingSection({
             <Button
               type="button"
               onClick={handleConfirmSubmit}
-              className="flex-1 bg-[#ff8d28] text-white hover:bg-[#ff8d28]/90"
+              className="flex-1 bg-[#ff8d28] text-white active:bg-[#ff8d28]/90"
               disabled={isSubmitting}
             >
               확정

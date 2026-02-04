@@ -43,8 +43,8 @@ export function DiningVoteDeadlineField({
         },
       }}
       render={({ field, fieldState: { error } }) => (
-        <div className="flex flex-col gap-3">
-          <Label htmlFor={name} className="text-lg font-bold text-[#333]">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
+          <Label htmlFor={name} className="text-base font-bold text-[#333] sm:text-lg">
             참석 투표 마감 날짜 및 시간 <span className="text-destructive">*</span>
           </Label>
           <DateTimePicker
