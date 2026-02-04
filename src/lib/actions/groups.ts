@@ -2,7 +2,7 @@
 
 import { fetchWithAuthRetry } from "../api/fetch-with-auth-retry";
 import { getErrorMessage } from "../api/error-handler";
-import type { ApiNestedResponse, ApiResponse } from "@/src/types/api/common";
+import type { ApiResponse } from "@/src/types/api/common";
 import type { GroupSummary } from "@/src/types/groups";
 
 interface CreateGroupRequest {
@@ -47,7 +47,7 @@ interface GetMyGroupsResult {
 
 interface JoinGroupResult {
   success: boolean;
-  data?: number;
+  data?: string;
   error?: string;
 }
 
@@ -225,7 +225,7 @@ export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
     );
 
     const payload = (await response.json().catch(() => null)) as
-      | ApiNestedResponse<number>
+      | ApiResponse<string>
       | null;
 
     if (!response.ok) {
@@ -235,19 +235,11 @@ export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
       };
     }
 
-    const nestedError = payload?.data?.errorMessage;
-
-    if (nestedError) {
-      return { success: false, error: nestedError };
+    if (!payload?.data) {
+      return { success: false, error: "그룹 가입 응답을 확인할 수 없습니다." };
     }
 
-    const result = payload?.data?.data;
-
-    if (result === null || result === undefined) {
-      return { success: false, error: "요청 결과를 확인할 수 없습니다." };
-    }
-
-    return { success: true, data: result };
+    return { success: true, data: payload.data };
   } catch (error) {
     console.error("[joinGroup] Request failed", error);
     return {
