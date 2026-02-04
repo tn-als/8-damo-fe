@@ -93,6 +93,7 @@ export function GroupDetailContent({
       </div>
 
       <GroupDetailCreateDiningButton
+        isGroupLeader={group?.isGroupLeader ?? false}
         onCreateDining={handleCreateDining}
         onShareQR={handleShareQR}
       />

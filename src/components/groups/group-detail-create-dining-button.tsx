@@ -5,11 +5,13 @@ import { Plus, ChevronRight } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
 interface GroupDetailCreateDiningButtonProps {
+  isGroupLeader?: boolean;
   onCreateDining?: () => void;
   onShareQR?: () => void;
 }
 
 export function GroupDetailCreateDiningButton({
+  isGroupLeader = false,
   onCreateDining,
   onShareQR,
 }: GroupDetailCreateDiningButtonProps) {
@@ -59,19 +61,20 @@ export function GroupDetailCreateDiningButton({
           </button>
         </div>
 
-        {/* 회식 생성하기 */}
-        <div className="flex items-center gap-3">
-          <span className="text-base font-bold leading-[22px] text-[#333]">
-            회식 생성하기
-          </span>
-          <button
-            type="button"
-            onClick={handleCreateDining}
-            className="flex size-14 items-center justify-center rounded-full bg-[#ffdcbd] shadow-[2px_2px_12px_0px_rgba(0,0,0,0.08)]"
-          >
-            <Plus className="size-6 text-[#ff8d28]" />
-          </button>
-        </div>
+        {isGroupLeader ? (
+          <div className="flex items-center gap-3">
+            <span className="text-base font-bold leading-[22px] text-[#333]">
+              회식 생성하기
+            </span>
+            <button
+              type="button"
+              onClick={handleCreateDining}
+              className="flex size-14 items-center justify-center rounded-full bg-[#ffdcbd] shadow-[2px_2px_12px_0px_rgba(0,0,0,0.08)]"
+            >
+              <Plus className="size-6 text-[#ff8d28]" />
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {/* 메인 FAB */}
