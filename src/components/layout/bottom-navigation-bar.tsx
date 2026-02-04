@@ -26,8 +26,7 @@ const navigationItems: NavigationItem[] = [
     {
         id: "mypage",
         label: "마이",
-        href: "/mypage",
-        disabled: true,
+        href: "/mypage"
     },
 ];
 
