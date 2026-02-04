@@ -18,6 +18,7 @@ import { toast } from "@/src/components/ui/sonner";
 import { getImageContentType } from "@/src/constants/s3/util";
 import { useCompleteOnboarding } from "@/src/hooks/use-complete-onboarding";
 import { useRouter } from "next/navigation";
+import { containsEmoji } from "@/src/utils/text";
 
 interface BasicInfoFormProps {
   defaultValues?: Partial<BasicInfoFormProps>;
@@ -42,6 +43,11 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
   });
 
   const onFormSubmit = async (data: BasicInfoFormValues) => {
+    if (containsEmoji(data.nickname)) {
+      toast.error("이모지는 작성할 수 없습니다.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     let imagePath = "";

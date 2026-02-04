@@ -12,6 +12,7 @@ import { GroupCreateSubmitArea } from "./group-create-submit-area";
 import { createGroup } from "@/src/lib/actions/groups";
 import { getPresignedUrl } from "@/src/lib/actions/s3";
 import { getImageContentType } from "@/src/constants/s3/util";
+import { containsEmoji } from "@/src/utils/text";
 
 export type GroupCreateFormValues = {
   imagePath: string;
@@ -52,6 +53,11 @@ export function GroupCreateContainer({
   });
 
   const onFormSubmit = async (data: GroupCreateFormValues) => {
+    if (containsEmoji(data.groupName) || containsEmoji(data.introduction)) {
+      toast.error("이모지는 작성할 수 없습니다.");
+      return;
+    }
+
     if (!location) {
       toast.error("그룹 위치를 제공해주세요.");
       return;
