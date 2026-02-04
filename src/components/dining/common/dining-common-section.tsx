@@ -24,12 +24,12 @@ export function DiningCommonSection({
 }: DiningCommonSectionProps) {
   return (
     <div
-      className="mx-auto flex h-screen w-full max-w-[430px] flex-col bg-background"
+      className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-background"
       data-is-group-leader={isGroupLeader}
     >
       <DiningHeaderContainer diningDate={diningDate} diningStatus={diningStatus} />
       
-      <div className="flex flex-col gap-8 px-5 pb-10">
+      <div className="flex flex-col gap-6 px-4 pb-10 sm:gap-8 sm:px-5">
         {children}
         <DiningParticipantList participants={diningParticipants} />
       </div>

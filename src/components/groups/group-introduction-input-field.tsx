@@ -35,14 +35,14 @@ export function GroupIntroductionInputField({
         const currentLength = countGraphemes(field.value ?? "");
 
         return (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
             <Label htmlFor={name}>그룹 소개</Label>
             <Textarea
               {...field}
               id={name}
               placeholder="그룹 소개를 입력해주세요"
               aria-invalid={!!error}
-              className="min-h-[60px]"
+              className="min-h-[56px] sm:min-h-[60px]"
               value={field.value ?? ""}
               onChange={(event) => {
                 const rawValue = event.target.value.replace(/\r?\n/g, "");

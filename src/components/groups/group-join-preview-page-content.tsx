@@ -76,7 +76,7 @@ export function GroupJoinPreviewPageContent({
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 sm:px-6">
         <p className="text-sm text-muted-foreground">그룹 정보를 불러오는 중...</p>
       </div>
     );
@@ -84,7 +84,7 @@ export function GroupJoinPreviewPageContent({
 
   if (!group) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 sm:px-6">
         <div className="flex flex-col items-center gap-2 text-center">
           <p className="text-base font-medium text-destructive">
             {errorMessage ?? "존재하지 않는 그룹입니다. QR 코드를 확인해주세요."}
@@ -101,7 +101,7 @@ export function GroupJoinPreviewPageContent({
   }
 
   return (
-    <div className="flex flex-1 flex-col justify-center py-8">
+    <div className="flex flex-1 flex-col justify-center py-6 sm:py-8">
       <GroupJoinPreviewSection
         group={group}
         onJoinClick={handleJoin}

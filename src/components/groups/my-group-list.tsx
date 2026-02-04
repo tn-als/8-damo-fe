@@ -23,7 +23,7 @@ export function MyGroupList({ groupSummaryList = [] }: MyGroupListProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3 pb-20 sm:gap-4 sm:px-5 sm:pb-24">
+    <div className="flex flex-col gap-3 px-4 pb-20 sm:gap-4 sm:px-5 sm:pb-24">
       {groupSummaryList.map((groupSummary) => (
         <GroupCard
           key={groupSummary.id}

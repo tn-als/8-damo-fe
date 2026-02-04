@@ -41,10 +41,13 @@ export function RestaurantVotingCarousel({
 
   return (
     <div className="w-full">
-      <div ref={viewportRef} className="w-full overflow-x-auto snap-x snap-mandatory">
+      <div
+        ref={viewportRef}
+        className="w-full snap-x snap-mandatory overflow-x-auto scroll-smooth"
+      >
         <div className="flex w-full">
           {Children.map(children, (child, index) => (
-            <div key={index} className="w-full shrink-0 snap-center px-5 pb-2">
+            <div key={index} className="w-full shrink-0 snap-center px-4 pb-2 sm:px-5">
               <div className="flex w-full justify-center">{child}</div>
             </div>
           ))}

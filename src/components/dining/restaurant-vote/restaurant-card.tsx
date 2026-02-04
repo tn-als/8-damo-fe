@@ -154,8 +154,8 @@ export function RestaurantCard({
   };
 
   return (
-    <div className="flex w-[320px] flex-col gap-4 sm:w-[360px] md:w-[375px] lg:w-[390px]">
-      <div className="w-full rounded-[20px] border border-[#e2e8f0] bg-white px-4 pb-4 pt-6">
+    <div className="flex w-full max-w-[390px] flex-col gap-4">
+      <div className="w-full rounded-[20px] border border-[#e2e8f0] bg-white px-4 pb-4 pt-5 sm:pt-6">
         <RestaurantInfo
           location={location}
           name={restaurant.restaurantsName}
@@ -165,7 +165,7 @@ export function RestaurantCard({
         />
 
         {showActions && (
-          <div className="mt-4 flex w-full items-center justify-end text-black">
+          <div className="mt-3.5 flex w-full items-center justify-end text-black sm:mt-4">
             <RestaurantAction
               likeCount={likeCount}
               dislikeCount={dislikeCount}

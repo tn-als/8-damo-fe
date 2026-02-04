@@ -25,15 +25,15 @@ export function DiningParticipantList({
   participants,
 }: DiningParticipantListProps) {
   return (
-    <section className="flex w-full flex-col gap-3 px-5">
-      <h2 className="text-[16px] font-semibold leading-[22px] text-[#333333]">
+    <section className="flex w-full flex-col gap-3 px-4 sm:px-5">
+      <h2 className="text-[15px] font-semibold leading-[21px] text-[#333333] sm:text-[16px] sm:leading-[22px]">
         참석 확정 인원
       </h2>
       <div className="flex flex-col">
         {participants.map((participant) => (
           <div
             key={participant.userId}
-            className="flex items-center gap-3 py-3.5"
+            className="flex items-center gap-3 py-3"
           >
             <Avatar
               src={`https://${process.env.NEXT_PUBLIC_S3_CDN}/${participant.imagePath}`}
@@ -43,7 +43,7 @@ export function DiningParticipantList({
               showBorder={false}
               className="bg-[#f2f2f7]"
             />
-            <span className="text-[16px] font-semibold leading-[22px] text-[#333333]">
+            <span className="text-[15px] font-semibold leading-[21px] text-[#333333] sm:text-[16px] sm:leading-[22px]">
               {participant.nickname}
             </span>
           </div>

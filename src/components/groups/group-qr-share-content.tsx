@@ -79,17 +79,17 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
   };
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-white">
       <Header title="QR 공유하기" onBack={handleBack} />
 
-      <div className="flex flex-1 flex-col items-center gap-[72px] px-5 pt-[130px]">
-        <h2 className="text-center text-2xl font-bold leading-8 text-foreground">
+      <div className="flex flex-1 flex-col items-center gap-10 px-4 pt-14 sm:gap-[72px] sm:px-5 sm:pt-[130px]">
+        <h2 className="text-center text-xl font-bold leading-7 text-foreground sm:text-2xl sm:leading-8">
           그룹 이름 : {groupName}
         </h2>
 
-        <div className="flex items-center justify-center">
+        <div className="flex w-full items-center justify-center">
           {imageError ? (
-            <div className="flex size-[300px] items-center justify-center rounded-lg border border-border bg-muted">
+            <div className="flex aspect-square w-full max-w-[300px] items-center justify-center rounded-lg border border-border bg-muted">
               <p className="text-sm text-muted-foreground">QR 코드를 불러올 수 없습니다</p>
             </div>
           ) : (
@@ -98,7 +98,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
               alt={`${groupName} 그룹 QR 코드`}
               width={200}
               height={200}
-              className="size-[200px] object-contain"
+              className="size-[180px] object-contain sm:size-[200px]"
               onError={() => setImageError(true)}
               loading="eager"
               fetchPriority="high"
@@ -111,7 +111,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
           <button
             ref={kakaoButtonRef}
             disabled={!isKakaoReady}
-            className="flex h-16 w-full items-center justify-center gap-2.5 rounded-lg bg-[#FEE500] px-6 py-3 text-sm font-bold leading-[18px] text-black/85 transition-colors hover:bg-[#FEE500]/90 active:bg-[#FEE500]/80 disabled:opacity-50"
+            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-lg bg-[#FEE500] px-6 py-3 text-sm font-bold leading-[18px] text-black/85 transition-colors active:bg-[#FEE500]/80 disabled:opacity-50 sm:h-16"
           >
             <MessageCircle className="size-5" />
             {isKakaoReady ? "카카오톡으로 공유하기" : "로딩 중..."}
@@ -119,7 +119,7 @@ export function GroupQrShareContent({ groupId, groupName }: GroupQrShareContentP
 
           <button
             onClick={handleCopyLink}
-            className="flex h-16 w-full items-center justify-center gap-2.5 rounded-lg bg-primary/15 px-6 py-3 text-sm font-bold leading-[18px] text-primary transition-colors hover:bg-primary/20 active:bg-primary/25"
+            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-lg bg-primary/15 px-6 py-3 text-sm font-bold leading-[18px] text-primary transition-colors active:bg-primary/25 sm:h-16"
           >
             <Share2 className="size-5" />
             링크 복사하기

@@ -17,14 +17,14 @@ export default function GroupPreviewClient({
   const router = useRouter();
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-4">
+    <main className="relative flex min-h-dvh flex-col items-center justify-center gap-6 px-4 py-4">
     
       {/* 비로그인 시 상단 오버레이 */}
       {!isAuthenticated && (
         <>
         <Header title="그룹 참여" showBackButton={false} />
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-[160px]">
-          <div className="w-full max-w-md rounded-2xl bg-white px-8 py-10 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 px-4 pt-24 sm:pt-[160px]">
+          <div className="w-full max-w-md rounded-2xl bg-white px-6 py-8 shadow-xl sm:px-8 sm:py-10">
             <div className="flex flex-col items-center gap-6 text-center">
               <h2 className="text-xl font-semibold">
                 로그인하고 그룹에 참여하세요

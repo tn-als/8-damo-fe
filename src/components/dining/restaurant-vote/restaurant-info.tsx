@@ -22,13 +22,13 @@ export function RestaurantInfo({
   badgeLabel,
 }: RestaurantInfoProps) {
   return (
-    <section className="flex w-full flex-col gap-3">
+    <section className="flex w-full flex-col gap-2.5 sm:gap-3">
       <div className="w-full overflow-hidden rounded-[12px]">
-        <KakaoMapView location={location} className="h-40 w-full" />
+        <KakaoMapView location={location} className="h-36 w-full sm:h-40" />
       </div>
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <h2 className="text-[17px] font-semibold leading-[24px] text-[#1f2937]">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <h2 className="text-base font-semibold leading-6 text-[#1f2937] sm:text-[17px]">
             {name}
           </h2>
           {badgeLabel && (
@@ -39,14 +39,14 @@ export function RestaurantInfo({
           )}
         </div>
         {description && (
-          <p className="text-[15px] leading-[22px] text-[#6b7280]">
+          <p className="text-[14px] leading-5 text-[#6b7280] sm:text-[15px] sm:leading-[22px]">
             {description}
           </p>
         )}
         {phoneNumber && (
           <a
             href={`tel:${phoneNumber}`}
-            className="flex items-center gap-2 text-[15px] font-medium leading-[22px] text-[#2563eb]"
+            className="flex items-center gap-2 text-[14px] font-medium leading-5 text-[#2563eb] sm:text-[15px] sm:leading-[22px]"
           >
             <Phone className="size-4" />
             <span>{phoneNumber}</span>

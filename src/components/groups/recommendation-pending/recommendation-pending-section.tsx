@@ -125,7 +125,7 @@ export function RecommendationPendingSection({
   };
 
   return (
-    <section className="flex flex-col gap-4 px-5 pt-4">
+    <section className="flex flex-col gap-4 px-4 pt-4 sm:px-5">
       <div className="rounded-xl bg-white px-4 py-3">
         <div className="flex items-center gap-2 text-sm font-semibold text-[#333]">
           <div className="relative h-5 overflow-hidden">

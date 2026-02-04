@@ -90,7 +90,7 @@ export function GroupLocationInputField({ onLocationChange }: GroupLocationInput
         variant={status === "granted" ? "secondary" : "outline"}
         onClick={handleRequestLocation}
         disabled={status === "loading" || status === "unavailable"}
-        className="h-12 w-full justify-start gap-3"
+        className="h-11 w-full justify-start gap-3 sm:h-12"
       >
         {getButtonContent()}
       </Button>

@@ -129,17 +129,17 @@ export function GroupCreateContainer({
   return (
     <form
       onSubmit={handleSubmit(onFormSubmit)}
-      className="flex min-h-[calc(100vh-64px)] flex-col bg-background px-5 py-8 sm:min-h-[calc(100vh-80px)]"
+      className="flex min-h-[calc(100dvh-64px)] flex-col bg-background px-4 py-6 sm:min-h-[calc(100dvh-80px)] sm:px-5 sm:py-8"
     >
       <div className="flex flex-1 flex-col justify-center">
-        <div className="mx-auto flex w-full max-w-[360px] flex-col gap-4 sm:max-w-[380px]">
+        <div className="mx-auto flex w-full max-w-[380px] flex-col gap-4">
           <GroupImageUploadField
             name="groupImage"
             control={control}
             onFileChange={setProfileImageFile}
           />
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5 sm:gap-6">
             <GroupNameInputField name="groupName" control={control} />
             <GroupIntroductionInputField name="introduction" control={control} />
             <GroupLocationInputField onLocationChange={setLocation} />
