@@ -59,8 +59,8 @@ export function ProfileCard({
       </div>
 
       {/* 프로필 수정 버튼 */}
-      <Button variant="outline" className="w-full" asChild>
-        <Link href="/mypage/edit-profile">프로필 수정하기</Link>
+      <Button variant="default" className="w-full" asChild>
+        <Link href="/mypage/edit-profile">프로필 수정</Link>
       </Button>
     </div>
   );

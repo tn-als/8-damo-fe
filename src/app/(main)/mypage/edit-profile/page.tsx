@@ -16,7 +16,7 @@ export default async function EditProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title="음식 취향 수정" />
+      <Header title="프로필 수정" />
       <EditProfileContainer initialData={initialData} />
     </div>
   );
