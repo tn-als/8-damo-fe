@@ -74,22 +74,21 @@ export function GroupDetailContent({
   };
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-white">
+    <div className="mx-auto flex h-screen w-full max-w-[430px] flex-col bg-white">
       <GroupDetailHeaderContainer
         groupName={group?.name ?? ""}
         onBack={handleBack}
         onMoreClick={handleMoreClick}
       />
 
-      {/* Header spacer */}
-      <div className="h-14 sm:h-16" />
-
       <GroupDetailInformationContainer
         description={group?.introduction ?? ""}
         memberCount={group?.participantsCount ?? 0}
       />
 
-      {diningSection}
+      <div className="flex-1 overflow-y-auto bg-[#f2f2f7]">
+        {diningSection}
+      </div>
 
       <GroupDetailCreateDiningButton
         onCreateDining={handleCreateDining}

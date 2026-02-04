@@ -38,7 +38,12 @@ export function MyGroupActionsFAB({
   };
 
   return (
-    <div className="fab-above-nav fixed right-4 z-[60] flex flex-col items-end gap-2">
+    <div className="
+      fab-above-nav 
+      absolute
+      right-4
+      flex flex-col items-end gap-2
+      ">
       <div
         className={cn(
           "flex flex-col items-end gap-2 transition-all duration-200 sm:gap-2.5",

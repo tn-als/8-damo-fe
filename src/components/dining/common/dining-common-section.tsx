@@ -4,7 +4,7 @@ import type {
   DiningParticipantResponse,
   DiningStatus,
 } from "@/src/types/api/dining";
-import { DiningHeader } from "./dining-header";
+import { DiningHeaderContainer } from "./dining-header-container";
 import { DiningParticipantList } from "./dining-participant-list";
 
 interface DiningCommonSectionProps {
@@ -24,14 +24,16 @@ export function DiningCommonSection({
 }: DiningCommonSectionProps) {
   return (
     <div
-      className="mx-auto min-h-screen w-full max-w-[430px] bg-background"
+      className="mx-auto flex h-screen w-full max-w-[430px] flex-col bg-background"
       data-is-group-leader={isGroupLeader}
     >
-      <DiningHeader diningDate={diningDate} diningStatus={diningStatus} />
-      <main className="flex flex-col gap-8 px-5 pb-12 pt-16">
+      <DiningHeaderContainer diningDate={diningDate} diningStatus={diningStatus} />
+      
+      <div className="flex flex-col gap-8 px-5 pb-10">
         {children}
         <DiningParticipantList participants={diningParticipants} />
-      </main>
+      </div>
+
     </div>
   );
 }

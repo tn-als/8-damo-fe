@@ -48,8 +48,8 @@ export function BottomNavigationBar() {
     };
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background">
-            <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2 sm:h-18">
+        <nav className="sticky bottom-0 z-50 w-full bg-background">
+            <div className="mx-auto flex h-16 w-full max-w-[430px] items-center justify-around px-2">
                 {navigationItems.map((item) => {
                     const Icon = iconMap[item.id];
                     const active = isActive(item.href);
@@ -60,8 +60,8 @@ export function BottomNavigationBar() {
                                 key={item.id}
                                 className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-muted-foreground/50"
                             >
-                                <Icon className="size-5 sm:size-6" />
-                                <span className="text-xs sm:text-sm">
+                                <Icon className="size-5" />
+                                <span className="text-xs">
                                     {item.label}
                                 </span>
                             </div>
@@ -79,8 +79,8 @@ export function BottomNavigationBar() {
                                     : "text-muted-foreground hover:text-foreground"
                             )}
                         >
-                            <Icon className="size-5 sm:size-6" />
-                            <span className="text-xs sm:text-sm">
+                            <Icon className="size-5" />
+                            <span className="text-xs">
                                 {item.label}
                             </span>
                         </Link>
