@@ -25,8 +25,8 @@ export function DiningBudgetField({
             return "예산을 입력해주세요";
           }
 
-          if (value < 0) {
-            return "예산은 0원 이상이어야 합니다";
+          if (value < 10000) {
+            return "예산은 최소 10,000원 이상이어야 합니다.";
           }
 
           if (value > 100000000) {
