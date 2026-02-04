@@ -43,7 +43,7 @@ export function GroupJoinContainer() {
       )}
 
       {scanResult.status === "error" && (
-        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 sm:px-6">
           <div className="flex flex-col items-center gap-2 text-center">
             <p className="text-base font-medium text-destructive">
               {scanResult.message}

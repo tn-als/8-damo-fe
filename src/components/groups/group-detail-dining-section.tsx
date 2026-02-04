@@ -41,7 +41,7 @@ export function GroupDetailDiningSection({
     <div className="flex flex-1 flex-col bg-[#f2f2f7]">
       <RecommendationPendingSection groupId={groupId} />
 
-      <div className="px-5 py-4">
+      <div className="px-4 py-4 sm:px-5">
         <SegmentedTabs
           tabs={TAB_OPTIONS}
           value={status}
@@ -49,7 +49,7 @@ export function GroupDetailDiningSection({
         />
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 px-5 pb-32">
+      <div className="flex flex-1 flex-col gap-3 px-4 pb-28 sm:px-5 sm:pb-32">
         {dinings.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
             <p>조회된 회식이 없습니다.</p>

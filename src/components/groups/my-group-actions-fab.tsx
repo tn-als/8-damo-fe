@@ -41,7 +41,7 @@ export function MyGroupActionsFAB({
     <div className="
       fab-above-nav 
       absolute
-      right-4
+      right-4 sm:right-5
       flex flex-col items-end gap-2
       ">
       <div
@@ -55,7 +55,7 @@ export function MyGroupActionsFAB({
         <Button
           variant="ghost"
           onClick={handleJoinClick}
-          className="group flex h-10 items-center gap-2 rounded-full bg-background px-3 text-xs font-semibold text-foreground shadow-sm transition-transform hover:bg-background active:scale-95 sm:h-12 sm:px-3.5 sm:text-sm"
+          className="group flex h-10 items-center gap-2 rounded-full bg-background px-3 text-xs font-semibold text-foreground shadow-sm transition-transform active:scale-95 sm:h-12 sm:px-3.5 sm:text-sm"
         >
           <span>그룹 참여하기</span>
           <span className="flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground sm:size-10">
@@ -65,7 +65,7 @@ export function MyGroupActionsFAB({
         <Button
           variant="ghost"
           onClick={handleCreateClick}
-          className="group flex h-10 items-center gap-2 rounded-full bg-background px-3 text-xs font-semibold text-foreground shadow-sm transition-transform hover:bg-background active:scale-95 sm:h-12 sm:px-3.5 sm:text-sm"
+          className="group flex h-10 items-center gap-2 rounded-full bg-background px-3 text-xs font-semibold text-foreground shadow-sm transition-transform active:scale-95 sm:h-12 sm:px-3.5 sm:text-sm"
         >
           <span>그룹 생성하기</span>
           <span className="flex size-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground sm:size-10">

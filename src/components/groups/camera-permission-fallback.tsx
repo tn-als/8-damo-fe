@@ -34,9 +34,9 @@ export function CameraPermissionFallback({ error, onRetry }: CameraPermissionFal
   const isPermissionError = error === "NotAllowedError";
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 px-6 py-10 text-center">
-      <div className="flex size-16 items-center justify-center rounded-full bg-muted">
-        <Camera className="size-8 text-muted-foreground" />
+    <div className="flex flex-col items-center justify-center gap-6 px-4 py-8 text-center sm:px-6 sm:py-10">
+      <div className="flex size-14 items-center justify-center rounded-full bg-muted sm:size-16">
+        <Camera className="size-7 text-muted-foreground sm:size-8" />
       </div>
 
       <div className="flex flex-col gap-2">
@@ -44,7 +44,7 @@ export function CameraPermissionFallback({ error, onRetry }: CameraPermissionFal
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
 
-      <div className="flex flex-col gap-3 w-full max-w-[200px]">
+      <div className="flex w-full max-w-[220px] flex-col gap-3">
         <Button onClick={onRetry} variant="default" className="w-full">
           다시 시도
         </Button>

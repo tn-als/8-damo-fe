@@ -12,11 +12,11 @@ export function GroupCreateSubmitArea({
   isValid = true,
 }: GroupCreateSubmitAreaProps) {
   return (
-    <div className="pt-8">
+    <div className="pt-6 sm:pt-8">
       <Button
         type="submit"
         disabled={isSubmitting || !isValid}
-        className="h-14 w-full rounded-lg bg-primary text-base font-semibold text-white shadow-md hover:bg-primary/90 sm:h-16"
+        className="h-14 w-full rounded-lg bg-primary text-base font-semibold text-white shadow-md active:bg-primary/90 sm:h-16"
       >
         {isSubmitting ? "생성 중..." : "그룹 생성하기"}
       </Button>

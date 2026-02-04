@@ -48,12 +48,12 @@ export function DiningSummaryCard({
       disabled={disabled}
       aria-disabled={disabled}
       className={cn(
-        "flex h-[88px] w-full items-start gap-2 rounded-lg bg-white p-4 text-left transition-colors active:bg-gray-50 disabled:cursor-default disabled:bg-white disabled:opacity-60 disabled:active:bg-white",
+        "flex min-h-[84px] w-full items-start gap-2 rounded-lg bg-white p-3.5 text-left transition-colors active:bg-gray-50 disabled:cursor-default disabled:bg-white disabled:opacity-60 disabled:active:bg-white sm:min-h-[88px] sm:p-4",
         className
       )}
     >
       <div className="flex flex-1 flex-col gap-3">
-        <h4 className="text-xl font-bold leading-7 text-[#333]">{date}</h4>
+        <h4 className="text-lg font-bold leading-6 text-[#333] sm:text-xl sm:leading-7">{date}</h4>
         <div className="flex items-center gap-1">
           <Users className="size-5 text-[#aeaeb2]" />
           <span className="text-sm font-semibold leading-[18px] text-[#333]">
