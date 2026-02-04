@@ -30,16 +30,16 @@ export function GroupJoinContainer() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="relative flex flex-col flex-1">
       {scanResult.status === "idle" && (
-        <>
+        <div className="fixed inset-0 flex items-center justify-center">
           <CameraScanSection
             onScanSuccess={handleScanSuccess}
             isScanning={isScanning}
             onScanningChange={setIsScanning}
             disabled={Boolean(scannedGroupId)}
           />
-        </>
+        </div>
       )}
 
       {scanResult.status === "error" && (
