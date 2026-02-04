@@ -74,7 +74,7 @@ export function GroupDetailContent({
   };
 
   return (
-    <div className="mx-auto flex h-screen w-full max-w-[430px] flex-col bg-white">
+    <div className="relative flex h-full flex-col">
       <GroupDetailHeaderContainer
         groupName={group?.name ?? ""}
         onBack={handleBack}
@@ -86,8 +86,10 @@ export function GroupDetailContent({
         memberCount={group?.participantsCount ?? 0}
       />
 
-      <div className="flex-1 overflow-y-auto bg-[#f2f2f7]">
-        {diningSection}
+      <div className="relative flex-1 overflow-y-auto">
+        <main className="flex min-h-full flex-col gap-6">
+          {diningSection}
+        </main>
       </div>
 
       <GroupDetailCreateDiningButton
