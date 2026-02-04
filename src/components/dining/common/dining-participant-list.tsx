@@ -5,7 +5,7 @@ import { Avatar } from "@/src/components/ui/avatar";
 export interface Participant {
   userId: number;
   nickname: string;
-  profileImageUrl?: string | null;
+  imagePath: string;
 }
 
 interface DiningParticipantListProps {
@@ -36,7 +36,7 @@ export function DiningParticipantList({
             className="flex items-center gap-3 py-3.5"
           >
             <Avatar
-              src={participant.profileImageUrl ?? null}
+              src={`https://${process.env.NEXT_PUBLIC_S3_CDN}/${participant.imagePath}`}
               alt={`${participant.nickname} 프로필`}
               fallbackUrl={PERSON_FALLBACK_IMAGE}
               size="sm"
