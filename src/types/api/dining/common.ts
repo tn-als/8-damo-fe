@@ -5,6 +5,7 @@ import { DiningStatus } from "./enums";
 export interface DiningParticipantResponse {
   userId: number;
   nickname: string;
+  imagePath: string;
 }
 
 export interface DiningCommonResponse {
