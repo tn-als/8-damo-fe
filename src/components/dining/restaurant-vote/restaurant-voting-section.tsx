@@ -56,13 +56,7 @@ export function RestaurantVotingSection({
     );
     return restaurants[clampedIndex].recommendRestaurantsId;
   }, [activeIndex, restaurants]);
-
-  useEffect(() => {
-    if (activeIndex !== 0){
-      setActiveIndex(0);
-    }
-  }, [restaurants]);
-
+  
   if (!restaurants.length) {
     return <RestaurantVoteFallback />;
   }
