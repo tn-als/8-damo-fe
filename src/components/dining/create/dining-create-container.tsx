@@ -89,7 +89,7 @@ export function DiningCreateContainer({
   return (
     <form
       onSubmit={handleSubmit(onFormSubmit)}
-      className="flex min-h-[calc(100vh-56px)] flex-col bg-background px-[15px] pb-8 pt-[151px] sm:min-h-[calc(100vh-64px)] sm:px-5 sm:pt-[143px]"
+      className="flex flex-1 flex-col bg-background px-4 pb-8 pt-16"
     >
       <div className="flex flex-1 flex-col">
         <div className="flex w-full flex-col gap-8">
@@ -98,7 +98,7 @@ export function DiningCreateContainer({
           <DiningBudgetField name="budget" control={control} />
         </div>
 
-        <div className="mt-auto pt-8">
+        <div className="pt-16">
           <DiningCreateSubmitArea
             isSubmitting={isSubmitting}
             isValid={isValid}

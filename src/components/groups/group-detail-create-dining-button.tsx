@@ -30,7 +30,12 @@ export function GroupDetailCreateDiningButton({
   };
 
   return (
-    <div className="fixed bottom-6 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="
+      fab-above-nav 
+      absolute
+      right-4
+      flex flex-col items-end gap-2
+      ">
       {/* 펼쳐진 메뉴 */}
       <div
         className={cn(

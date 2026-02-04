@@ -13,7 +13,7 @@ export default async function DiningCreatePage({
   const { groupId } = await params;
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-[430px] bg-background">
+    <div className="flex h-screen flex-col mx-auto min-h-screen w-full max-w-[430px] bg-background">
       <Header title="회식 만들기" showBackButton={true} />
       <DiningCreateContainer groupId={groupId} />
     </div>
