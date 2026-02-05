@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { Avatar } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
 import { PROFILE_FALLBACK_IMAGE } from "@/src/constants/image";
 import { GENDER_LABEL, AGE_GROUP_LABEL } from "@/src/constants/user";
+import { LogOut } from "lucide-react";
+import { logout } from "@/src/lib/actions/auth";
 
 interface ProfileCardProps {
   userId: string;
@@ -31,37 +31,47 @@ export function ProfileCard({
 }: ProfileCardProps) {
   const imageUrl = getProfileImageUrl(userId, imagePath);
 
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-card p-4">
-      {/* 프로필 정보 영역 */}
-      <div className="flex items-center gap-4">
-        <Avatar
-          src={imageUrl}
-          alt={nickname}
-          fallbackUrl={PROFILE_FALLBACK_IMAGE}
-          size="lg"
-        />
-        <div className="flex flex-col gap-1.5">
-          <span className="text-lg font-semibold text-foreground">{nickname}</span>
-          <div className="flex gap-2">
-            {gender && (
-              <Badge variant="secondary" size="sm">
-                {GENDER_LABEL[gender] ?? gender}
-              </Badge>
-            )}
-            {ageGroup && (
-              <Badge variant="secondary" size="sm">
-                {AGE_GROUP_LABEL[ageGroup] ?? ageGroup}
-              </Badge>
-            )}
-          </div>
+    <div className="relative flex items-center gap-4 px-5 py-6">
+      {/* 로그아웃 버튼 */}
+      <button
+        onClick={handleLogout}
+        className="absolute right-5 top-6 p-1"
+        aria-label="로그아웃"
+      >
+        <LogOut className="size-6 text-[#bfbfbf]" />
+      </button>
+
+      {/* 프로필 이미지 */}
+      <Avatar
+        src={imageUrl}
+        alt={nickname}
+        fallbackUrl={PROFILE_FALLBACK_IMAGE}
+        size="xl"
+      />
+
+      {/* 프로필 정보 */}
+      <div className="flex flex-col gap-2">
+        <span className="text-[24px] font-bold text-foreground sm:text-[28px] md:text-[32px]">
+          {nickname}
+        </span>
+        <div className="flex gap-2">
+          {gender && (
+            <Badge variant="diningAttendance" size="sm">
+              {GENDER_LABEL[gender] ?? gender}
+            </Badge>
+          )}
+          {ageGroup && (
+            <Badge variant="diningAttendance" size="sm">
+              {AGE_GROUP_LABEL[ageGroup] ?? ageGroup}
+            </Badge>
+          )}
         </div>
       </div>
-
-      {/* 프로필 수정 버튼 */}
-      <Button variant="default" className="w-full" asChild>
-        <Link href="/mypage/edit-profile">프로필 수정</Link>
-      </Button>
     </div>
   );
 }

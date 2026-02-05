@@ -8,21 +8,21 @@ export function ProfileCardSkeleton({ className }: ProfileCardSkeletonProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-2xl border border-border bg-card p-4",
+        "relative flex items-center gap-4 px-5 py-6",
         className
       )}
     >
-      {/* Avatar skeleton */}
-      <div className="size-16 shrink-0 animate-pulse rounded-full bg-muted sm:size-20" />
+      {/* Avatar skeleton (xl size) */}
+      <div className="size-20 shrink-0 animate-pulse rounded-full bg-muted sm:size-24" />
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         {/* Nickname skeleton */}
-        <div className="h-6 w-24 animate-pulse rounded bg-muted" />
+        <div className="h-8 w-32 animate-pulse rounded bg-muted sm:h-9 md:h-10" />
 
         {/* Badge skeleton */}
         <div className="flex gap-2">
-          <div className="h-5 w-12 animate-pulse rounded-full bg-muted" />
-          <div className="h-5 w-12 animate-pulse rounded-full bg-muted" />
+          <div className="h-5 w-12 animate-pulse rounded-full bg-muted sm:h-6" />
+          <div className="h-5 w-12 animate-pulse rounded-full bg-muted sm:h-6" />
         </div>
       </div>
     </div>

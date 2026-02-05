@@ -5,6 +5,7 @@ import {
   ProfileCard,
   ProfileCardSkeleton,
   ProfileCardError,
+  MenuItem,
 } from "@/src/components/mypage";
 import { BottomNavigationBar } from "@/src/components/layout";
 
@@ -13,13 +14,9 @@ export default function MyPage() {
 
   return (
     <>
-      <main className="flex min-h-screen flex-col gap-6 px-4 py-8 pb-24">
-        <h1 className="text-xl font-bold">마이페이지</h1>
-
+      <main className="flex min-h-screen flex-col pb-24 pt-12">
         {isLoading && <ProfileCardSkeleton />}
-
         {!isLoading && !user && <ProfileCardError />}
-
         {!isLoading && user && (
           <ProfileCard
             userId={user.userId}
@@ -29,6 +26,19 @@ export default function MyPage() {
             imagePath={user.imagePath}
           />
         )}
+
+        <nav className="flex flex-col">
+          <MenuItem href="/mypage/edit/basic" label="기본 정보 수정" />
+          <MenuItem href="/mypage/edit/characteristic" label="개인 특성 수정" />
+        </nav>
+
+        <div className="h-2 bg-muted" />
+
+        <nav className="flex flex-col">
+          <MenuItem href="#" label="푸시 알림" />
+          <MenuItem href="#" label="회원 탈퇴" />
+          <MenuItem href="#" label="리뷰 관리" />
+        </nav>
       </main>
       <BottomNavigationBar />
     </>
