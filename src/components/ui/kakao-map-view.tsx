@@ -26,7 +26,7 @@ export function KakaoMapView({
 
     const script = document.createElement("script");
     script.id = "kakao-map-sdk";
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_SDK_TEST_KEY}&autoload=false`;
     script.async = true;
     document.head.appendChild(script);
   }, []);

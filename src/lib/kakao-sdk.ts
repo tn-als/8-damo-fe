@@ -53,10 +53,10 @@ export function loadKakaoSDK(): Promise<void> {
 }
 
 function initializeKakao(): void {
-  const appKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+  const appKey = process.env.NEXT_PUBLIC_KAKAO_SDK_KEY;
 
   if (!appKey) {
-    console.error("NEXT_PUBLIC_KAKAO_MAP_KEY 환경변수가 설정되지 않았습니다.");
+    console.error("카카오 SDK 환경변수가 설정되지 않았습니다.");
     return;
   }
 
