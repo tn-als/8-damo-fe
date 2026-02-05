@@ -8,6 +8,7 @@ const sizeStyles = {
   md: "size-14 sm:size-16",
   lg: "size-16 sm:size-20",
   xl: "size-20 sm:size-24",
+  "2xl": "size-[120px] sm:size-[135px] md:size-[147px]",
 };
 
 const textSizeStyles = {
@@ -15,6 +16,7 @@ const textSizeStyles = {
   md: "text-base sm:text-lg",
   lg: "text-lg sm:text-xl",
   xl: "text-xl sm:text-2xl",
+  "2xl": "text-3xl sm:text-4xl",
 };
 
 interface AvatarProps {
