@@ -1,8 +1,8 @@
 import { Header } from "@/src/components/layout/header";
 import { getMyProfile } from "@/src/lib/actions/user-characteristics";
-import { EditProfileContainer } from "@/src/components/mypage/edit-profile/edit-profile-container";
+import { EditCharacteristicContainer } from "@/src/components/mypage/edit-profile/edit-characteristic-container";
 
-export default async function EditProfilePage() {
+export default async function EditCharacteristicPage() {
   const result = await getMyProfile();
 
   const initialData = result.success && result.data
@@ -16,8 +16,8 @@ export default async function EditProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title="프로필 수정" />
-      <EditProfileContainer initialData={initialData} />
+      <Header title="개인 특성 수정" />
+      <EditCharacteristicContainer initialData={initialData} />
     </div>
   );
 }

@@ -18,7 +18,7 @@ interface FormData {
   otherCharacteristics: string;
 }
 
-interface EditProfileContainerProps {
+interface EditCharacteristicContainerProps {
   initialData: {
     allergies: string[];
     likeFoods: string[];
@@ -27,7 +27,7 @@ interface EditProfileContainerProps {
   };
 }
 
-export function EditProfileContainer({ initialData }: EditProfileContainerProps) {
+export function EditCharacteristicContainer({ initialData }: EditCharacteristicContainerProps) {
   const router = useRouter();
 
   const {
@@ -111,7 +111,7 @@ export function EditProfileContainer({ initialData }: EditProfileContainerProps)
         />
       </div>
 
-      <div className="sticky w-full inset-x-0 bottom-0 border-t border-border bg-background p-4">
+      <div className="sticky w-full inset-x-0 bottom-0 bg-background p-4">
         <Button
           type="submit"
           className="w-full"
