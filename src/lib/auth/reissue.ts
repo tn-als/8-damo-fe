@@ -65,7 +65,7 @@ function parseCookie(cookieString: string): ParsedCookie | null {
  */
 export async function reissueAccessToken(): Promise<boolean> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     console.error("[reissueAccessToken] Missing API base URL env");

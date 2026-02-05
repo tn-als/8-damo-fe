@@ -34,7 +34,7 @@ export async function getPresignedUrl(
   }
 
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };

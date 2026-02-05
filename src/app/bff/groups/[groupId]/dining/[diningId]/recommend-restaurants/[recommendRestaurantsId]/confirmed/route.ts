@@ -12,7 +12,7 @@ interface RouteParams {
 export async function PATCH(_: Request, { params }: RouteParams) {
   const { groupId, diningId, recommendRestaurantsId } = await params;
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return NextResponse.json(

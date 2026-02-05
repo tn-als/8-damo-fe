@@ -10,7 +10,7 @@ interface GetMeResponse {
 }
 
 export async function getMe(): Promise<GetMeResponse> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { httpStatus: "400", error: "API base URL이 설정되지 않았습니다." };

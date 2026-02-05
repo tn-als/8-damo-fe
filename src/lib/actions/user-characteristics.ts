@@ -61,7 +61,7 @@ export interface GetMyProfileResponse {
 }
 
 export async function getMyProfile(): Promise<GetMyProfileResponse> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -118,7 +118,7 @@ export async function getMyProfile(): Promise<GetMyProfileResponse> {
 export async function updateCharacteristics(
   data: UpdateCharacteristicsRequest
 ): Promise<UpdateCharacteristicsResponse> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -160,7 +160,7 @@ export async function updateCharacteristics(
 export async function editProfile(
   data: UpdateCharacteristicsRequest
 ): Promise<UpdateCharacteristicsResponse> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };

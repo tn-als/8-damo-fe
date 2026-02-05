@@ -37,7 +37,7 @@ export async function proxy(request: NextRequest) {
 
   // access_token이 없고 refresh_token이 있으면 갱신 시도
   if (!accessToken && refreshToken) {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
     try {
       const reissueResponse = await fetch(`${API_BASE_URL}/api/v1/auth/reissue`, {

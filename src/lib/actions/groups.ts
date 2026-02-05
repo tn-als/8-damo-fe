@@ -55,7 +55,7 @@ export async function createGroup(
   data: CreateGroupRequest
 ): Promise<CreateGroupResponse> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -107,7 +107,7 @@ export async function getGroupDetail(
   groupId: string
 ): Promise<GetGroupDetailResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -152,7 +152,7 @@ export async function getGroupDetail(
 
 export async function getMyGroups(): Promise<GetMyGroupsResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -206,7 +206,7 @@ export async function getMyGroups(): Promise<GetMyGroupsResult> {
 
 export async function joinGroup(groupId: string): Promise<JoinGroupResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
