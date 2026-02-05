@@ -20,6 +20,7 @@ interface UserState {
   setLoading: (loading: boolean) => void;
   setInitialized: (initialized: boolean) => void;
   updateOnboardingStep: (status: OnboardingStatus) => void;
+  updateBasicInfo: (info: Partial<Pick<User, 'nickname' | 'gender' | 'ageGroup' | 'imagePath'>>) => void;
   reset: () => void;
 }
 
@@ -34,6 +35,10 @@ export const useUserStore = create<UserState>((set) => ({
   updateOnboardingStep: (status) =>
     set((state) => ({
       user: state.user ? { ...state.user, onboardingStep: status } : null,
+    })),
+  updateBasicInfo: (info) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, ...info } : null,
     })),
   reset: () => set({ user: null, isLoading: false, isInitialized: false }),
 }));

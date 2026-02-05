@@ -9,16 +9,18 @@ interface ProfileImageFieldProps {
   name: "profileImage";
   control: Control<BasicInfoFormValues>;
   fallbackUrl?: string;
+  previewImgUrl?: string | null;
 }
 
 export function ProfileImageField({
   name,
   control,
   fallbackUrl,
+  previewImgUrl = null
 }: ProfileImageFieldProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { field } = useController({ name, control });
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(previewImgUrl);
 
   React.useEffect(() => {
     if (field.value instanceof File) {

@@ -6,6 +6,7 @@ import { PROFILE_FALLBACK_IMAGE } from "@/src/constants/image";
 import { GENDER_LABEL, AGE_GROUP_LABEL } from "@/src/constants/user";
 import { LogOut } from "lucide-react";
 import { logout } from "@/src/lib/actions/auth";
+import { useRouter } from "next/navigation";
 
 interface ProfileCardProps {
   userId: string;
@@ -30,9 +31,11 @@ export function ProfileCard({
   imagePath,
 }: ProfileCardProps) {
   const imageUrl = getProfileImageUrl(userId, imagePath);
+  const router = useRouter();
 
   const handleLogout = async () => {
     await logout();
+    router.replace("/login");
   };
 
   return (
