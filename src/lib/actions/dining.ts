@@ -129,7 +129,7 @@ export async function createDining(
   groupId: string,
   data: CreateDiningRequest
 ): Promise<CreateDiningResponse> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -184,7 +184,7 @@ export async function getGroupDiningSummaries(
   groupId: string,
   status: DiningStatus
 ): Promise<GetGroupDiningSummariesResult> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -236,7 +236,7 @@ export async function getDiningCommon({
   diningId,
 }: GetDiningCommonRequest): Promise<DiningCommonResponse> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     throw new Error("API base URL이 설정되지 않았습니다.");
@@ -273,7 +273,7 @@ export async function getDiningRestaurantVote({
   diningId,
 }: GetDiningRestaurantVoteRequest): Promise<RestaurantVoteResponse[]> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     throw new Error("API base URL이 설정되지 않았습니다.");
@@ -310,7 +310,7 @@ export async function getDiningAttendanceVote({
   diningId,
 }: GetDiningAttendanceVoteRequest): Promise<AttendanceVoteResponse> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     throw new Error("API base URL이 설정되지 않았습니다.");
@@ -347,7 +347,7 @@ export async function getDiningConfirmed({
   diningId,
 }: GetDiningConfirmedRequest): Promise<ConfirmedRestaurantResponse> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     throw new Error("API base URL이 설정되지 않았습니다.");
@@ -386,7 +386,7 @@ export async function voteRestaurant({
   restaurantVoteStatus,
 }: VoteRestaurantRequest): Promise<VoteRestaurantResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -434,7 +434,7 @@ export async function voteAttendance({
   attendanceVoteStatus,
 }: VoteAttendanceRequest): Promise<VoteAttendanceResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -479,7 +479,7 @@ export async function refreshRecommendRestaurants({
   diningId,
 }: RefreshRecommendRestaurantsRequest): Promise<RefreshRecommendRestaurantsResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
@@ -526,7 +526,7 @@ export async function confirmRestaurant({
   recommendRestaurantsId,
 }: ConfirmRestaurantRequest): Promise<ConfirmRestaurantResult> {
   const API_BASE_URL =
-    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    process.env.NEXT_PUBLIC_API_URL;
 
   if (!API_BASE_URL) {
     return { success: false, error: "API base URL이 설정되지 않았습니다." };
