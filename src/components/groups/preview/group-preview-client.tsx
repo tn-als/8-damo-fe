@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/src/components/layout";
-import { GroupJoinPreviewPageContent } from "@/src/components/groups/group-join-preview-page-content";
+import { GroupJoinPreviewPageContent } from "@/src/components/groups/join/group-join-preview-page-content";
 import { LoginButton } from "@/src/components/login/login-button";
 import { useRouter } from "next/navigation";
 

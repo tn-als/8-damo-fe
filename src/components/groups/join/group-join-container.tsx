@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CameraScanSection } from "./camera-scan-section";
+import { CameraScanSection } from "../shared/camera-scan-section";
 
 type ScanResult = { status: "idle" } | { status: "error"; message: string };
 

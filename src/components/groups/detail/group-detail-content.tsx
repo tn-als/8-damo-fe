@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GroupDetailHeaderContainer } from "@/src/components/groups/group-detail-header-container";
-import { GroupDetailInformationContainer } from "@/src/components/groups/group-detail-information-container";
-import { GroupDetailCreateDiningButton } from "@/src/components/groups/group-detail-create-dining-button";
+import { GroupDetailHeaderContainer } from "@/src/components/groups/detail/group-detail-header-container";
+import { GroupDetailInformationContainer } from "@/src/components/groups/detail/group-detail-information-container";
+import { GroupDetailCreateDiningButton } from "@/src/components/groups/detail/group-detail-create-dining-button";
 import { getGroupDetail } from "@/src/lib/actions/groups";
 
 interface GroupDetailState {

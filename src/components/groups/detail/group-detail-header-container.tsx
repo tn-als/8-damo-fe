@@ -1,6 +1,6 @@
 "use client";
 
-import { GroupDetailHeader } from "@/src/components/groups/group-detail-header";
+import { GroupDetailHeader } from "@/src/components/groups/detail/group-detail-header";
 
 interface GroupDetailHeaderContainerProps {
   groupName: string;

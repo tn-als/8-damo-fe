@@ -1,6 +1,6 @@
 "use client";
 
-import { GroupDetailInformationSection } from "@/src/components/groups/group-detail-information-section";
+import { GroupDetailInformationSection } from "@/src/components/groups/detail/group-detail-information-section";
 
 interface GroupDetailInformationContainerProps {
   description: string;

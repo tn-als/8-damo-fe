@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import GroupPreviewClient from "@/src/components/groups/group-preview-client";
+import GroupPreviewClient from "@/src/components/groups/preview/group-preview-client";
 
 interface GroupPreviewPageProps {
   params: Promise<{ groupId: string }>;

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { GroupDetailContent } from "@/src/components/groups/group-detail-content";
-import { GroupDetailDiningSectionServer } from "@/src/components/groups/group-detail-dining-section-server";
+import { GroupDetailContent } from "@/src/components/groups/detail/group-detail-content";
+import { GroupDetailDiningSectionServer } from "@/src/components/groups/detail/group-detail-dining-section-server";
 import type { DiningStatus } from "@/src/types/api/dining";
 
 interface PageProps {

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DiningSummaryCard } from "@/src/components/groups/dining-summary-card";
+import { DiningSummaryCard } from "@/src/components/groups/detail/dining-summary-card";
 import { getGroupDiningSummaries } from "@/src/lib/actions/dining";
 import type { DiningSummary } from "@/src/types/api/dining";
 

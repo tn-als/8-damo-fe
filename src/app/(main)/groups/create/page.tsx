@@ -1,5 +1,5 @@
 import { Header } from "@/src/components/layout/header";
-import { GroupCreateContainer } from "@/src/components/groups/group-create-container";
+import { GroupCreateContainer } from "@/src/components/groups/create/group-create-container";
 
 export default function GroupCreatePage() {
   return (

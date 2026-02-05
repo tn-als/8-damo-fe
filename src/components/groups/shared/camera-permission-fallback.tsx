@@ -1,7 +1,7 @@
 "use client";
 
 import { Camera, Settings } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 type PermissionError = "NotAllowedError" | "NotFoundError" | "NotReadableError" | "unknown";
 

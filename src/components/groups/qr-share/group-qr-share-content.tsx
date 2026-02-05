@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Share2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-import { Header } from "../layout";
+import { Header } from "../../layout";
 import { loadKakaoSDK } from "@/src/lib/kakao-sdk";
 
 interface GroupQrShareContentProps {

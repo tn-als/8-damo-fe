@@ -1,6 +1,6 @@
 "use client";
 
-import { DiningSummaryCard } from "@/src/components/groups/dining-summary-card";
+import { DiningSummaryCard } from "@/src/components/groups/detail/dining-summary-card";
 import { RecommendationPendingSection } from "@/src/components/groups/recommendation-pending/recommendation-pending-section";
 import { type DiningStatus, type DiningSummary } from "@/src/types/api/dining";
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";

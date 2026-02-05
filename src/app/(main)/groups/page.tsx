@@ -1,4 +1,4 @@
-import { GroupsPageContent } from '@/src/components/groups/groups-page-content';
+import { GroupsPageContent } from '@/src/components/groups/list/groups-page-content';
 import { getMyGroups } from '@/src/lib/actions/groups';
 
 export default async function GroupsPage() {

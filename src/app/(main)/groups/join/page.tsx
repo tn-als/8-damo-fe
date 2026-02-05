@@ -1,5 +1,5 @@
 import { Header } from "@/src/components/layout";
-import { GroupJoinContainer } from "@/src/components/groups/group-join-container";
+import { GroupJoinContainer } from "@/src/components/groups/join/group-join-container";
 
 export default function GroupJoinPage() {
   return (

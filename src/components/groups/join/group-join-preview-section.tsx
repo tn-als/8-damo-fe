@@ -1,7 +1,7 @@
 "use client";
 
 import { Users } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { GroupSummary } from "@/src/types/groups";
 
 interface GroupJoinPreviewSectionProps {

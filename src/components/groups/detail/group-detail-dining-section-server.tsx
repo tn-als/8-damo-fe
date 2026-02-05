@@ -1,4 +1,4 @@
-import { GroupDetailDiningSection } from "@/src/components/groups/group-detail-dining-section";
+import { GroupDetailDiningSection } from "@/src/components/groups/detail/group-detail-dining-section";
 import { getGroupDiningSummaries } from "@/src/lib/actions/dining";
 import type { DiningStatus } from "@/src/types/api/dining";
 

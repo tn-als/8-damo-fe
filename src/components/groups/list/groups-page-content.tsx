@@ -2,9 +2,8 @@
 import { MyGroupHeader } from "./my-group-header";
 import { MyGroupList } from "./my-group-list";
 import { MyGroupActionsFAB } from "./my-group-actions-fab";
-import { BottomNavigationBar } from "../layout";
+import { BottomNavigationBar } from "../../layout";
 import { GroupSummary } from "@/src/types/groups";
-import { GroupDetailCreateDiningButton } from "./group-detail-create-dining-button";
 
 interface GroupsPageContentProps {
   groups: GroupSummary[];

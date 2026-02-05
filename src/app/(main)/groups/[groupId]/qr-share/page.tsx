@@ -1,4 +1,4 @@
-import { GroupQrShareContent } from "@/src/components/groups/group-qr-share-content";
+import { GroupQrShareContent } from "@/src/components/groups/qr-share/group-qr-share-content";
 
 interface QrSharePageProps {
   params: Promise<{ groupId: string }>;
