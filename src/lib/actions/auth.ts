@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { parseCookie } from "../cookie";
 
 export type OnboardingStep = "BASIC" | "CHARACTERISTIC" | "DONE";
@@ -129,4 +130,11 @@ export async function processAuthTest(): Promise<KakaoOAuthResult> {
       error: error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
     };
   }
+}
+
+export async function logout(): Promise<void> {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
 }
