@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { PageHeader } from "@/src/components/ui/page-header";
-import { processKakaoOAuth } from "@/src/lib/actions/auth";
+import { processKakaoOAuth } from "@/src/lib/api/client/auth";
+import { getMe } from "@/src/lib/api/client/user";
 import { KakaoCallbackError } from "./kakao-callback-error";
 import { useUserStore } from "@/src/stores/user-store";
-import { getMe } from "@/src/lib/actions/user";
 import { useRouter } from "next/navigation";
 
 interface KakaoCallbackContentProps {
@@ -30,23 +30,22 @@ export function KakaoCallbackContent({
 
   useEffect(() => {
     const run = async () => {
-      const result = await processKakaoOAuth(code);
+      try {
+        await processKakaoOAuth(code);
 
-      if (!result.success) {
-        setError(result.error);
-        return;
-      }
-
-      // OAuth 성공 후 getMe로 사용자 정보 조회하여 setUser
-      // RouteGuard가 user 상태 변경을 감지하여 자동으로 리다이렉트 처리
-      const meResult = await getMe();
-      if (meResult.httpStatus === "200 OK" && meResult.data) {
-        setUser(meResult.data);
-        const fallbackUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "/";
-        const nextPath = normalizeRedirectPath(redirectPath);
-        window.location.replace(nextPath ?? fallbackUrl);
-      } else {
-        setError("사용자 정보를 불러올 수 없습니다.");
+        // OAuth 성공 후 getMe로 사용자 정보 조회하여 setUser
+        // RouteGuard가 user 상태 변경을 감지하여 자동으로 리다이렉트 처리
+        const meResult = await getMe();
+        if (meResult.data) {
+          setUser(meResult.data);
+          const fallbackUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "/";
+          const nextPath = normalizeRedirectPath(redirectPath);
+          window.location.replace(nextPath ?? fallbackUrl);
+        } else {
+          setError("사용자 정보를 불러올 수 없습니다.");
+        }
+      } catch {
+        setError("카카오 로그인 처리 중 오류가 발생했습니다.");
       }
     };
 

@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { toast } from "@/src/components/ui/sonner";
-import { processAuthTest } from "@/src/lib/actions/auth";
+import { processAuthTest } from "@/src/lib/api/client/auth";
 
 export default function LoginTestPage() {
   const router = useRouter();
@@ -12,14 +12,12 @@ export default function LoginTestPage() {
 
   const handleAuthTest = () => {
     startTransition(async () => {
-      const result = await processAuthTest();
-
-      if (!result.success) {
-        toast.error(result.error || "로그인 테스트에 실패했습니다.");
-        return;
+      try {
+        await processAuthTest();
+        router.replace("/");
+      } catch {
+        toast.error("로그인 테스트에 실패했습니다.");
       }
-
-      router.replace("/");
     });
   };
 
