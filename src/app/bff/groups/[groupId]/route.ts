@@ -3,20 +3,15 @@ import { AxiosError } from "axios";
 import { bffAxios, passthroughResponse, errorResponse } from "@/src/app/bff/_lib";
 
 interface RouteParams {
-  params: Promise<{
-    groupId: string;
-    diningId: string;
-  }>;
+  params: Promise<{ groupId: string }>;
 }
 
-// GET - 식당 투표 현황 조회
+// GET - 그룹 상세 조회
 export async function GET(_: NextRequest, { params }: RouteParams) {
   try {
-    const { groupId, diningId } = await params;
+    const { groupId } = await params;
 
-    const response = await bffAxios.get(
-      `/api/v1/groups/${groupId}/dining/${diningId}/restaurant-vote`
-    );
+    const response = await bffAxios.get(`/api/v1/groups/${groupId}`);
     return passthroughResponse(response.data, response.status);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {

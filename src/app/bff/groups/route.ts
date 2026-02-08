@@ -2,21 +2,12 @@ import { NextRequest } from "next/server";
 import { AxiosError } from "axios";
 import { bffAxios, passthroughResponse, errorResponse } from "@/src/app/bff/_lib";
 
-interface RouteParams {
-  params: Promise<{
-    groupId: string;
-    diningId: string;
-  }>;
-}
-
-// GET - 식당 투표 현황 조회
-export async function GET(_: NextRequest, { params }: RouteParams) {
+// POST - 그룹 생성
+export async function POST(request: NextRequest) {
   try {
-    const { groupId, diningId } = await params;
+    const body = await request.json();
 
-    const response = await bffAxios.get(
-      `/api/v1/groups/${groupId}/dining/${diningId}/restaurant-vote`
-    );
+    const response = await bffAxios.post("/api/v1/groups", body);
     return passthroughResponse(response.data, response.status);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {

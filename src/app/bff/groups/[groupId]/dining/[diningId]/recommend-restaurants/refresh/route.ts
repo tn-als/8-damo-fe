@@ -9,13 +9,13 @@ interface RouteParams {
   }>;
 }
 
-// GET - 식당 투표 현황 조회
-export async function GET(_: NextRequest, { params }: RouteParams) {
+// POST - 추천 식당 새로고침
+export async function POST(_: NextRequest, { params }: RouteParams) {
   try {
     const { groupId, diningId } = await params;
 
-    const response = await bffAxios.get(
-      `/api/v1/groups/${groupId}/dining/${diningId}/restaurant-vote`
+    const response = await bffAxios.post(
+      `/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurant/refresh`
     );
     return passthroughResponse(response.data, response.status);
   } catch (error) {

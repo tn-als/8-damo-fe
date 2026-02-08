@@ -3,20 +3,19 @@ import { AxiosError } from "axios";
 import { bffAxios, passthroughResponse, errorResponse } from "@/src/app/bff/_lib";
 
 interface RouteParams {
-  params: Promise<{
-    groupId: string;
-    diningId: string;
-  }>;
+  params: Promise<{ groupId: string }>;
 }
 
-// GET - 참석 투표 현황 조회
-export async function GET(_: NextRequest, { params }: RouteParams) {
+// GET - 그룹 회식 목록 조회
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { groupId, diningId } = await params;
+    const { groupId } = await params;
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status");
 
-    const response = await bffAxios.get(
-      `/api/v1/groups/${groupId}/dining/${diningId}/attendance-vote`
-    );
+    const response = await bffAxios.get(`/api/v1/groups/${groupId}/dining`, {
+      params: status ? { status } : undefined,
+    });
     return passthroughResponse(response.data, response.status);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
@@ -26,16 +25,13 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   }
 }
 
-// PATCH - 참석 투표
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+// POST - 회식 생성
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
-    const { groupId, diningId } = await params;
+    const { groupId } = await params;
     const body = await request.json();
 
-    const response = await bffAxios.patch(
-      `/api/v1/groups/${groupId}/dining/${diningId}/attendance-vote`,
-      body
-    );
+    const response = await bffAxios.post(`/api/v1/groups/${groupId}/dining`, body);
     return passthroughResponse(response.data, response.status);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {

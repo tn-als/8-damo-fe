@@ -6,16 +6,19 @@ interface RouteParams {
   params: Promise<{
     groupId: string;
     diningId: string;
+    recommendRestaurantsId: string;
   }>;
 }
 
-// GET - 식당 투표 현황 조회
-export async function GET(_: NextRequest, { params }: RouteParams) {
+// POST - 식당 투표
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
-    const { groupId, diningId } = await params;
+    const { groupId, diningId, recommendRestaurantsId } = await params;
+    const body = await request.json();
 
-    const response = await bffAxios.get(
-      `/api/v1/groups/${groupId}/dining/${diningId}/restaurant-vote`
+    const response = await bffAxios.post(
+      `/api/v1/groups/${groupId}/dining/${diningId}/restaurants-vote/${recommendRestaurantsId}`,
+      body
     );
     return passthroughResponse(response.data, response.status);
   } catch (error) {
