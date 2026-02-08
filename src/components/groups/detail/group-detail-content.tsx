@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { GroupDetailHeaderContainer } from "@/src/components/groups/detail/group-detail-header-container";
 import { GroupDetailInformationContainer } from "@/src/components/groups/detail/group-detail-information-container";
 import { GroupDetailCreateDiningButton } from "@/src/components/groups/detail/group-detail-create-dining-button";
-import { getGroupDetail } from "@/src/lib/actions/groups";
+import { getGroupDetail } from "@/src/lib/api/client/groups";
 
 interface GroupDetailState {
   name: string;
@@ -31,20 +31,17 @@ export function GroupDetailContent({
     let isActive = true;
 
     const run = async () => {
-      const result = await getGroupDetail(groupId);
+      try {
+        const result = await getGroupDetail(groupId);
 
-      if (!isActive) return;
+        if (!isActive) return;
 
-      if (!result.success) {
-        console.error(
-          "[GroupDetailContent] Failed to load group detail",
-          result.error
-        );
+        setGroup(result.data ?? null);
+      } catch (error) {
+        if (!isActive) return;
+        console.error("[GroupDetailContent] Failed to load group detail", error);
         setGroup(null);
-        return;
       }
-
-      setGroup(result.data ?? null);
     };
 
     run();
