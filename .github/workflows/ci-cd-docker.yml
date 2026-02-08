@@ -129,8 +129,8 @@ jobs:
             export ECR_REPO="${ECR_REPO}"
             export IMAGE_TAG="${IMAGE_TAG}"
 
-            docker compose pull
-            docker compose up -d
+            sudo docker compose pull
+            sudo docker compose up -d
 
   k6_test:
     needs: deploy
