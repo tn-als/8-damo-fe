@@ -79,6 +79,7 @@ jobs:
           echo "ECR_REPO=${ECR_REPO}" >> "$GITHUB_ENV"
           echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
           echo "IMAGE=${ECR_REPO}:${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "LATEST_IMAGE=${ECR_REPO}:latest" >> "$GITHUB_ENV"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -86,7 +87,9 @@ jobs:
           context: .
           platforms: linux/arm64
           push: true
-          tags: ${{ env.IMAGE }}
+          tags: |
+            ${{ env.IMAGE }}
+            ${{ env.LATEST_IMAGE }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
@@ -129,8 +132,8 @@ jobs:
             export ECR_REPO="${ECR_REPO}"
             export IMAGE_TAG="${IMAGE_TAG}"
 
-            sudo docker compose pull
-            sudo docker compose up -d
+            docker compose pull
+            docker compose up -d
 
   k6_test:
     needs: deploy
