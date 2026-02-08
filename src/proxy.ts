@@ -90,5 +90,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|static|favicon.ico).*)'],
+  matcher: ['/((?!api|_next|static|favicon.ico|bff).*)'],
 };
