@@ -12,8 +12,8 @@ import {
   type BasicInfoFormValues,
 } from "@/src/components/onboarding/basic";
 import { basicInfoSchema } from "@/src/lib/schema/basic-information";
-import { updateBasicInfo } from "@/src/lib/actions/user-basic-info";
-import { getPresignedUrl } from "@/src/lib/actions/s3";
+import { updateBasicInfo } from "@/src/lib/api/client/user";
+import { getPresignedUrl } from "@/src/lib/api/client/s3";
 import { Button } from "@/src/components/ui/button";
 import { toast } from "@/src/components/ui/sonner";
 import { getImageContentType } from "@/src/constants/s3/util";
@@ -79,43 +79,49 @@ export function EditBasicContainer({ initialData }: EditBasicContainerProps) {
         return;
       }
 
-      const presignedResult = await getPresignedUrl({
-        directory: "users/profile",
-        fileName: profileImage.name,
-        contentType: profileImageContentType,
-      });
+      try {
+        const presignedResult = await getPresignedUrl({
+          directory: "users/profile",
+          fileName: profileImage.name,
+          contentType: profileImageContentType,
+        });
 
-      if (!presignedResult.success || !presignedResult.data) {
-        toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
-        setIsSubmitting(false);
-        return;
-      }
+        if (!presignedResult.data) {
+          toast.error("이미지 업로드 실패, 재시도 해주세요.");
+          setIsSubmitting(false);
+          return;
+        }
 
-      const uploadResponse = await fetch(presignedResult.data.presignedUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": profileImageContentType,
-        },
-        body: profileImage,
-      });
+        const uploadResponse = await fetch(presignedResult.data.presignedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": profileImageContentType,
+          },
+          body: profileImage,
+        });
 
-      if (!uploadResponse.ok) {
+        if (!uploadResponse.ok) {
+          toast.error("업로드 실패, 재시도 해주세요.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        newImagePath = presignedResult.data.objectKey;
+      } catch {
         toast.error("업로드 실패, 재시도 해주세요.");
         setIsSubmitting(false);
         return;
       }
-
-      newImagePath = presignedResult.data.objectKey;
     }
 
-    const result = await updateBasicInfo({
-      imagePath: newImagePath,
-      nickname: data.nickname,
-      gender: data.gender,
-      ageGroup: data.ageGroup,
-    });
+    try {
+      await updateBasicInfo({
+        imagePath: newImagePath,
+        nickname: data.nickname,
+        gender: data.gender,
+        ageGroup: data.ageGroup,
+      });
 
-    if (result.success) {
       updateUserStore({
         nickname: data.nickname,
         gender: data.gender,
@@ -125,8 +131,8 @@ export function EditBasicContainer({ initialData }: EditBasicContainerProps) {
       updateOnboardingStep("DONE");
       toast.success("저장되었습니다");
       router.push("/mypage");
-    } else {
-      toast.error(result.error || "저장에 실패했습니다.");
+    } catch {
+      toast.error("저장에 실패했습니다.");
       setIsSubmitting(false);
     }
   };

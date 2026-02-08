@@ -11,8 +11,8 @@ import {
   type BasicInfoFormValues,
 } from "@/src/components/onboarding/basic";
 import { basicInfoSchema } from "@/src/lib/schema/basic-information";
-import { updateBasicInfo } from "@/src/lib/actions/user-basic-info";
-import { getPresignedUrl } from "@/src/lib/actions/s3";
+import { updateBasicInfo } from "@/src/lib/api/client/user";
+import { getPresignedUrl } from "@/src/lib/api/client/s3";
 import { Button } from "../../ui/button";
 import { toast } from "@/src/components/ui/sonner";
 import { getImageContentType } from "@/src/constants/s3/util";
@@ -25,7 +25,7 @@ interface BasicInfoFormProps {
   onSubmit?: (data: BasicInfoFormValues) => void;
 }
 
-export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
+export function BasicInfoForm({ defaultValues }: BasicInfoFormProps) {
   const { advanceToNextStep } = useCompleteOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -66,52 +66,58 @@ export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
           setIsSubmitting(false);
           return;
         } else {
-          const presignedResult = await getPresignedUrl({
-            directory: "users/profile",
-            fileName: profileImage.name,
-            contentType: profileImageContentType,
-          });
+          try {
+            const presignedResult = await getPresignedUrl({
+              directory: "users/profile",
+              fileName: profileImage.name,
+              contentType: profileImageContentType,
+            });
 
-          if (!presignedResult.success || !presignedResult.data) {
-            toast.error(presignedResult.error || "업로드 실패, 재시도 해주세요.");
-            setIsSubmitting(false);
-            return;
-          }
-
-          const uploadResponse = await fetch(
-            presignedResult.data.presignedUrl,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": profileImageContentType,
-              },
-              body: profileImage,
+            if (!presignedResult.data) {
+              toast.error("업로드 실패, 재시도 해주세요.");
+              setIsSubmitting(false);
+              return;
             }
-          );
 
-          if (!uploadResponse.ok) {
+            const uploadResponse = await fetch(
+              presignedResult.data.presignedUrl,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": profileImageContentType,
+                },
+                body: profileImage,
+              }
+            );
+
+            if (!uploadResponse.ok) {
+              toast.error("업로드 실패, 재시도 해주세요.");
+              setIsSubmitting(false);
+              return;
+            }
+
+            imagePath = presignedResult.data.objectKey;
+          } catch {
             toast.error("업로드 실패, 재시도 해주세요.");
             setIsSubmitting(false);
             return;
           }
-
-          imagePath = presignedResult.data.objectKey;
         }
       }
     }
 
-    const result = await updateBasicInfo({
-      imagePath,
-      nickname: data.nickname,
-      gender: data.gender,
-      ageGroup: data.ageGroup,
-    });
+    try {
+      await updateBasicInfo({
+        imagePath,
+        nickname: data.nickname,
+        gender: data.gender,
+        ageGroup: data.ageGroup,
+      });
 
-    if (result.success) {
       await advanceToNextStep("CHARACTERISTIC");
       router.replace("/onboarding/characteristic");
-    } else {
-      toast.error(result.error || "저장에 실패했습니다.");
+    } catch {
+      toast.error("저장에 실패했습니다.");
       setIsSubmitting(false);
     }
   };

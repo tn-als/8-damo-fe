@@ -10,7 +10,7 @@ import {
   type AdditionalNotesFormValues,
 } from "@/src/lib/schema/characteristic";
 import { useOnboardingStore } from "@/src/stores/onboarding-store";
-import { updateCharacteristics } from "@/src/lib/actions/user-characteristics";
+import { updateCharacteristics } from "@/src/lib/api/client/user";
 import { toast } from "@/src/components/ui/sonner";
 import { useCompleteOnboarding } from "@/src/hooks/use-complete-onboarding";
 
@@ -35,21 +35,21 @@ export function AdditionalNotesForm() {
     setAdditionalNotes(data.additionalNotes);
     const characteristics = getCharacteristics();
 
-    const result = await updateCharacteristics({
-      allergies: characteristics.allergies,
-      likeFoods: characteristics.foodTypes,
-      likeIngredients: characteristics.ingredients,
-      otherCharacteristics: data.additionalNotes,
-    });
+    try {
+      await updateCharacteristics({
+        allergies: characteristics.allergies,
+        likeFoods: characteristics.foodTypes,
+        likeIngredients: characteristics.ingredients,
+        otherCharacteristics: data.additionalNotes,
+      });
 
-    if (result.success) {
       const advanced = await advanceToNextStep("DONE");
       if (!advanced) {
         setIsSubmitting(false);
         return;
       }
-    } else {
-      toast.error(result.error || "재접속을 시도해주세요.");
+    } catch {
+      toast.error("재접속을 시도해주세요.");
       setIsSubmitting(false);
     }
   };

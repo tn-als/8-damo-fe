@@ -8,7 +8,7 @@ import { DiningDateTimeField } from "./dining-date-time-field";
 import { DiningVoteDeadlineField } from "./dining-vote-deadline-field"
 import { DiningBudgetField } from "./dining-budget-field";
 import { DiningCreateSubmitArea } from "./dining-create-submit-area";
-import { createDining } from "@/src/lib/actions/dining";
+import { createDining } from "@/src/lib/api/client/dining";
 
 export type DiningCreateFormValues = {
   diningDate?: Date;
@@ -71,19 +71,18 @@ export function DiningCreateContainer({
       budget: data.budget ?? 0,
     };
 
-    const result = await createDining(groupId, requestBody);
+    try {
+      await createDining(groupId, requestBody);
 
-    if (!result.success) {
-      toast.error(result.error || "회식 생성에 실패했습니다.");
-      return;
+      if (onSubmit) {
+        onSubmit(requestBody);
+      }
+
+      toast.success("회식이 생성되었습니다.");
+      router.push(`/groups/${groupId}`);
+    } catch {
+      toast.error("회식 생성에 실패했습니다.");
     }
-
-    if (onSubmit) {
-      onSubmit(requestBody);
-    }
-
-    toast.success("회식이 생성되었습니다.");
-    router.push(`/groups/${groupId}`);
   };
 
   return (

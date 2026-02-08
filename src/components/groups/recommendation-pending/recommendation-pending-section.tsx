@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DiningSummaryCard } from "@/src/components/groups/detail/dining-summary-card";
-import { getGroupDiningSummaries } from "@/src/lib/actions/dining";
+import { getGroupDiningSummaries } from "@/src/lib/api/client/dining";
 import type { DiningSummary } from "@/src/types/api/dining";
 
 const POLLING_INTERVAL_MS = 3_000;
@@ -53,26 +53,30 @@ export function RecommendationPendingSection({
     };
 
     const fetchPending = async (): Promise<boolean> => {
-      const res = await getGroupDiningSummaries(
-        groupId,
-        "RECOMMENDATION_PENDING"
-      );
+      try {
+        const res = await getGroupDiningSummaries(
+          groupId,
+          "RECOMMENDATION_PENDING"
+        );
 
-      if (!alive || !res.success) return false;
+        if (!alive) return false;
 
-      const data = res.data ?? [];
+        const data = res.data ?? [];
 
-      if (
-        data.length === 0 ||
-        data.some((d) => d.status !== "RECOMMENDATION_PENDING")
-      ) {
-        setPendingDinings([]);
-        stopAll();
+        if (
+          data.length === 0 ||
+          data.some((d) => d.status !== "RECOMMENDATION_PENDING")
+        ) {
+          setPendingDinings([]);
+          stopAll();
+          return false;
+        }
+
+        setPendingDinings(data);
+        return true;
+      } catch {
         return false;
       }
-
-      setPendingDinings(data);
-      return true;
     };
 
     const startPolling = () => {

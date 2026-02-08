@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { RestaurantInfo } from "./restaurant-info";
 import { RestaurantAction } from "./restaurant-action";
-import { voteRestaurant } from "@/src/lib/actions/dining";
+import { voteRestaurant } from "@/src/lib/api/client/dining";
 import { toast } from "@/src/components/ui/sonner";
 import type {
   ConfirmedRestaurantResponse,
@@ -125,31 +125,30 @@ export function RestaurantCard({
     setIsSubmitting(true);
     applyLocalVote(nextStatus);
 
-    const result = await voteRestaurant({
-      groupId,
-      diningId,
-      recommendRestaurantsId: restaurant.recommendRestaurantsId,
-      restaurantVoteStatus: nextStatus,
-    });
+    try {
+      const result = await voteRestaurant({
+        groupId,
+        diningId,
+        recommendRestaurantsId: restaurant.recommendRestaurantsId,
+        restaurantVoteStatus: nextStatus,
+      });
 
-    setIsSubmitting(false);
-
-    if (!result.success) {
+      if (
+        typeof result.data === "object" &&
+        result.data !== null &&
+        !Array.isArray(result.data)
+      ) {
+        syncServerVote(result.data);
+      } else if (typeof result.data === "string") {
+        syncServerVote({ restaurantVoteStatus: result.data });
+      }
+    } catch {
       setVoteStatus(prevStatus);
       setLikeCount(prevLike);
       setDislikeCount(prevDislike);
-      toast.error(result.error || "식당 투표에 실패했습니다.");
-      return;
-    }
-
-    if (
-      typeof result.data === "object" &&
-      result.data !== null &&
-      !Array.isArray(result.data)
-    ) {
-      syncServerVote(result.data);
-    } else if (typeof result.data === "string") {
-      syncServerVote({ restaurantVoteStatus: result.data });
+      toast.error("식당 투표에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

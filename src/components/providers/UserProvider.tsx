@@ -2,7 +2,7 @@
 
 import { useEffect, ReactNode } from 'react';
 import { useUserStore } from '@/src/stores/user-store';
-import { getMe } from '@/src/lib/actions/user';
+import { getMe } from '@/src/lib/api/client/user';
 
 interface UserProviderProps {
   children: ReactNode;
@@ -19,8 +19,8 @@ export function UserProvider({ children }: UserProviderProps) {
 
       try {
         const result = await getMe();
-
-        if (result.httpStatus === "200 OK" && result.data) {
+        
+        if (result.data) {
           setUser(result.data);
         } else {
           setUser(null);

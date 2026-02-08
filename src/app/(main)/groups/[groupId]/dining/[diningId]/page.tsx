@@ -1,6 +1,6 @@
 import { DiningDetailClient } from "@/src/components/dining/dining-detail-client";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
-import { getDiningCommon } from "@/src/lib/actions/dining";
+import { getDiningCommon } from "@/src/lib/api/server/dining";
 import type { DiningCommonResponse } from "@/src/types/api/dining";
 
 interface DiningDetailPageProps {
