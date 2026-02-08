@@ -56,3 +56,6 @@ docs/
 certificates
 
 refactor-backlog/
+
+# docker
+docker-compose.yml
