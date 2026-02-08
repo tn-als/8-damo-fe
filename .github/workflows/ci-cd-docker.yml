@@ -126,14 +126,14 @@ jobs:
             fi
 
             aws ecr get-login-password --region ${{ env.AWS_REGION }} \
-              | docker login --username AWS --password-stdin 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com
+              | sudo docker login --username AWS --password-stdin 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com
 
             cd /home/ubuntu
             export ECR_REPO="${ECR_REPO}"
             export IMAGE_TAG="${IMAGE_TAG}"
 
-            sudo docker compose pull
-            sudo docker compose up -d
+            sudo -E docker compose pull
+            sudo -E docker compose up -d
 
   k6_test:
     needs: deploy
