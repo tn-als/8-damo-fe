@@ -5,7 +5,7 @@ import { Badge } from "@/src/components/ui/badge";
 import { PROFILE_FALLBACK_IMAGE } from "@/src/constants/image";
 import { GENDER_LABEL, AGE_GROUP_LABEL } from "@/src/constants/user";
 import { LogOut } from "lucide-react";
-import { logout } from "@/src/lib/actions/auth";
+import { logout } from "@/src/lib/api/client/auth";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/src/stores/user-store";
 

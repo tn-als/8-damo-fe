@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "@/src/components/ui/sonner";
 import { Button } from "@/src/components/ui/button";
-import { editProfile } from "@/src/lib/actions/user-characteristics";
+import { editProfile } from "@/src/lib/api/client/user";
 import { AllergySection } from "./sections/allergy-section";
 import { FoodTypeSection } from "./sections/food-type-section";
 import { IngredientSection } from "./sections/ingredient-section";
@@ -44,18 +44,18 @@ export function EditCharacteristicContainer({ initialData }: EditCharacteristicC
   });
 
   const onSubmit = async (data: FormData) => {
-    const result = await editProfile({
-      allergies: data.allergies,
-      likeFoods: data.likeFoods,
-      likeIngredients: data.likeIngredients,
-      otherCharacteristics: data.otherCharacteristics,
-    });
+    try {
+      await editProfile({
+        allergies: data.allergies,
+        likeFoods: data.likeFoods,
+        likeIngredients: data.likeIngredients,
+        otherCharacteristics: data.otherCharacteristics,
+      });
 
-    if (result.success) {
       toast.success("저장되었습니다");
       router.back();
-    } else {
-      toast.error(result.error || "저장에 실패했습니다");
+    } catch {
+      toast.error("저장에 실패했습니다");
     }
   };
 

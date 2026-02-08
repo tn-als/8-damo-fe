@@ -1,7 +1,7 @@
 'use client';
 
 import { toast } from '@/src/components/ui/sonner';
-import { getMe } from '@/src/lib/actions/user';
+import { getMe } from '@/src/lib/api/client/user';
 import { useUserStore, type OnboardingStatus } from '@/src/stores/user-store';
 
 /**
@@ -16,16 +16,21 @@ export function useCompleteOnboarding() {
    * @param nextStep 다음 온보딩 상태
    */
   const advanceToNextStep = async (nextStep: OnboardingStatus): Promise<boolean> => {
-    const result = await getMe();
+    try {
+      const result = await getMe();
 
-    if (result.httpStatus === "200 OK" && result.data) {
-      setUser(result.data);
-      updateOnboardingStep(nextStep);
-      return true;
+      if (result.data) {
+        setUser(result.data);
+        updateOnboardingStep(nextStep);
+        return true;
+      }
+
+      toast.error("사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
+      return false;
+    } catch {
+      toast.error("사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
+      return false;
     }
-
-    toast.error("사용자 정보를 불러오지 못했습니다. 다시 시도해주세요.");
-    return false;
   };
 
   return { advanceToNextStep };
