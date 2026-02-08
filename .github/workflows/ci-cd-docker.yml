@@ -58,6 +58,12 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
         env:
           ECR_REPO_DEV: 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com/dev/fe
@@ -67,10 +73,8 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
           NEXT_PUBLIC_S3_CDN: ${{ secrets.NEXT_PUBLIC_S3_CDN }}
-          NEXT_PUBLIC_S3_URL: ${{ secrets.NEXT_PUBLIC_S3_URL }}
           NEXT_PUBLIC_KAKAO_SDK_TEST_KEY: ${{ secrets.NEXT_PUBLIC_KAKAO_MAP_KEY }}
           NEXT_PUBLIC_KAKAO_SDK_KEY: ${{ secrets.NEXT_PUBLIC_KAKAO_SDK_KEY }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
         run: |
           SHORT_SHA=${GITHUB_SHA::7}
           IMAGE_TAG=${SHORT_SHA}
@@ -81,7 +85,8 @@ jobs:
           fi
           IMAGE="${ECR_REPO}:${IMAGE_TAG}"
 
-          docker build \
+          docker buildx build \
+            --platform linux/arm64 \
             --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \
             --build-arg NEXT_PUBLIC_KAKAO_CLIENT_ID="$NEXT_PUBLIC_KAKAO_CLIENT_ID" \
             --build-arg NEXT_PUBLIC_KAKAO_REDIRECT_URI="$NEXT_PUBLIC_KAKAO_REDIRECT_URI" \
@@ -90,9 +95,8 @@ jobs:
             --build-arg NEXT_PUBLIC_KAKAO_SDK_TEST_KEY="$NEXT_PUBLIC_KAKAO_SDK_TEST_KEY" \
             --build-arg NEXT_PUBLIC_URL="$NEXT_PUBLIC_URL" \
             -t "$IMAGE" \
+            --push \
             .
-
-          docker push "$IMAGE"
 
   deploy:
     name: CD (Docker deploy)
