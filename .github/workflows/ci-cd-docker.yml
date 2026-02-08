@@ -117,7 +117,8 @@ jobs:
           script_stop: true
           script: |
             set -e
-            SHORT_SHA=${GITHUB_SHA::7}
+            SHORT_SHA=${{ github.sha }}
+            SHORT_SHA=${SHORT_SHA::7}
             IMAGE_TAG=${SHORT_SHA}
             if [ "${GITHUB_REF_NAME}" = "main" ]; then
               ECR_REPO="080598576517.dkr.ecr.ap-northeast-2.amazonaws.com/prod/fe"
