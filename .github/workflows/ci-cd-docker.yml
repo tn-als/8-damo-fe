@@ -117,22 +117,10 @@ jobs:
           script_stop: true
           script: |
             set -e
-            SHORT_SHA=${{ github.sha }}
-            SHORT_SHA=${SHORT_SHA::7}
-            IMAGE_TAG=${SHORT_SHA}
-            if [ "${GITHUB_REF_NAME}" = "main" ]; then
-              ECR_REPO="080598576517.dkr.ecr.ap-northeast-2.amazonaws.com/prod/fe"
-            else
-              ECR_REPO="080598576517.dkr.ecr.ap-northeast-2.amazonaws.com/dev/fe"
-            fi
-
             aws ecr get-login-password --region ${{ env.AWS_REGION }} \
               | sudo docker login --username AWS --password-stdin 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com
 
             cd /home/ubuntu
-            export ECR_REPO="${ECR_REPO}"
-            export IMAGE_TAG="${IMAGE_TAG}"
-
             sudo -E docker compose pull
             sudo -E docker compose up -d
 
