@@ -1,4 +1,3 @@
-import { cn } from "@/src/lib/utils";
 import { Header } from "../layout";
 
 interface HomeHeaderProps {

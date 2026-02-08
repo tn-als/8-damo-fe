@@ -17,7 +17,6 @@ import type {
   DiningStatus,
   RestaurantVoteResponse,
 } from "@/src/types/api/dining";
-import { Toaster } from "../ui/sonner";
 
 const POLLING_INTERVAL_MS = 5_000;
 
@@ -109,9 +108,7 @@ export function DiningDetailClient({
         );
         setAttendanceVote(data);
       } catch (error) {
-        {diningCommonError && (
-          <DiningErrorToast messages={[diningCommonError.message]}/>
-        )}
+        console.error("[DiningDetailClient] Failed to load attendance vote", error);
       }
     }
 
@@ -122,9 +119,7 @@ export function DiningDetailClient({
         );
         setRestaurantVotes(data);
       } catch (error) {
-        {diningCommonError && (
-          <DiningErrorToast messages={[diningCommonError.message]}/>
-        )}
+        console.error("[DiningDetailClient] Failed to load restaurant vote", error);
       }
     }
 
@@ -135,9 +130,7 @@ export function DiningDetailClient({
         );
         setConfirmedRestaurant(data);
       } catch (error) {
-        {diningCommonError && (
-          <DiningErrorToast messages={[diningCommonError.message]}/>
-        )}
+        console.error("[DiningDetailClient] Failed to load confirmed restaurant", error);
       }
     }
   };

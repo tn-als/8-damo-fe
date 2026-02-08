@@ -25,7 +25,7 @@ interface BasicInfoFormProps {
   onSubmit?: (data: BasicInfoFormValues) => void;
 }
 
-export function BasicInfoForm({defaultValues, onSubmit}: BasicInfoFormProps){
+export function BasicInfoForm({ defaultValues }: BasicInfoFormProps) {
   const { advanceToNextStep } = useCompleteOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();

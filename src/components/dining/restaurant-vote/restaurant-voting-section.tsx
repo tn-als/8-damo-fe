@@ -6,7 +6,7 @@ import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
 import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
 import { toast } from "@/src/components/ui/sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,

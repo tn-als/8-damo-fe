@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import axios, { AxiosError } from "axios";
 import { parseCookie } from "@/src/lib/cookie";

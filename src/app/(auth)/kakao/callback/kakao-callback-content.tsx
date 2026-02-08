@@ -8,7 +8,6 @@ import { processKakaoOAuth } from "@/src/lib/api/client/auth";
 import { getMe } from "@/src/lib/api/client/user";
 import { KakaoCallbackError } from "./kakao-callback-error";
 import { useUserStore } from "@/src/stores/user-store";
-import { useRouter } from "next/navigation";
 
 interface KakaoCallbackContentProps {
   code: string;
@@ -24,7 +23,6 @@ export function KakaoCallbackContent({
   code,
   redirectPath,
 }: KakaoCallbackContentProps) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const { setUser } = useUserStore();
 
