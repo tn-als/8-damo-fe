@@ -40,7 +40,7 @@ jobs:
 
   build_push:
     name: Build & Push (ECR)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     needs: [ci]
     if: github.event_name == 'push' && needs.ci.result == 'success'
 
@@ -57,9 +57,6 @@ jobs:
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
