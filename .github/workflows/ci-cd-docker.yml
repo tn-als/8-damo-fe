@@ -64,17 +64,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: Resolve image tag/repo
         env:
           ECR_REPO_DEV: 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com/dev/fe
           ECR_REPO_PROD: 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com/prod/fe
-          NEXT_PUBLIC_KAKAO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_KAKAO_CLIENT_ID }}
-          NEXT_PUBLIC_KAKAO_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_KAKAO_REDIRECT_URI }}
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
-          NEXT_PUBLIC_S3_CDN: ${{ secrets.NEXT_PUBLIC_S3_CDN }}
-          NEXT_PUBLIC_KAKAO_SDK_TEST_KEY: ${{ secrets.NEXT_PUBLIC_KAKAO_MAP_KEY }}
-          NEXT_PUBLIC_KAKAO_SDK_KEY: ${{ secrets.NEXT_PUBLIC_KAKAO_SDK_KEY }}
         run: |
           SHORT_SHA=${GITHUB_SHA::7}
           IMAGE_TAG=${SHORT_SHA}
@@ -83,20 +76,30 @@ jobs:
           else
             ECR_REPO="${ECR_REPO_DEV}"
           fi
-          IMAGE="${ECR_REPO}:${IMAGE_TAG}"
+          echo "ECR_REPO=${ECR_REPO}" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "IMAGE=${ECR_REPO}:${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "LATEST_IMAGE=${ECR_REPO}:latest" >> "$GITHUB_ENV"
 
-          docker buildx build \
-            --platform linux/arm64 \
-            --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \
-            --build-arg NEXT_PUBLIC_KAKAO_CLIENT_ID="$NEXT_PUBLIC_KAKAO_CLIENT_ID" \
-            --build-arg NEXT_PUBLIC_KAKAO_REDIRECT_URI="$NEXT_PUBLIC_KAKAO_REDIRECT_URI" \
-            --build-arg NEXT_PUBLIC_S3_CDN="$NEXT_PUBLIC_S3_CDN" \
-            --build-arg NEXT_PUBLIC_KAKAO_SDK_KEY="$NEXT_PUBLIC_KAKAO_SDK_KEY" \
-            --build-arg NEXT_PUBLIC_KAKAO_SDK_TEST_KEY="$NEXT_PUBLIC_KAKAO_SDK_TEST_KEY" \
-            --build-arg NEXT_PUBLIC_URL="$NEXT_PUBLIC_URL" \
-            -t "$IMAGE" \
-            --push \
-            .
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE }}
+            ${{ env.LATEST_IMAGE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_KAKAO_CLIENT_ID=${{ secrets.NEXT_PUBLIC_KAKAO_CLIENT_ID }}
+            NEXT_PUBLIC_KAKAO_REDIRECT_URI=${{ secrets.NEXT_PUBLIC_KAKAO_REDIRECT_URI }}
+            NEXT_PUBLIC_S3_CDN=${{ secrets.NEXT_PUBLIC_S3_CDN }}
+            NEXT_PUBLIC_KAKAO_SDK_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_SDK_KEY }}
+            NEXT_PUBLIC_KAKAO_SDK_TEST_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_MAP_KEY }}
+            NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
 
   deploy:
     name: CD (Docker deploy)
