@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "@/src/components/ui/sonner";
-import { voteAttendance } from "@/src/lib/actions/dining";
+import { voteAttendance } from "@/src/lib/api/client/dining";
 import { type AttendanceVoteStatus } from "@/src/types/api/dining";
 import { AttendanceVoteProgress } from "./attendance-vote-progress";
 import { AttendanceVotePrompt } from "./attendance-vote-prompt";
@@ -36,20 +36,19 @@ export function AttendanceVotingSection({
 
     setIsSubmitting(true);
 
-    const result = await voteAttendance({
-      groupId: params.groupId,
-      diningId: params.diningId,
-      attendanceVoteStatus: vote,
-    });
+    try {
+      await voteAttendance({
+        groupId: params.groupId,
+        diningId: params.diningId,
+        attendanceVoteStatus: vote,
+      });
 
-    if (!result.success) {
-      toast.error(result.error || "참석 투표에 실패했습니다.");
+      setCurrentVoteStatus(vote);
+    } catch {
+      toast.error("참석 투표에 실패했습니다.");
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    setCurrentVoteStatus(vote);
-    setIsSubmitting(false);
   };
 
   return (
