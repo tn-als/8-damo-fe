@@ -7,6 +7,9 @@ export interface ApiResponse<T = unknown> {
 }
 
 export function passthroughResponse<T>(payload: ApiResponse<T>, status: number) {
+  if (status === 204) {
+    return new NextResponse(null, { status });
+  }
   return NextResponse.json(payload, { status });
 }
 
