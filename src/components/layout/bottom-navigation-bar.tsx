@@ -21,7 +21,7 @@ const navigationItems: NavigationItem[] = [
         id: "lightning",
         label: "번개",
         href: "/lightning",
-        disabled: true,
+        disabled: false,
     },
     {
         id: "mypage",
