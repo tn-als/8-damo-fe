@@ -116,12 +116,9 @@ jobs:
           script_stop: true
           script: |
             set -e
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} \
-              | sudo docker login --username AWS --password-stdin 080598576517.dkr.ecr.ap-northeast-2.amazonaws.com
-
             cd /home/ubuntu
-            sudo -E docker compose pull
-            sudo -E docker compose up -d
+            sudo docker compose pull
+            sudo docker compose up -d
 
   k6_test:
     needs: deploy
