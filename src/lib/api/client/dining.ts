@@ -4,12 +4,60 @@ import type {
   DiningStatus,
   RestaurantVoteResponse,
   ConfirmedRestaurantResponse,
+  DiningCommonResponse,
+  AttendanceVoteResponse
 } from "@/src/types/api/dining";
 
 export interface CreateDiningRequest {
   diningDate?: string;
   voteDueDate?: string;
   budget?: number;
+}
+
+interface VoteRestaurantData {
+  restaurantVoteStatus?: string;
+  likeCount?: number;
+  dislikeCount?: number;
+}
+
+export async function getDiningCommon(params: {
+  groupId: string;
+  diningId: string;
+}): Promise<ApiResponse<DiningCommonResponse>>{
+  const {groupId, diningId} = params;
+  return bffGet<DiningCommonResponse>(
+    `/groups/${groupId}/dining/${diningId}/common`
+  );
+}
+
+export async function getDiningAttendanceVote(params: {
+  groupId: string;
+  diningId: string;
+}): Promise<ApiResponse<AttendanceVoteResponse>>{
+  const {groupId, diningId} = params;
+  return bffGet<AttendanceVoteResponse>(
+    `/groups/${groupId}/dining/${diningId}/attendance-vote`
+  )
+}
+
+export async function getDiningRestaurantVote(params: {
+  groupId: string;
+  diningId: string;
+}): Promise<ApiResponse<RestaurantVoteResponse>>{
+  const {groupId, diningId} = params;
+  return bffGet<RestaurantVoteResponse>(
+    `/groups/${groupId}/dining/${diningId}/restaurant-vote`
+  )
+}
+
+export async function getDiningConfirmed(params: {
+  groupId: string;
+  diningId: string;
+}): Promise<ApiResponse<ConfirmedRestaurantResponse>>{
+  const {groupId, diningId} = params;
+  return bffGet<ConfirmedRestaurantResponse>(
+    `/groups/${groupId}/dining/${diningId}/confirmed`
+  )
 }
 
 export async function createDining(
@@ -40,11 +88,7 @@ export async function voteAttendance(params: {
   );
 }
 
-interface VoteRestaurantData {
-  restaurantVoteStatus?: string;
-  likeCount?: number;
-  dislikeCount?: number;
-}
+
 
 export async function voteRestaurant(params: {
   groupId: string;
