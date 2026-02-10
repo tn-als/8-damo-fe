@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Calendar, MapPin, Users } from "lucide-react";
 import type { LightningItem } from "@/src/types/lightning";
@@ -31,8 +32,11 @@ export function LightningCard({ item }: { item: LightningItem }) {
             {item.currentParticipants}/{item.maxParticipants}명
           </span>
         </div>
-        <Button type="button" className="h-10 min-w-20 rounded-xl px-3 text-sm font-semibold sm:h-11 sm:min-w-24 sm:text-base">
-          참가하기
+        <Button
+          asChild
+          className="h-10 min-w-20 rounded-xl px-3 text-sm font-semibold sm:h-11 sm:min-w-24 sm:text-base"
+        >
+          <Link href={`/lightning/${item.id}`}>참가하기</Link>
         </Button>
       </div>
     </article>
