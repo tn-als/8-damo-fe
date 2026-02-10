@@ -21,8 +21,8 @@ export interface LightningParticipant {
 export interface LightningDetail {
   id: string;
   title: string;
-  meetingDateLabel: string;
-  placeName: string;
+  meetingDate: string;
+  restaurantName: string;
   currentParticipants: number;
   maxParticipants: number;
   description: string;
