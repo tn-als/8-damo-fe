@@ -1,8 +1,11 @@
 "use client";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { MOCK_LIGHTNING_ITEMS } from "./mock-lightning-item";
 import { LightningCard } from "./lightning-card";
 import { useRouter } from "next/navigation";
 import { BottomNavigationBar } from "@/src/components/layout";
+import { Button } from "@/src/components/ui/button";
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";
 import type { LightningTab } from "@/src/types/lightning";
 
@@ -44,6 +47,19 @@ export function LightningPageContent({ activeTab }: LightningPageContentProps) {
           ))}
         </section>
       </main>
+      <div className="pointer-events-none fixed bottom-20 left-1/2 w-full max-w-[430px] -translate-x-1/2 px-4">
+        <div className="flex justify-end">
+          <Button
+            asChild
+            size="icon-lg"
+            className="pointer-events-auto size-14 rounded-full bg-[#ff8d28] text-white shadow-lg hover:bg-[#ff8d28]/90"
+          >
+            <Link href="/lightning/create" aria-label="번개 생성하기">
+              <Plus className="size-6" />
+            </Link>
+          </Button>
+        </div>
+      </div>
       <BottomNavigationBar />
     </>
   );
