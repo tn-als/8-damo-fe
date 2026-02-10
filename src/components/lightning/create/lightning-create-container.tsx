@@ -14,6 +14,8 @@ import { useLightningLocation } from "@/src/hooks/lightning/create/use-lightning
 import { useLightningDescription } from "@/src/hooks/lightning/create/use-lightning-description";
 
 import { MOCK_RECOMMENDED_RESTAURANTS } from "./mock-recommended-restaurant";
+import { createLightning } from "@/src/lib/api/client/lightning";
+import { formatDateToMinute } from "@/src/lib/utils";
 
 export function LightningCreateContainer() {
   const router = useRouter();
@@ -33,15 +35,27 @@ export function LightningCreateContainer() {
     return permission !== "granted" || description.length === 0;
   }, [permission, description]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (disabled) return;
 
     setIsSubmitting(true);
 
-    // 실제로는 API 호출 후 성공 처리
-    toast.success("번개가 생성되었습니다.");
-    router.push("/lightning");
+    try{
+      await createLightning({
+        restaurantId: "1", 
+        maxParticipants, 
+        description, 
+        lightningDate: formatDateToMinute(new Date())
+      });
+      toast.success("번개가 생성되었습니다.");
+      router.push("/lightning");
+    } catch (error) {
+      console.error(error);
+      toast.error("번개 생성에 실패했습니다.");
+    } finally{
+      setIsSubmitting(false);
+    }
   };
 
   return (
