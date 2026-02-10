@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import { BottomNavigationBar } from "@/src/components/layout";
 import { Button } from "@/src/components/ui/button";
 import { SegmentedTabs } from "@/src/components/ui/segmented-tabs";
-import type { LightningTab } from "@/src/types/lightning";
+import type { LightningTab, LightningItem } from "@/src/types/lightning";
 
 interface LightningPageContentProps {
   activeTab: LightningTab;
+  items: LightningItem[];
 }
 
 const TAB_OPTIONS: { value: LightningTab; label: string }[] = [
@@ -18,12 +19,8 @@ const TAB_OPTIONS: { value: LightningTab; label: string }[] = [
   { value: "joined", label: "내가 참여한 번개" },
 ];
 
-export function LightningPageContent({ activeTab }: LightningPageContentProps) {
+export function LightningPageContent({ items, activeTab }: LightningPageContentProps) {
   const router = useRouter();
-  const items =
-    activeTab === "joined"
-      ? MOCK_LIGHTNING_ITEMS.filter((item) => item.joined)
-      : MOCK_LIGHTNING_ITEMS;
 
   return (
     <>
