@@ -35,9 +35,13 @@ export function LocationPermissionGate({
       <Button
         type="button"
         onClick={onRequestPermission}
-        className="mt-4 h-11 w-full rounded-xl bg-[#ff8d28] text-sm font-semibold text-white active:bg-[#ff8d28]/90"
+        className="mt-4 h-11 w-full rounded-xl"
       >
-        {permission === "denied" ? "위치 권한 다시 요청" : "위치 권한 허용"}
+        {permission === "denied" ? (
+          <div>
+            위치 권한을 설정에서 직접 허용해주세요.
+          </div>
+        ) : "위치 권한 허용"}
       </Button>
     </section>
   );
