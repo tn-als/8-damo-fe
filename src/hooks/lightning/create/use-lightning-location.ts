@@ -11,7 +11,7 @@ interface UseLightningLocationResult {
 function getInitialPermission(): LocationPermission{
   if (typeof navigator === "undefined") return "unknown";
   if (!("geolocation" in navigator)) return "denied";
-  return "granted";
+  return "unknown";
 }
 
 export function useLightningLocation(): UseLightningLocationResult {
@@ -19,12 +19,8 @@ export function useLightningLocation(): UseLightningLocationResult {
     getInitialPermission
   );
 
-  const permissionRef = useRef(permission);
-
   const updatePermission = useCallback((next: LocationPermission) => {
-    if (permissionRef.current === next) return;
-    permissionRef.current = next;
-    setPermission(next);
+    setPermission((prev) => (prev === next ? prev : next));
   }, []);
 
   useEffect(() => {
