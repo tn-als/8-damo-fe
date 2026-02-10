@@ -29,7 +29,7 @@ export function LightningCard({ item }: { item: LightningItem }) {
         <div className="flex items-center gap-2 text-[#334155]">
           <Users className="size-4 shrink-0 sm:size-5" />
           <span className="text-sm font-semibold leading-6 sm:text-base">
-            {item.currentParticipants}/{item.maxParticipants}명
+            {item.participantsCount}/{item.maxParticipants}명
           </span>
         </div>
         <Button

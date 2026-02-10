@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { MOCK_LIGHTNING_ITEMS } from "./mock-lightning-item";
 import { LightningCard } from "./lightning-card";
 import { useRouter } from "next/navigation";
 import { BottomNavigationBar } from "@/src/components/layout";
