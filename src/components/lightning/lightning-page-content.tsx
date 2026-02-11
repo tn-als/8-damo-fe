@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { LightningCard } from "./lightning-card";
+import { LightningEmptyState } from "./lightning-empty-state";
 import { useRouter } from "next/navigation";
 import { BottomNavigationBar } from "@/src/components/layout";
 import { Button } from "@/src/components/ui/button";
@@ -38,9 +39,11 @@ export function LightningPageContent({ items, activeTab }: LightningPageContentP
         />
 
         <section className="mt-4 flex flex-col gap-3">
-          {items.map((item) => (
-            <LightningCard key={item.id} item={item} />
-          ))}
+          {items.length > 0 ? (
+            items.map((item) => <LightningCard key={item.id} item={item} />)
+          ) : (
+            <LightningEmptyState activeTab={activeTab} />
+          )}
         </section>
       </main>
       <div className="pointer-events-none fixed bottom-20 left-1/2 w-full max-w-[430px] -translate-x-1/2 px-4">
