@@ -2,7 +2,10 @@ import { Suspense } from "react";
 import { LightningPageContent } from "@/src/components/lightning/lightning-page-content";
 import { LightningPageFallback } from "@/src/components/lightning/lightning-fallback";
 import type { LightningTab } from "@/src/types/lightning";
-import { getMyLightnings } from "@/src/lib/api/server/lightning";
+import {
+  getJoinedLightnings,
+  getRecruitingLightnings,
+} from "@/src/lib/api/server/lightning";
 
 interface PageProps {
   searchParams?: Promise<{ tab?: string }>;
@@ -17,7 +20,12 @@ export default async function LightningPage({ searchParams }: PageProps) {
     ? resolvedSearchParams.tab
     : "recruiting";
 
-  const items = await getMyLightnings();
+  let items =
+    activeTab === "joined"
+      ? await getJoinedLightnings()
+      : await getRecruitingLightnings();
+
+  items = [];
 
   return (
     <Suspense fallback={<LightningPageFallback />}>
