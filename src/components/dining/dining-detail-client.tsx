@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { memo, useMemo } from "react"; 
 import {
   AttendanceVotingSection,
   ConfirmedSection,
@@ -40,7 +41,12 @@ export function DiningDetailClient({
       return response.data;
     },
     initialData: initialDiningCommon,
-    refetchInterval: POLLING_INTERVAL_MS,
+    refetchInterval: (query) => {
+      const status = query.state.data?.diningStatus;
+      return status === "CONFIRMED" || status === "COMPLETE"
+      ? false
+      : POLLING_INTERVAL_MS
+    },
     refetchOnWindowFocus: false,
   });
 
@@ -56,7 +62,7 @@ export function DiningDetailClient({
       return response.data;
     },
     enabled: isAttendanceVoting,
-    refetchInterval: POLLING_INTERVAL_MS,
+    refetchInterval: isAttendanceVoting ? POLLING_INTERVAL_MS: false,
     refetchOnWindowFocus: false,
   });
 
@@ -67,7 +73,7 @@ export function DiningDetailClient({
       return response.data;
     },
     enabled: isRestaurantVoting,
-    refetchInterval: POLLING_INTERVAL_MS,
+    refetchInterval: isRestaurantVoting? POLLING_INTERVAL_MS: false,
     refetchOnWindowFocus: false,
   });
 
@@ -78,7 +84,7 @@ export function DiningDetailClient({
       return response.data;
     },
     enabled: isConfirmed,
-    refetchInterval: POLLING_INTERVAL_MS,
+    refetchInterval: isConfirmed ? POLLING_INTERVAL_MS: false,
     refetchOnWindowFocus: false,
   });
 
