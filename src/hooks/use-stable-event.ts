@@ -8,6 +8,10 @@ export function useStableEvent<T extends(...args: T[]) => T>(
   const handlerRef = useRef<T | undefined>(handler);
 
   useEffect(() => {
+    if (!handlerRef.current) {
+      throw new Error("Handler is not defined");
+    }
+
     handlerRef.current = handler;
   }, [handler]);
 
