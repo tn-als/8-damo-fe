@@ -99,6 +99,9 @@ jobs:
             NEXT_PUBLIC_KAKAO_SDK_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_SDK_KEY }}
             NEXT_PUBLIC_KAKAO_SDK_TEST_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_MAP_KEY }}
             NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}
+            NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+            NEXT_PUBLIC_BROKER_URL=${{ github.ref_name == 'main' && secrets.NEXT_PUBLIC_BROKER_URL_PROD || secrets.NEXT_PUBLIC_BROKER_URL_DEV }}
 
   deploy:
     name: CD (Docker deploy)
