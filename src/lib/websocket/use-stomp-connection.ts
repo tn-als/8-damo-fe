@@ -21,7 +21,7 @@ export function useStompConnection({
   onError,
 }: UseStompConnectionOptions) {
 
-  const BROKER_URL = process.env.NEXT_PUBLIC_API_URL;
+  const BROKER_URL = process.env.NEXT_PUBLIC_BROKER_URL;
   const clientRef = useRef<Client | null>(null);
 
   const stableOnConnect = useStableEvent(onConnect);
