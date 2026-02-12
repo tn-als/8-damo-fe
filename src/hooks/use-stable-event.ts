@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-export function useStableEvent<T extends(...args: any[]) => any>(
+export function useStableEvent<T extends(...args: T[]) => T>(
   handler?: T
 ): T {
   const handlerRef = useRef<T | undefined>(handler);
@@ -11,7 +11,7 @@ export function useStableEvent<T extends(...args: any[]) => any>(
     handlerRef.current = handler;
   }, [handler]);
 
-  return useCallback(((...args: any[]) => {
+  return useCallback(((...args: T[]) => {
     return handlerRef.current?.(...args);
   }) as T, []);
 }
