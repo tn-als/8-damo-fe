@@ -1,29 +1,42 @@
-import {LightningParticipant} from "@/src/types/lightning";
+import { SectionCard } from "@/src/components/ui/section-card";
+import { LightningParticipant } from "@/src/types/lightning";
 import { ParticipantAvatar } from "./participant-avatar";
 
-interface LightningDetailParticipantListSectionProps{
- maxParticipants: number;
- currentParticipants: number;
- participants: LightningParticipant[];
+interface LightningDetailParticipantListSectionProps {
+  maxParticipants: number;
+  currentParticipants: number;
+  participants: LightningParticipant[];
 }
 
 export function LightningDetailParticipantListSection({
-  maxParticipants, 
-  currentParticipants, 
+  maxParticipants,
+  currentParticipants,
   participants
-}: LightningDetailParticipantListSectionProps){
-  return <section className="mt-6">
+}: LightningDetailParticipantListSectionProps) {
+  const remainingSeats = Math.max(0, maxParticipants - currentParticipants);
+
+  return (
+    <section className="mt-6">
+      <SectionCard>
+        <div className="flex items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-[#111111]">
-            참여자 ({currentParticipants}명 / {maxParticipants}명)
+            참여자 {currentParticipants}명
           </h2>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {participants.map((participant) => (
-              <ParticipantAvatar
-                key={participant.id}
-                src={participant.avatarUrl}
-                nickname={participant.nickname}
-              />
-            ))}
-          </div>
-        </section>
+          <span className="text-xs font-medium text-[#8e8e93]">
+            {remainingSeats > 0 ? `남은 ${remainingSeats}자리` : "정원 마감"}
+          </span>
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          {participants.map((participant) => (
+            <ParticipantAvatar
+              key={participant.id}
+              src={participant.avatarUrl}
+              nickname={participant.nickname}
+            />
+          ))}
+        </div>
+      </SectionCard>
+    </section>
+  );
 }
