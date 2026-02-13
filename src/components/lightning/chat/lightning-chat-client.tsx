@@ -10,23 +10,19 @@ import { ChatInput } from "./chat-input";
 
 interface Props {
   lightningId: string;
-  accessToken: string;
 }
 
 export function LightningChatClient({
   lightningId,
-  accessToken,
 }: Props) {
   const router = useRouter();
   const currentUserId = useUserStore((state) => state.user?.userId ?? null);
   const {
-    state,
     error,
     messages,
     sendMessage,
   } = useLightningChatSocket({
-    lightningId,
-    accessToken,
+    lightningId
   });
 
   return (
@@ -41,9 +37,6 @@ export function LightningChatClient({
         <h1 className="ml-1 flex-1 text-lg font-semibold leading-7 text-foreground">
           번개 채팅
         </h1>
-        <p className="pr-2 text-xs text-muted-foreground">
-          {state === "connected" ? "연결됨" : "연결 중"}
-        </p>
       </header>
 
       <ChatMessageList
@@ -57,10 +50,7 @@ export function LightningChatClient({
         </p>
       )}
 
-      <ChatInput
-        onSend={sendMessage}
-        disabled={state !== "connected"}
-      />
+      <ChatInput onSend={sendMessage}/>
     </div>
   );
 }
