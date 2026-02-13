@@ -44,24 +44,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
       `/api/v1/lightning/${lightningId}`
     );
 
-    const normalized = normalizeLightningDetail(response.data);
-    const detail = normalized.data;
-
-    if (!detail) {
-      return errorResponse(
-        normalized.errorMessage ?? "번개 상세 정보를 찾을 수 없습니다.",
-        404
-      );
-    }
-
-    return passthroughResponse(
-      {
-        httpStatus: normalized.httpStatus,
-        data: detail,
-        errorMessage: normalized.errorMessage,
-      },
-      response.status
-    );
+    return passthroughResponse(response.data, response.status);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
       return passthroughResponse(error.response.data, error.response.status);
