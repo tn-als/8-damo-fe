@@ -1,6 +1,5 @@
 import { Suspense } from "react";
-import { LightningPageContent } from "@/src/components/lightning/lightning-page-content";
-import { LightningPageFallback } from "@/src/components/lightning/lightning-fallback";
+import { LightningPageContent, LightningPageFallback } from "@/src/components/lightning";
 import type { LightningTab } from "@/src/types/lightning";
 import {
   getJoinedLightnings,
