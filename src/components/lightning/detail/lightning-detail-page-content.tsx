@@ -9,20 +9,33 @@ import { LightningDetailParticipantListSection } from "./lightning-detail-partic
 
 interface LightningDetailPageContentProps {
   detail: LightningDetail;
+  canParticipate: boolean;
 }
 
 export function LightningDetailPageContent({
   detail,
+  canParticipate
 }: LightningDetailPageContentProps) {
+  const buttonLabel = canParticipate ? "참가하기" : "참가 마감";
+  const statusLabel = canParticipate ? "모집 중" : "모집 마감";
+  const remainingSeats = Math.max(
+    0,
+    detail.maxParticipants - detail.currentParticipants
+  );
+
   return (
     <div className="mx-auto flex min-h-dvh w-full min-w-[320px] max-w-[430px] flex-col bg-background">
-      <LightningDetailHeader/>
+      <LightningDetailHeader statusLabel={statusLabel} isClosed={!canParticipate} />
 
       <main className="flex-1 overflow-y-auto px-4 pb-28 pt-4">
-        <LightningDetailMapViewSection location={detail.location}/>
+        <LightningDetailMapViewSection
+          location={detail.location}
+          restaurantName={detail.restaurantName}
+          meetingDate={detail.meetingDate}
+        />
 
-        <LightningDetailInfoSection 
-          title={detail.title} 
+        <LightningDetailInfoSection
+          title={detail.title}
           meetingDate={detail.meetingDate}
           restaurantName={detail.restaurantName}
           currentParticipants={detail.currentParticipants}
@@ -39,9 +52,12 @@ export function LightningDetailPageContent({
 
       </main>
 
-      <div className="sticky bottom-0 bg-background px-4 py-3">
-        <Button className="h-12 w-full rounded-xl text-base font-semibold">
-          참가하기
+      <div className="sticky bottom-0 px-4 py-3 backdrop-blur">
+        <Button
+          disabled={!canParticipate}
+          className="h-12 w-full rounded-2xl text-base font-semibold shadow-sm disabled:opacity-50"
+        >
+          {buttonLabel}
         </Button>
       </div>
     </div>

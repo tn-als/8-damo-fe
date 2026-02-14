@@ -1,5 +1,5 @@
 import { Header } from "@/src/components/layout/header";
-import { LightningCreateContainer } from "@/src/components/lightning/create/lightning-create-container";
+import { LightningCreateContainer } from "@/src/components/lightning";
 
 export default function LightningCreatePage() {
   return (

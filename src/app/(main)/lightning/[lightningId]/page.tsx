@@ -1,6 +1,6 @@
 import { getAccessToken } from "@/src/lib/cookie";
 import { redirect } from "next/navigation";
-import { LightningChatClient } from "@/src/components/lightning/chat/lightning-chat-client";
+import { LightningChatClient } from "@/src/components/lightning";
 
 interface Props {
   params: Promise<{

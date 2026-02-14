@@ -21,6 +21,7 @@ const TAB_OPTIONS: { value: LightningTab; label: string }[] = [
 
 export function LightningPageContent({ items, activeTab }: LightningPageContentProps) {
   const router = useRouter();
+  const isRecruitingTab = activeTab === "recruiting";
 
   return (
     <>
@@ -40,7 +41,12 @@ export function LightningPageContent({ items, activeTab }: LightningPageContentP
 
         <section className="mt-4 flex flex-col gap-3">
           {items.length > 0 ? (
-            items.map((item) => <LightningCard key={item.id} item={item} />)
+            items.map((item) => 
+            <LightningCard
+            key={item.id}
+            item={item}
+            href={isRecruitingTab ? `/lightning/details/${item.id}` : `/lightning/${item.id}`}
+            />)
           ) : (
             <LightningEmptyState activeTab={activeTab} />
           )}

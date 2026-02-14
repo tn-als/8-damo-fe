@@ -3,7 +3,12 @@ import { Calendar, MapPin, Users } from "lucide-react";
 import type { LightningItem } from "@/src/types/lightning";
 import { cn } from "@/src/lib/utils";
 
-export function LightningCard({ item }: { item: LightningItem }) {
+interface LightningCardProps {
+  item: LightningItem;
+  href: string;
+}
+
+export function LightningCard({ item, href }: LightningCardProps) {
   const isFull = item.participantsCount >= item.maxParticipants;
   const participationRate =
     item.maxParticipants > 0
@@ -13,7 +18,7 @@ export function LightningCard({ item }: { item: LightningItem }) {
 
   return (
     <Link
-      href={`/lightning/${item.id}`}
+      href={href}
       className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8d28] focus-visible:ring-offset-2"
     >
       <article className="rounded-2xl border border-[#d1d1d6] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(17,17,17,0.05)] transition active:scale-[0.99] active:shadow-sm sm:px-5 sm:py-5">
