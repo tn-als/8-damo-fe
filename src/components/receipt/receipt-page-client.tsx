@@ -6,9 +6,8 @@ import { FailedPanel } from "./panels/failed-panel";
 import { RECEIPT_BOTTOM_NAV_RESERVED_SPACE } from "./receipt-bottom-navigation.constants";
 
 export interface ReceiptAnalysisResult {
-  totalAmount: string;
-  itemCount: number;
-  taxAmount: string;
+  confidence: number;
+  isReceipt: boolean;
   analyzedAt: string;
 }
 

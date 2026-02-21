@@ -4,7 +4,6 @@ import { type ChangeEvent, useEffect, useReducer, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   ReceiptPageClient,
-  type ReceiptAnalysisResult,
   type ReceiptPageViewState,
 } from "@/src/components/receipt/receipt-page-client";
 import { ReceiptBottomNavigation } from "@/src/components/receipt/receipt-bottom-navigation";
@@ -14,6 +13,7 @@ import {
   receiptReducer,
   type ReceiptState,
 } from "./receipt.reducer";
+import { classifyReceiptImage } from "@/src/lib/receipt/receipt-classifier";
 
 interface ReceiptInteractionProps {
   groupId: string;
@@ -21,14 +21,7 @@ interface ReceiptInteractionProps {
 }
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
-const MOCK_ANALYSIS_DELAY_MS = 300;
 const ALLOWED_EXTENSIONS = new Set(["jpg", "png"]);
-
-const MOCK_ANALYSIS_RESULT: Omit<ReceiptAnalysisResult, "analyzedAt"> = {
-  totalAmount: "128,000원",
-  itemCount: 6,
-  taxAmount: "11,636원",
-};
 
 function getFileExtension(fileName: string) {
   return fileName.split(".").pop()?.toLowerCase() ?? "";
@@ -211,29 +204,35 @@ export function ReceiptInteraction({ groupId, diningId }: ReceiptInteractionProp
 
     dispatch({ type: "START_ANALYSIS" });
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, MOCK_ANALYSIS_DELAY_MS)
-    );
+    try {
+      const result = await classifyReceiptImage(state.selectedFile);
+      if (!isMountedRef.current) {
+        return;
+      }
 
-    if (!isMountedRef.current) {
-      return;
+      if (!result.isReceipt) {
+        dispatch({ type: "ANALYSIS_INVALID" });
+        return;
+      }
+
+      dispatch({
+        type: "ANALYSIS_SUCCESS",
+        analysisResult: {
+          ...result,
+          analyzedAt: formatAnalyzedAt(new Date()),
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      if (!isMountedRef.current) {
+        return;
+      }
+
+      dispatch({
+        type: "ANALYSIS_ERROR",
+        errorMessage: "모델 실행 중 오류가 발생했습니다.",
+      });
     }
-
-    const isMockFailure = false;
-
-    if (isMockFailure) {
-      toast.error("영수증 검증에 실패했습니다.");
-      dispatch({ type: "ANALYSIS_INVALID" });
-      return;
-    }
-
-    dispatch({
-      type: "ANALYSIS_SUCCESS",
-      analysisResult: {
-        ...MOCK_ANALYSIS_RESULT,
-        analyzedAt: formatAnalyzedAt(new Date()),
-      },
-    });
   };
 
   const handleConfirm = () => {
