@@ -149,6 +149,7 @@ jobs:
           IMAGE=${IMAGE}
           IMAGE_TAG=${IMAGE_TAG}
           ECR_REPO=${ECR_REPO}
+          ECR_REGISTRY=${ECR_REGISTRY}
           EOF
 
           # appspec.yml, scripts/, docker-compose.yml 를 deployment.zip에 포함
