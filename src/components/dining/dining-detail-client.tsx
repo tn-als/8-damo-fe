@@ -1,6 +1,4 @@
 "use client";
-
-import { useQuery } from "@tanstack/react-query";
 import {
   AttendanceVotingSection,
   ConfirmedSection,
@@ -10,12 +8,10 @@ import {
 import { DiningCommonSection } from "@/src/components/dining/common";
 import { DiningErrorToast } from "@/src/components/dining/dining-error-toast";
 import type { DiningCommonResponse } from "@/src/types/api/dining";
-import {
-  getDiningAttendanceVote,
-  getDiningCommon,
-  getDiningConfirmed,
-  getDiningRestaurantVote,
-} from "@/src/lib/api/client/dining";
+import { useDiningCommon } from "@/src/hooks/dining/use-dining-common";
+import { useDiningAttendanceVote } from "@/src/hooks/dining/use-dining-attendance-vote";
+import { useDiningRestaurantVote } from "@/src/hooks/dining/use-dining-restaurant-vote";
+import { useDiningConfirmed } from "@/src/hooks/dining/use-dining-confirmed";
 
 const POLLING_INTERVAL_MS = 5_000;
 
@@ -30,24 +26,11 @@ export function DiningDetailClient({
   diningId,
   initialDiningCommon,
 }: DiningDetailClientProps) {
+
   const {
     data: diningCommon,
     error: diningCommonError,
-  } = useQuery({
-    queryKey: ["dining", "detail", groupId, diningId, "common"],
-    queryFn: async () => {
-      const response = await getDiningCommon({ groupId, diningId });
-      return response.data;
-    },
-    initialData: initialDiningCommon,
-    refetchInterval: (query) => {
-      const status = query.state.data?.diningStatus;
-      return status === "CONFIRMED" || status === "COMPLETE"
-      ? false
-      : POLLING_INTERVAL_MS
-    },
-    refetchOnWindowFocus: false,
-  });
+  } = useDiningCommon(groupId, diningId, initialDiningCommon);
 
   const diningState = diningCommon.diningStatus;
   const isAttendanceVoting = diningState === "ATTENDANCE_VOTING";
@@ -55,38 +38,9 @@ export function DiningDetailClient({
   const isRestaurantVoting = diningState === "RESTAURANT_VOTING";
   const isConfirmed = diningState === "CONFIRMED";
 
-  const { data: attendanceVote } = useQuery({
-    queryKey: ["dining", "detail", groupId, diningId, "attendance-vote"],
-    queryFn: async () => {
-      const response = await getDiningAttendanceVote({ groupId, diningId });
-      return response.data;
-    },
-    enabled: isAttendanceVoting,
-    refetchInterval: isAttendanceVoting ? POLLING_INTERVAL_MS: false,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: restaurantVotes } = useQuery({
-    queryKey: ["dining", "detail", groupId, diningId, "restaurant-vote"],
-    queryFn: async () => {
-      const response = await getDiningRestaurantVote({ groupId, diningId });
-      return response.data;
-    },
-    enabled: isRestaurantVoting,
-    refetchInterval: isRestaurantVoting? POLLING_INTERVAL_MS: false,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: confirmedRestaurant } = useQuery({
-    queryKey: ["dining", "detail", groupId, diningId, "confirmed"],
-    queryFn: async () => {
-      const response = await getDiningConfirmed({ groupId, diningId });
-      return response.data;
-    },
-    enabled: isConfirmed,
-    refetchInterval: isConfirmed ? POLLING_INTERVAL_MS: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: attendanceVote } = useDiningAttendanceVote(groupId, diningId, isAttendanceVoting);
+  const { data: restaurantVotes } = useDiningRestaurantVote(groupId, diningId, isRestaurantVoting);
+  const { data: confirmedRestaurant } = useDiningConfirmed(groupId, diningId, isConfirmed);
 
   if (!diningCommon) {
     return (
