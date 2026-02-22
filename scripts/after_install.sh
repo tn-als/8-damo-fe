@@ -12,6 +12,12 @@ if [ ! -f "/home/ubuntu/app/.env" ]; then
     fi
 fi
 
+# login ECR
+echo "AfterInstall: Logging in to ECR..."
+aws ecr get-login-password --region ap-northeast-2 | \
+  sudo docker login --username AWS --password-stdin \
+  "${ECR_REGISTRY}"
+
 # Set proper permissions
 sudo chown -R ubuntu:ubuntu /home/ubuntu/app
 sudo chmod +x /home/ubuntu/app/scripts/*.sh
