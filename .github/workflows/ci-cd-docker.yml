@@ -15,8 +15,8 @@ env:
   ECR_REPO_PROD: prod/fe
 
   DEPLOYMENT_APP: damo-fe
-  DEPLOYMENT_GROUP_DEV: dev
-  DEPLOYMENT_GROUP_PROD: prod
+  DEPLOYMENT_GROUP_DEV: dev-damo-fe
+  DEPLOYMENT_GROUP_PROD: prod-damo-fe
 
 jobs:
   ci:
