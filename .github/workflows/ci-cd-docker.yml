@@ -14,8 +14,7 @@ env:
   ECR_REPO_DEV: dev/fe
   ECR_REPO_PROD: prod/fe
 
-  DEPLOYMENT_APP_DEV: dev-damo-fe
-  DEPLOYMENT_APP_PROD: prod-damo-fe
+  DEPLOYMENT_APP: damo-fe
   DEPLOYMENT_GROUP_DEV: dev
   DEPLOYMENT_GROUP_PROD: prod
 
@@ -126,11 +125,11 @@ jobs:
       - name: Resolve deployment target
         run: |
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
-            echo "APPLICATION_NAME=${DEPLOYMENT_APP_PROD}" >> "$GITHUB_ENV"
+            echo "APPLICATION_NAME=${DEPLOYMENT_APP}" >> "$GITHUB_ENV"
             echo "DEPLOYMENT_GROUP=${DEPLOYMENT_GROUP_PROD}" >> "$GITHUB_ENV"
             echo "ECR_REPO=${ECR_REGISTRY}/${ECR_REPO_PROD}" >> "$GITHUB_ENV"
           else
-            echo "APPLICATION_NAME=${DEPLOYMENT_APP_DEV}" >> "$GITHUB_ENV"
+            echo "APPLICATION_NAME=${DEPLOYMENT_APP}" >> "$GITHUB_ENV"
             echo "DEPLOYMENT_GROUP=${DEPLOYMENT_GROUP_DEV}" >> "$GITHUB_ENV"
             echo "ECR_REPO=${ECR_REGISTRY}/${ECR_REPO_DEV}" >> "$GITHUB_ENV"
           fi
