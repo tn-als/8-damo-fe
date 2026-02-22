@@ -14,6 +14,7 @@ fi
 
 # login ECR
 echo "AfterInstall: Logging in to ECR..."
+source /home/ubuntu/app/scripts/image.env
 aws ecr get-login-password --region ap-northeast-2 | \
   sudo docker login --username AWS --password-stdin \
   "${ECR_REGISTRY}"
