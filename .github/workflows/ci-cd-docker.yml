@@ -155,7 +155,7 @@ jobs:
       - name: Upload bundle to S3
         run: |
           S3_BUCKET="${{ secrets.CODEDEPLOY_BUCKET }}"
-          S3_KEY="codedeploy/prod/fe/${GITHUB_SHA}.zip"
+          S3_KEY="codedeploy/prod/fe/${GITHUB_SHA::7}.zip"
           aws s3 cp deployment.zip "s3://${S3_BUCKET}/${S3_KEY}"
 
       - name: Create CodeDeploy deployment (from S3)
