@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { memo, useMemo } from "react"; 
 import {
   AttendanceVotingSection,
   ConfirmedSection,
@@ -50,10 +49,11 @@ export function DiningDetailClient({
     refetchOnWindowFocus: false,
   });
 
-  const diningStatus = diningCommon?.diningStatus;
-  const isAttendanceVoting = diningStatus === "ATTENDANCE_VOTING";
-  const isRestaurantVoting = diningStatus === "RESTAURANT_VOTING";
-  const isConfirmed = diningStatus === "CONFIRMED";
+  const diningState = diningCommon.diningStatus;
+  const isAttendanceVoting = diningState === "ATTENDANCE_VOTING";
+  const isRecommendationPending = diningState === "RECOMMENDATION_PENDING";
+  const isRestaurantVoting = diningState === "RESTAURANT_VOTING";
+  const isConfirmed = diningState === "CONFIRMED";
 
   const { data: attendanceVote } = useQuery({
     queryKey: ["dining", "detail", groupId, diningId, "attendance-vote"],
@@ -101,14 +101,14 @@ export function DiningDetailClient({
   return (
     <DiningCommonSection
       diningDate={diningCommon.diningDate}
-      diningStatus={diningCommon.diningStatus}
+      diningStatus={diningState}
       diningParticipants={diningCommon.diningParticipants}
       isGroupLeader={diningCommon.isGroupLeader}
     >
       {diningCommonError && (
         <DiningErrorToast messages={[diningCommonError.message]} />
       )}
-      {diningCommon.diningStatus === "ATTENDANCE_VOTING" && attendanceVote && (
+      {isAttendanceVoting && attendanceVote && (
         <AttendanceVotingSection
           progress={{
             totalCount: attendanceVote.totalGroupMemberCount,
@@ -118,17 +118,17 @@ export function DiningDetailClient({
           myVoteStatus={attendanceVote.attendanceVoteStatus}
         />
       )}
-      {diningCommon.diningStatus === "RESTAURANT_VOTING" && restaurantVotes && (
+      {isRestaurantVoting && restaurantVotes && (
         <RestaurantVotingSection
           restaurants={restaurantVotes}
           isGroupLeader={diningCommon.isGroupLeader}
           canAdditionalAttend={false}
         />
       )}
-      {diningCommon.diningStatus === "RECOMMENDATION_PENDING" && (
+      {isRecommendationPending && (
         <RecommendationPendingSection />
       )}
-      {diningCommon.diningStatus === "CONFIRMED" && (
+      {isConfirmed && (
         <ConfirmedSection
           restaurant={confirmedRestaurant ?? null}
           fallbackDescription="다시 시도해주세요"
