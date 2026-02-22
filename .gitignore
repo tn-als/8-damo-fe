@@ -57,7 +57,5 @@ certificates
 
 refactor-backlog/
 
-# docker
-docker-compose.yml
 # Sentry Config File
 .env.sentry-build-plugin
