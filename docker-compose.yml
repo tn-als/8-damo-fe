@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   nextjs:
-    image: ${ECR_REPO}/${IMAGE_TAG}
+    image: ${ECR_REPO}:${IMAGE_TAG}
     container_name: next-app
     environment:
       PORT: "3000"
