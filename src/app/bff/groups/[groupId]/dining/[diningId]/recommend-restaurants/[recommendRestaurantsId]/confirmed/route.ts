@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
-import { getAccessToken } from "@/src/lib/cookie";
+import { NextRequest } from "next/server";
+import { AxiosError } from "axios";
+import { bffAxios, passthroughResponse, errorResponse } from "@/src/app/bff/_lib";
 
 interface RouteParams {
   params: Promise<{
@@ -9,50 +10,19 @@ interface RouteParams {
   }>;
 }
 
-export async function PATCH(_: Request, { params }: RouteParams) {
-  const { groupId, diningId, recommendRestaurantsId } = await params;
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL;
-
-  if (!API_BASE_URL) {
-    return NextResponse.json(
-      { errorMessage: "API base URL이 설정되지 않았습니다." },
-      { status: 500 }
-    );
-  }
-
-  const accessToken = await getAccessToken();
-
-  if (!accessToken) {
-    return NextResponse.json(
-      { errorMessage: "인증 토큰이 없습니다." },
-      { status: 401 }
-    );
-  }
-
+// PATCH - 식당 확정
+export async function PATCH(_: NextRequest, { params }: RouteParams) {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurants/${recommendRestaurantsId}/confirmed`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
+    const { groupId, diningId, recommendRestaurantsId } = await params;
+
+    const response = await bffAxios.patch(
+      `/api/v1/groups/${groupId}/dining/${diningId}/recommend-restaurants/${recommendRestaurantsId}/confirmed`
     );
-
-    const payload = await response.json().catch(() => null);
-
-    return NextResponse.json(payload ?? { errorMessage: null }, {
-      status: response.status,
-    });
+    return passthroughResponse(response.data, response.status);
   } catch (error) {
-    return NextResponse.json(
-      {
-        errorMessage:
-          error instanceof Error ? error.message : "요청 중 오류가 발생했습니다.",
-      },
-      { status: 500 }
-    );
+    if (error instanceof AxiosError && error.response) {
+      return passthroughResponse(error.response.data, error.response.status);
+    }
+    return errorResponse("요청 중 오류가 발생했습니다.", 500);
   }
 }

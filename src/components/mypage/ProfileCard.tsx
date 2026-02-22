@@ -5,8 +5,9 @@ import { Badge } from "@/src/components/ui/badge";
 import { PROFILE_FALLBACK_IMAGE } from "@/src/constants/image";
 import { GENDER_LABEL, AGE_GROUP_LABEL } from "@/src/constants/user";
 import { LogOut } from "lucide-react";
-import { logout } from "@/src/lib/actions/auth";
+import { logout } from "@/src/lib/api/client/auth";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/src/stores/user-store";
 
 interface ProfileCardProps {
   userId: string;
@@ -30,12 +31,16 @@ export function ProfileCard({
   ageGroup,
   imagePath,
 }: ProfileCardProps) {
+  const { setUser, setInitialized } = useUserStore();
+
   const imageUrl = getProfileImageUrl(userId, imagePath);
   const router = useRouter();
 
   const handleLogout = async () => {
     await logout();
     router.replace("/login");
+    setUser(null);
+    setInitialized(false);
   };
 
   return (

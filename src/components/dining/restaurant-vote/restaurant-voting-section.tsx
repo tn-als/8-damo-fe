@@ -6,7 +6,7 @@ import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
 import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
 import { toast } from "@/src/components/ui/sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
-import { confirmRestaurant, refreshRecommendRestaurants } from "@/src/lib/actions/dining";
+import { confirmRestaurant, refreshRecommendRestaurants } from "@/src/lib/api/client/dining";
 
 interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
@@ -82,20 +82,20 @@ export function RestaurantVotingSection({
 
     setIsRetryingRecommendation(true);
 
-    const result = await refreshRecommendRestaurants({ groupId, diningId });
-    setIsRetryingRecommendation(false);
+    try {
+      const result = await refreshRecommendRestaurants({ groupId, diningId });
 
-    if (!result.success) {
-      toast.error(result.error ?? "재추천 요청에 실패했습니다.");
-      return;
+      if (result.data?.length === 0) {
+        window.location.reload();
+        return;
+      }
+
+      onRetryRecommendation?.();
+    } catch {
+      toast.error("재추천 요청에 실패했습니다.");
+    } finally {
+      setIsRetryingRecommendation(false);
     }
-
-    if (result.data?.length === 0) {
-      window.location.reload(); 
-      return;
-    }
-
-    onRetryRecommendation?.();
   };
 
   const handleAdditionalAttend = () => {
@@ -119,22 +119,21 @@ export function RestaurantVotingSection({
 
     setIsSubmitting(true);
 
-    const result = await confirmRestaurant({
-      groupId,
-      diningId,
-      recommendRestaurantsId: activeRestaurantId,
-    });
+    try {
+      await confirmRestaurant({
+        groupId,
+        diningId,
+        recommendRestaurantsId: activeRestaurantId,
+      });
 
-    setIsSubmitting(false);
-    setIsDialogOpen(false);
-
-    if (!result.success) {
-      toast.error(result.error ?? "회식 장소 확정에 실패했습니다.");
-      return;
+      toast.success("회식 장소가 확정되었습니다.");
+      handleConfirmDining(activeRestaurantId);
+    } catch {
+      toast.error("회식 장소 확정에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+      setIsDialogOpen(false);
     }
-
-    toast.success("회식 장소가 확정되었습니다.");
-    handleConfirmDining(activeRestaurantId);
   };
 
   return (

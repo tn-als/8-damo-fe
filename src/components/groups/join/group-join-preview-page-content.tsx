@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { GroupJoinPreviewSection } from "./group-join-preview-section";
-import { getGroupDetail, joinGroup } from "@/src/lib/actions/groups";
+import { getGroupDetail, joinGroup } from "@/src/lib/api/client/groups";
 import type { GroupSummary } from "@/src/types/groups";
 
 interface GroupJoinPreviewPageContentProps {
@@ -27,23 +27,30 @@ export function GroupJoinPreviewPageContent({
       setIsLoading(true);
       setErrorMessage(null);
 
-      const result = await getGroupDetail(groupId);
+      try {
+        const result = await getGroupDetail(groupId);
 
-      if (!isActive) return;
+        if (!isActive) return;
 
-      if (!result.success || !result.data) {
+        if (!result.data) {
+          setGroup(null);
+          setErrorMessage("그룹 정보를 불러오지 못했습니다.");
+          setIsLoading(false);
+          return;
+        }
+
+        setGroup({
+          id: groupId,
+          name: result.data.name,
+          introduction: result.data.introduction,
+        });
+      } catch {
+        if (!isActive) return;
         setGroup(null);
-        setErrorMessage(result.error ?? "그룹 정보를 불러오지 못했습니다.");
-        setIsLoading(false);
-        return;
+        setErrorMessage("그룹 정보를 불러오지 못했습니다.");
+      } finally {
+        if (isActive) setIsLoading(false);
       }
-
-      setGroup({
-        id: groupId,
-        name: result.data.name,
-        introduction: result.data.introduction,
-      });
-      setIsLoading(false);
     };
 
     run();
@@ -62,16 +69,14 @@ export function GroupJoinPreviewPageContent({
 
     setIsJoining(true);
 
-    const result = await joinGroup(groupId);
-
-    if (!result.success) {
-      toast.error(result.error ?? "그룹 참여에 실패했습니다. 다시 시도해주세요.");
+    try {
+      await joinGroup(groupId);
+      toast.success(`${group.name} 그룹에 참여했습니다!`);
+      router.push(`/groups/${groupId}`);
+    } catch {
+      toast.error("그룹 참여에 실패했습니다. 다시 시도해주세요.");
       setIsJoining(false);
-      return;
     }
-
-    toast.success(`${group.name} 그룹에 참여했습니다!`);
-    router.push(`/groups/${groupId}`);
   };
 
   if (isLoading) {

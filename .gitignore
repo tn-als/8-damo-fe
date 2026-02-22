@@ -56,3 +56,6 @@ docs/
 certificates
 
 refactor-backlog/
+
+# Sentry Config File
+.env.sentry-build-plugin
