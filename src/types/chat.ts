@@ -10,7 +10,7 @@ export interface ChatBroadcastMessagePayload {
   content: string;
   createdAt: string;
   senderNickname: string;
-  unreadCount: number;
+  unreadCount: string;
 }
 
 export interface UpdateUnreadCountEventPayload {

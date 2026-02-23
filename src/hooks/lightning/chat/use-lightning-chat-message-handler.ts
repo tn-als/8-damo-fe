@@ -21,8 +21,7 @@ function normalizeSocketMessage(
   raw: Partial<ChatBroadcastMessagePayload>,
   lightningId: string
 ): ChatBroadcastMessage {
-  const unreadCount =
-    typeof raw.unreadCount === "number" ? raw.unreadCount : undefined;
+  const unreadCount = Number(raw.unreadCount);
 
   return {
     messageId: String(raw.messageId ?? Date.now()),
