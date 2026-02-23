@@ -181,14 +181,23 @@ jobs:
         run: |
           DEPLOYMENT_ID=${{ env.DEPLOYMENT_ID }}
           echo "Waiting for deployment ${DEPLOYMENT_ID} to complete..."
-          
+
           while true; do
             STATUS=$(aws deploy get-deployment \
               --deployment-id "${DEPLOYMENT_ID}" \
               --query 'deploymentInfo.status' \
               --output text)
             
-            echo "$(date '+%Y-%m-%d %H:%M:%S') - Status: ${STATUS}"
+            EVENT=$(aws deploy get-deployment \
+              --deployment-id "${DEPLOYMENT_ID}" \
+              --query 'deploymentInfo.lifecycleEvents[?status=='"'"'InProgress'"'"'].name' \
+              --output text)
+            
+            if [ -n "${EVENT}" ]; then
+              echo "$(date '+%Y-%m-%d %H:%M:%S') - Status: ${STATUS}, Event: ${EVENT}"
+            else
+              echo "$(date '+%Y-%m-%d %H:%M:%S') - Status: ${STATUS}"
+            fi
             
             case "${STATUS}" in
               Succeeded)
