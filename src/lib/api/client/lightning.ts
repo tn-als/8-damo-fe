@@ -103,6 +103,12 @@ export async function createLightning(
   return bffPost<number>("/lightning", data);
 }
 
+export async function joinLightning(
+  lightningId: string
+): Promise<ApiResponse<string>> {
+  return bffPost<string>(`/lightning/${lightningId}/users/me`);
+}
+
 export async function getLightningChatMessages(
   params: GetLightningChatMessagesParams
 ): Promise<ApiResponse<ChatMessagePageResponse>> {
