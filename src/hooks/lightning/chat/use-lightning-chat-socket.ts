@@ -6,6 +6,7 @@ import type { ChatMessageRequest } from "@/src/types/chat";
 import { useChatRoomSubscription } from "@/src/lib/websocket/use-chat-room-subscription";
 import { publishChatMessage } from "@/src/lib/lightning/chat/publish-chat-message";
 import { useLightningChatMessageHandler } from "@/src/hooks/lightning/chat/use-lightning-chat-message-handler";
+import { useUserStore } from "@/src/stores/user-store";
 
 interface UseLightningChatSocketOptions {
   lightningId: string;
@@ -16,11 +17,16 @@ export function useLightningChatSocket({
 }: UseLightningChatSocketOptions) {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const currentUserId = useUserStore((state) => {
+    const value = Number(state.user?.userId);
+    return Number.isFinite(value) ? value : null;
+  });
 
   const onMessage = useLightningChatMessageHandler({
     lightningId,
     queryClient,
     setError,
+    currentUserId,
   });
 
   useChatRoomSubscription(lightningId, onMessage);

@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { IMessage } from "@stomp/stompjs";
 import type { QueryClient } from "@tanstack/react-query";
 import { appendChatMessageToCache } from "@/src/lib/lightning/chat/append-chat-message-to-cache";
+import { updateUnreadCountInCache } from "@/src/lib/lightning/chat/update-unread-count-in-cache";
 import type {
   ChatBroadcastMessage,
   ChatBroadcastMessagePayload,
@@ -15,13 +16,14 @@ interface UseLightningChatMessageHandlerOptions {
   lightningId: string;
   queryClient: QueryClient;
   setError: Dispatch<SetStateAction<string | null>>;
+  currentUserId: number | null;
 }
 
 function normalizeSocketMessage(
   raw: Partial<ChatBroadcastMessagePayload>,
   lightningId: string
 ): ChatBroadcastMessage {
-  const unreadCount = Number(raw.unreadCount);
+  const parsedUnreadCount = Number(raw.unreadCount);
 
   return {
     messageId: String(raw.messageId ?? Date.now()),
@@ -31,7 +33,9 @@ function normalizeSocketMessage(
     content: raw.content ?? "",
     createdAt: raw.createdAt ?? new Date().toISOString(),
     senderNickname: raw.senderNickname,
-    unreadCount,
+    unreadCount: Number.isFinite(parsedUnreadCount)
+      ? parsedUnreadCount
+      : 0,
   };
 }
 
@@ -39,20 +43,16 @@ export function useLightningChatMessageHandler({
   lightningId,
   queryClient,
   setError,
+  currentUserId,
 }: UseLightningChatMessageHandlerOptions) {
   return useCallback(
     (payload: IMessage) => {
       try {
         const parsed = JSON.parse(payload.body) as WsEventMessage;
-
         switch (parsed.type) {
           case "CHAT_MESSAGE": {
-            console.log("[WS][CHAT_MESSAGE]", {
-              lightningId: parsed.lightningId,
-              payload: parsed.payload,
-            });
-
             const incoming = normalizeSocketMessage(parsed.payload, lightningId);
+            console.log("[WS][CHAT_MESSAGE]", { incoming, });
             appendChatMessageToCache(queryClient, lightningId, incoming);
             setError(null);
             return;
@@ -62,6 +62,13 @@ export function useLightningChatMessageHandler({
               lightningId: parsed.lightningId,
               payload: parsed.payload,
             });
+
+            updateUnreadCountInCache(
+              queryClient,
+              lightningId,
+              parsed.payload,
+              currentUserId
+            );
             setError(null);
             return;
           }
@@ -74,6 +81,6 @@ export function useLightningChatMessageHandler({
         setError("메시지를 읽지 못했습니다.");
       }
     },
-    [lightningId, queryClient, setError]
+    [currentUserId, lightningId, queryClient, setError]
   );
 }
