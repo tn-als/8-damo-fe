@@ -40,6 +40,8 @@ export function LightningChatClient({
     error: queryError,
   } = useLightningChatInfinite({ lightningId });
 
+  console.log(initialScrollMode, messages);
+
   const { error: socketError, sendMessage } = useLightningChatSocket({
     lightningId,
   });
