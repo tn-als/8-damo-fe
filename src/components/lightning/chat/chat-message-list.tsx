@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDown } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
@@ -8,6 +9,7 @@ import type {
   ChatReadBoundary,
 } from "@/src/types/api/lightning/chat";
 import { useChatScrollController } from "@/src/hooks/lightning/chat/use-lightning-chat-scroll-controller";
+import { Button } from "@/src/components/ui/button";
 import { ChatMessageItem } from "./chat-message-item";
 
 interface Props {
@@ -71,7 +73,10 @@ export function ChatMessageList({
       threshold: 0,
     });
 
-  useChatScrollController({
+  const {
+    isBottomOutOfView,
+    scrollToBottom,
+  } = useChatScrollController({
     scrollRoot,
     messagesLength: messages.length,
     initialScrollMode,
@@ -110,41 +115,57 @@ export function ChatMessageList({
       : null;
 
   return (
-    <section
-      ref={setScrollRootRef}
-      className="flex-1 overflow-y-auto bg-card px-4 py-4"
-    >
-      <div ref={topSentinelRef} className="h-px w-full" />
+    <div className="relative flex-1">
+      <section
+        ref={setScrollRootRef}
+        className="h-full overflow-y-auto bg-card px-4 py-4"
+      >
+        <div ref={topSentinelRef} className="h-px w-full" />
 
-      {messages.length === 0 && (
-        <div className="flex h-full items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            첫 메시지를 보내보세요
-          </p>
+        {messages.length === 0 && (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-sm text-muted-foreground">
+              첫 메시지를 보내보세요
+            </p>
+          </div>
+        )}
+
+        {messages.length > 0 && (
+          <ul className="space-y-4">
+            {messages.map((message) => (
+              <ChatMessageItem
+                key={message.messageId}
+                message={message}
+                currentUserId={currentUserId}
+                showDividerBefore={isSameMessageId(
+                  message.messageId,
+                  dividerBeforeMessageId
+                )}
+                showDividerAfter={isSameMessageId(
+                  message.messageId,
+                  dividerAfterMessageId
+                )}
+              />
+            ))}
+          </ul>
+        )}
+
+        <div ref={bottomSentinelRef} className="h-px w-full" />
+      </section>
+
+      {isBottomOutOfView && messages.length > 0 && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-end px-4">
+          <Button
+            type="button"
+            onClick={scrollToBottom}
+            size="sm"
+            className="pointer-events-auto h-9 rounded-full px-3 text-xs font-semibold"
+          >
+            <ArrowDown className="mr-1 size-4" />
+            아래로 이동
+          </Button>
         </div>
       )}
-
-      {messages.length > 0 && (
-        <ul className="space-y-4">
-          {messages.map((message) => (
-            <ChatMessageItem
-              key={message.messageId}
-              message={message}
-              currentUserId={currentUserId}
-              showDividerBefore={isSameMessageId(
-                message.messageId,
-                dividerBeforeMessageId
-              )}
-              showDividerAfter={isSameMessageId(
-                message.messageId,
-                dividerAfterMessageId
-              )}
-            />
-          ))}
-        </ul>
-      )}
-
-      <div ref={bottomSentinelRef} className="h-px w-full" />
-    </section>
+    </div>
   );
 }

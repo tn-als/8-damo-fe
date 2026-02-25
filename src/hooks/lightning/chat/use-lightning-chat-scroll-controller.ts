@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 import type {
   ChatInitialScrollMode,
@@ -37,6 +37,14 @@ export function useChatScrollController({
   const prevLengthRef = useRef(0);
   const fetchingPrevRef = useRef(false);
   const fetchingNextRef = useRef(false);
+  const [isBottomOutOfView, setIsBottomOutOfView] =
+    useState(false);
+
+  const scrollToBottom = useCallback(() => {
+    if (!scrollRoot) return;
+    scrollRoot.scrollTop = scrollRoot.scrollHeight;
+    setIsBottomOutOfView(false);
+  }, [scrollRoot]);
 
   // 1. 초기 스크롤
   useEffect(() => {
@@ -68,8 +76,15 @@ export function useChatScrollController({
 
       initialLoadDoneRef.current = true;
       prevLengthRef.current = messagesLength;
+      setIsBottomOutOfView(!bottomInView);
     });
-  }, [scrollRoot, messagesLength, initialScrollMode, anchorCursor]);
+  }, [
+    scrollRoot,
+    messagesLength,
+    initialScrollMode,
+    anchorCursor,
+    bottomInView,
+  ]);
 
   // 2. 위쪽 로딩
   useEffect(() => {
@@ -116,6 +131,11 @@ export function useChatScrollController({
     fetchNextPage,
   ]);
 
+  useEffect(() => {
+    if (!initialLoadDoneRef.current) return;
+    setIsBottomOutOfView(!bottomInView);
+  }, [bottomInView]);
+
   // 4. 새 메시지 도착 시 자동 하단 이동
   useEffect(() => {
     if (!scrollRoot || !initialLoadDoneRef.current) return;
@@ -137,4 +157,9 @@ export function useChatScrollController({
 
     prevLengthRef.current = messagesLength;
   }, [bottomInView, messagesLength, scrollRoot]);
+
+  return {
+    isBottomOutOfView,
+    scrollToBottom,
+  };
 }
