@@ -52,6 +52,8 @@ function mapChatPageParam(
 }
 
 function mapChatMessage(dto: ChatMessagePageRaw["messages"][number]): ChatBroadcastMessage {
+  const parsedUnreadCount = Number(dto.unreadCount);
+
   return {
     messageId: String(dto.messageId),
     senderId: String(dto.senderId),
@@ -59,6 +61,7 @@ function mapChatMessage(dto: ChatMessagePageRaw["messages"][number]): ChatBroadc
     chatType: dto.chatType,
     content: dto.content,
     createdAt: dto.createdAt,
+    unreadCount: Number.isFinite(parsedUnreadCount) ? parsedUnreadCount : 0,
   };
 }
 
