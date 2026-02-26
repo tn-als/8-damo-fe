@@ -115,7 +115,10 @@ export function ChatMessageList({
       : null;
 
   return (
-    <div className="relative flex-1">
+    <div className="relative flex-1 overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-7 bg-gradient-to-b from-background/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-8 bg-gradient-to-t from-background/80 to-transparent" />
+
       <section
         ref={setScrollRootRef}
         className="h-full overflow-y-auto bg-card px-4 py-4"
@@ -124,14 +127,19 @@ export function ChatMessageList({
 
         {messages.length === 0 && (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-muted-foreground">
-              첫 메시지를 보내보세요
-            </p>
+            <div className="rounded-2xl border border-border/70 bg-background/75 px-5 py-4 text-center shadow-xs">
+              <p className="text-sm font-semibold text-foreground">
+                아직 대화가 없어요
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                첫 메시지를 보내보세요
+              </p>
+            </div>
           </div>
         )}
 
         {messages.length > 0 && (
-          <ul className="space-y-4">
+          <ul className="space-y-4 pb-2">
             {messages.map((message) => (
               <ChatMessageItem
                 key={message.messageId}
