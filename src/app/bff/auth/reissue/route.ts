@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { parseCookie } from "@/src/lib/cookie";
 import {
   errorResponse,
-  passthroughResponse,
   type ApiResponse,
 } from "@/src/app/bff/_lib";
 
@@ -14,15 +13,6 @@ interface ReissueData {
 
 function splitSetCookieHeader(setCookieHeader: string): string[] {
   return setCookieHeader.split(/,(?=\s*\w+=)/);
-}
-
-function isApiResponse(payload: unknown): payload is ApiResponse<unknown> {
-  if (!payload || typeof payload !== "object") return false;
-  return (
-    "httpStatus" in payload &&
-    "data" in payload &&
-    "errorMessage" in payload
-  );
 }
 
 export async function POST(request: NextRequest) {
@@ -51,16 +41,6 @@ export async function POST(request: NextRequest) {
     if (!setCookieHeader) {
       return errorResponse("재발급 응답 쿠키가 없습니다.", 500);
     }
-    
-    const cookieStrings = setCookieHeader.split(/,(?=\s*\w+=)/);
-    const requestHeaders = new Headers(request.headers);
-
-    for (const cookieString of cookieStrings) {
-      const parsed = parseCookie(cookieString.trim());
-      if (parsed) {
-        requestHeaders.set(parsed.name, parsed.value);
-      }
-    }
 
     const parsedCookies = splitSetCookieHeader(setCookieHeader)
       .map((cookieString) => parseCookie(cookieString.trim()))
@@ -79,13 +59,16 @@ export async function POST(request: NextRequest) {
       return errorResponse("access_token 쿠키를 찾을 수 없습니다.", 500);
     }
 
+    const responseStatus =
+      reissueResponse.status === 204 ? 200 : reissueResponse.status;
+
     const response = NextResponse.json<ApiResponse<ReissueData>>(
       {
         httpStatus: `${reissueResponse.status}`,
         data: { accessToken },
         errorMessage: null,
       },
-      { status: reissueResponse.status }
+      { status: responseStatus }
     );
 
     response.headers.set("Set-Cookie", setCookieHeader);
