@@ -11,7 +11,5 @@ export type RecommendationStreamStatus =
   | "connecting"
   | "connected"
   | "streaming"
-  | "done"
   | "error"
   | "disconnected";
-
