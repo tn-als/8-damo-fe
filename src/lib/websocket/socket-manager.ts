@@ -1,5 +1,8 @@
 import type { Client } from "@stomp/stompjs";
-import { reissueAuthToken } from "@/src/lib/api/client/auth";
+import {
+  getWsAccessToken,
+  reissueAuthToken,
+} from "@/src/lib/api/client/auth";
 import { createStompClient } from "./stomp-client-factory";
 import type {
   MessageHandler,
@@ -30,6 +33,8 @@ export class SocketManager {
   private deactivating: Promise<void> | null = null;
   private recovering: Promise<void> | null = null;
   private tokenReissuePromise: Promise<string | null> | null = null;
+  private reconnectFailureCount = 0;
+  private readonly maxReconnectWithCurrentToken = 1;
 
   constructor(opts: SocketManagerOptions) {
     this.brokerURL = opts.brokerURL;
@@ -94,6 +99,7 @@ export class SocketManager {
         }
 
         this.client = connectedClient;
+        this.reconnectFailureCount = 0;
         this.restoreAllSubscriptions();
       },
       onWebSocketClose: (evt) => {
@@ -107,13 +113,6 @@ export class SocketManager {
 
         this.log("onWebSocketClose", { code: evt.code, reason: evt.reason });
         this.clearSubscriptionHandles();
-
-        if (this.shouldRecoverFromClose(evt.code)) {
-          void this.handleSocketError("websocket-close", {
-            code: evt.code,
-            reason: evt.reason,
-          });
-        }
       },
       onStompError: (frame) => {
         if (this.generation !== currentGen) {
@@ -164,49 +163,63 @@ export class SocketManager {
   }
 
   private async handleSocketError(reason: string, detail?: unknown) {
-    if (!this.token) {
-      this.log("socket recovery ignored: no token", { reason, detail });
-      return;
-    }
+    this.log("socket error", { reason, detail });
 
-    if (this.recovering) {
-      this.log("socket recovery ignored: already running", { reason });
-      return;
-    }
+    try {
+      const cookieToken = await this.getAccessTokenFromBrowserCookie();
+      await this.disconnect();
 
-    const failedToken = this.token;
-
-    this.recovering = (async () => {
-      try {
-        this.log("socket recovery start", { reason, detail });
-
-        const reissuedToken = await this.reissueAccessToken();
-        if (!reissuedToken) {
-          this.log("socket recovery failed: token reissue failed");
-
-          if (this.token === failedToken) {
-            await this.disconnect();
-          }
-
-          return;
-        }
-
-        if (this.token !== failedToken) {
-          this.log("socket recovery aborted: token changed during recovery");
-          return;
-        }
-
-        await this.disconnect();
-        await this.connect(reissuedToken);
-        this.log("socket recovery success");
-      } catch (error) {
-        this.log("socket recovery failed with exception", error);
+      if (cookieToken) {
+        await this.reconnectWithCurrentToken(cookieToken);
+        return;
       }
-    })();
 
-    await this.recovering.finally(() => {
-      this.recovering = null;
-    });
+      this.log("no token in cookie, try reissue");
+      await this.reconnectWithReissuedToken();
+    } catch (error) {
+      this.log("socket recovery unexpected error", error);
+      await this.disconnect();
+    }
+  }
+
+  private async reconnectWithCurrentToken(currentToken: string): Promise<void> {
+    this.log("retry with cookie token");
+
+    try {
+      await this.connect(currentToken);
+      return;
+    } catch (error) {
+      this.log("retry with cookie token failed", error);
+    }
+
+    this.log("try token reissue");
+    await this.reconnectWithReissuedToken();
+  }
+
+  private async reconnectWithReissuedToken(): Promise<void> {
+    const newToken = await this.reissueAccessToken();
+    if (!newToken) {
+      await this.disconnect();
+      return;
+    }
+
+    try {
+      await this.disconnect();
+      await this.connect(newToken);
+      return;
+    } catch (error) {
+      this.log("first reconnect failed", error);
+    }
+
+    try {
+      await this.disconnect();
+      await this.connect(newToken);
+      return;
+    } catch (error) {
+      this.log("second reconnect failed", error);
+      await this.disconnect();
+      return;
+    }
   }
 
   private async reissueAccessToken(): Promise<string | null> {
@@ -236,8 +249,20 @@ export class SocketManager {
     return this.tokenReissuePromise;
   }
 
-  private shouldRecoverFromClose(code: number): boolean {
-    return code === 1008 || code === 4001 || code === 4003;
+  private async getAccessTokenFromBrowserCookie(): Promise<string | null> {
+    try {
+      const response = await getWsAccessToken();
+      const accessToken = response.data?.accessToken?.trim();
+
+      if (!accessToken) {
+        return null;
+      }
+
+      return accessToken;
+    } catch (error) {
+      this.log("getWsAccessToken request failed", error);
+      return null;
+    }
   }
 
   private clearSubscriptionHandles() {
