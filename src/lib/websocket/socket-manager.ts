@@ -1,4 +1,5 @@
 import type { Client } from "@stomp/stompjs";
+import { reissueAuthToken } from "@/src/lib/api/client/auth";
 import { createStompClient } from "./stomp-client-factory";
 import type {
   MessageHandler,
@@ -27,6 +28,8 @@ export class SocketManager {
 
   private registry = new Map<SubscriptionKey, SubscriptionDef>();
   private deactivating: Promise<void> | null = null;
+  private recovering: Promise<void> | null = null;
+  private tokenReissuePromise: Promise<string | null> | null = null;
 
   constructor(opts: SocketManagerOptions) {
     this.brokerURL = opts.brokerURL;
@@ -69,9 +72,9 @@ export class SocketManager {
       await this.disconnect();
     }
 
-    this.token = accessToken; 
-    this.generation += 1; 
-    const currentGen = this.generation; 
+    this.token = accessToken;
+    this.generation += 1;
+    const currentGen = this.generation;
     this.log("connect start", { generation: currentGen });
 
     const client = createStompClient({
@@ -83,23 +86,46 @@ export class SocketManager {
         this.log("onConnect", this.snapshot());
 
         if (this.generation !== currentGen) {
-            this.log("onConnect ignored: generation mismatch", 
-            { 
-              expected: currentGen,
-              actual: this.generation, 
-            }); 
-            return; 
+          this.log("onConnect ignored: generation mismatch", {
+            expected: currentGen,
+            actual: this.generation,
+          });
+          return;
         }
 
         this.client = connectedClient;
         this.restoreAllSubscriptions();
       },
       onWebSocketClose: (evt) => {
+        if (this.generation !== currentGen) {
+          this.log("onWebSocketClose ignored: generation mismatch", {
+            expected: currentGen,
+            actual: this.generation,
+          });
+          return;
+        }
+
         this.log("onWebSocketClose", { code: evt.code, reason: evt.reason });
         this.clearSubscriptionHandles();
+
+        if (this.shouldRecoverFromClose(evt.code)) {
+          void this.handleSocketError("websocket-close", {
+            code: evt.code,
+            reason: evt.reason,
+          });
+        }
       },
       onStompError: (frame) => {
+        if (this.generation !== currentGen) {
+          this.log("onStompError ignored: generation mismatch", {
+            expected: currentGen,
+            actual: this.generation,
+          });
+          return;
+        }
+
         this.log("onStompError", frame);
+        void this.handleSocketError("stomp-error", frame);
       },
     });
 
@@ -135,6 +161,83 @@ export class SocketManager {
     this.deactivating = p;
     await p;
     this.deactivating = null;
+  }
+
+  private async handleSocketError(reason: string, detail?: unknown) {
+    if (!this.token) {
+      this.log("socket recovery ignored: no token", { reason, detail });
+      return;
+    }
+
+    if (this.recovering) {
+      this.log("socket recovery ignored: already running", { reason });
+      return;
+    }
+
+    const failedToken = this.token;
+
+    this.recovering = (async () => {
+      try {
+        this.log("socket recovery start", { reason, detail });
+
+        const reissuedToken = await this.reissueAccessToken();
+        if (!reissuedToken) {
+          this.log("socket recovery failed: token reissue failed");
+
+          if (this.token === failedToken) {
+            await this.disconnect();
+          }
+
+          return;
+        }
+
+        if (this.token !== failedToken) {
+          this.log("socket recovery aborted: token changed during recovery");
+          return;
+        }
+
+        await this.disconnect();
+        await this.connect(reissuedToken);
+        this.log("socket recovery success");
+      } catch (error) {
+        this.log("socket recovery failed with exception", error);
+      }
+    })();
+
+    await this.recovering.finally(() => {
+      this.recovering = null;
+    });
+  }
+
+  private async reissueAccessToken(): Promise<string | null> {
+    if (this.tokenReissuePromise) {
+      return this.tokenReissuePromise;
+    }
+
+    this.tokenReissuePromise = (async () => {
+      try {
+        const response = await reissueAuthToken();
+        const accessToken = response.data?.accessToken?.trim();
+
+        if (!accessToken) {
+          this.log("reissueAuthToken failed: access_token missing", response);
+          return null;
+        }
+
+        return accessToken;
+      } catch (error) {
+        this.log("reissueAuthToken request failed", error);
+        return null;
+      } finally {
+        this.tokenReissuePromise = null;
+      }
+    })();
+
+    return this.tokenReissuePromise;
+  }
+
+  private shouldRecoverFromClose(code: number): boolean {
+    return code === 1008 || code === 4001 || code === 4003;
   }
 
   private clearSubscriptionHandles() {
@@ -177,7 +280,7 @@ export class SocketManager {
 
     if (def.sub && isSafeToUseClient(this.client)) {
       try {
-        def.sub.unsubscribe({id: key});
+        def.sub.unsubscribe({ id: key });
       } catch {
       }
     }
@@ -208,7 +311,7 @@ export class SocketManager {
     if (def.sub && def.generation === this.generation) return;
 
     try {
-      const sub = client.subscribe(def.destination, def.handler, {id: key});
+      const sub = client.subscribe(def.destination, def.handler, { id: key });
       def.sub = sub;
       def.generation = this.generation;
       this.registry.set(key, def);
