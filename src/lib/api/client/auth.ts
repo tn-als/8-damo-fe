@@ -6,6 +6,10 @@ interface OAuthData {
   onboardingStep: OnboardingStep;
 }
 
+interface ReissueData {
+  accessToken: string;
+}
+
 export async function processKakaoOAuth(
   code: string
 ): Promise<ApiResponse<OAuthData>> {
@@ -18,4 +22,8 @@ export async function processAuthTest(): Promise<ApiResponse<null>> {
 
 export async function logout(): Promise<ApiResponse<null>> {
   return bffPost<null>("/auth/logout");
+}
+
+export async function reissueAuthToken(): Promise<ApiResponse<ReissueData>> {
+  return bffPost<ReissueData>("/auth/reissue");
 }
