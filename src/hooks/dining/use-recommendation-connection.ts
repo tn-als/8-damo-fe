@@ -20,9 +20,6 @@ interface UseRecommendationConnectionParams {
 interface UseRecommendationConnectionResult {
   streamStatus: RecommendationStreamStatus;
   errorMessage: string | null;
-  retryCount: number;
-  reconnectSeed: number;
-  reconnect: () => void;
 }
 
 export function useRecommendationConnection({
@@ -39,7 +36,7 @@ export function useRecommendationConnection({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [reconnectSeed, setReconnectSeed] = useState(0);
 
-  const reconnect = useCallback(() => {
+  const reconnectOnError = useCallback(() => {
     setErrorMessage(null);
     setReconnectSeed((previous) => previous + 1);
   }, []);
@@ -91,6 +88,7 @@ export function useRecommendationConnection({
 
           dispatch({ type: "ERROR" });
           setErrorMessage(message);
+          reconnectOnError();
         },
       });
     };
@@ -103,13 +101,18 @@ export function useRecommendationConnection({
       stopStream();
       dispatch({ type: "CLOSE" });
     };
-  }, [enabled, diningId, groupId, reconnectSeed, stableOnDone, stableOnMessage]);
+  }, [
+    enabled,
+    diningId,
+    groupId,
+    reconnectOnError,
+    reconnectSeed,
+    stableOnDone,
+    stableOnMessage,
+  ]);
 
   return {
     streamStatus,
     errorMessage,
-    retryCount: 0,
-    reconnectSeed,
-    reconnect,
   };
 }
