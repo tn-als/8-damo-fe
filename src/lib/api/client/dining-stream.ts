@@ -65,14 +65,16 @@ export function connectDiningRecommendationStream({
   source.onopen = () => {
     onOpen?.();
   };
-
-  source.onmessage = (event) => {
-    const parsed = parseJson<RecommendationStreamMessage>(event.data);
+2
+  source.addEventListener("streaming", (event) => {
+    const parsed = parseJson<RecommendationStreamMessage>(
+      (event as MessageEvent).data
+    );
     if (!parsed) return;
     const message = toRecommendationStreamMessage(parsed);
     if (!message) return;
     onMessage?.(message);
-  };
+  });
 
   source.addEventListener("done", () => {
     onDone?.();
