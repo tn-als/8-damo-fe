@@ -3,7 +3,6 @@
 import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRecommendationConnection } from "./use-recommendation-connection";
-import { useStreamExpireTimer } from "./use-stream-expire-timer";
 import { useStreamMessages } from "./use-stream-messages";
 import type {
   RecommendationStreamMessage,
@@ -20,9 +19,6 @@ interface UseDiningRecommendationStreamResult {
   streamStatus: RecommendationStreamStatus;
   messages: RecommendationStreamMessage[];
   errorMessage: string | null;
-  retryCount: number;
-  isExpired: boolean;
-  reconnect: () => void;
 }
 
 export function useDiningRecommendationStream({
@@ -32,7 +28,7 @@ export function useDiningRecommendationStream({
 }: UseDiningRecommendationStreamParams): UseDiningRecommendationStreamResult {
   const queryClient = useQueryClient();
 
-  const { messages, appendMessage, resetMessages } = useStreamMessages();
+  const { messages, appendMessage } = useStreamMessages();
 
   const syncDiningQueries = useCallback(async () => {
     await Promise.all([
@@ -45,13 +41,7 @@ export function useDiningRecommendationStream({
     ]);
   }, [diningId, groupId, queryClient]);
 
-  const {
-    streamStatus,
-    errorMessage,
-    retryCount,
-    reconnectSeed,
-    reconnect: reconnectConnection,
-  } = useRecommendationConnection({
+  const { streamStatus, errorMessage } = useRecommendationConnection({
     groupId,
     diningId,
     enabled,
@@ -61,23 +51,9 @@ export function useDiningRecommendationStream({
     },
   });
 
-  const { isExpired, resetExpireTimer } = useStreamExpireTimer({
-    enabled,
-    resetKey: `${groupId}:${diningId}:${reconnectSeed}`,
-  });
-
-  const reconnect = useCallback(() => {
-    resetMessages();
-    resetExpireTimer();
-    reconnectConnection();
-  }, [reconnectConnection, resetExpireTimer, resetMessages]);
-
   return {
     streamStatus,
     messages,
     errorMessage,
-    retryCount,
-    isExpired,
-    reconnect,
   };
 }

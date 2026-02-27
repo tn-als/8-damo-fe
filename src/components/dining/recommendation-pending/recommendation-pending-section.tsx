@@ -14,19 +14,9 @@ interface RecommendationPendingViewStateInput {
   streamStatus: RecommendationStreamStatus;
   messages: ReturnType<typeof useDiningRecommendationStream>["messages"];
   errorMessage: string | null;
-  retryCount: number;
-  isExpired: boolean;
 }
 
-type RecommendationUiStage =
-  | "initializing"
-  | "collecting"
-  | "reconnecting"
-  | "failed"
-  | "completed";
-
 interface NormalizedRecommendationState {
-  stage: RecommendationUiStage;
   normalizedStatus: RecommendationStreamStatus;
   normalizedErrorMessage: string | null;
 }
@@ -51,14 +41,12 @@ function normalizeRecommendationState({
   streamStatus,
   messages,
   errorMessage,
-  isExpired,
 }: RecommendationPendingViewStateInput): NormalizedRecommendationState {
   const hasMessages = messages.length > 0;
   const hasError = Boolean(errorMessage);
 
-  if (streamStatus === "error" || isExpired) {
+  if (streamStatus === "error") {
     return {
-      stage: "failed",
       normalizedStatus: "error",
       normalizedErrorMessage: errorMessage,
     };
@@ -66,7 +54,6 @@ function normalizeRecommendationState({
 
   if (streamStatus === "streaming") {
     return {
-      stage: "collecting",
       normalizedStatus: "streaming",
       normalizedErrorMessage: null,
     };
@@ -75,14 +62,12 @@ function normalizeRecommendationState({
   if (streamStatus === "disconnected") {
     if (hasMessages && !hasError) {
       return {
-        stage: "completed",
         normalizedStatus: "streaming",
         normalizedErrorMessage: null,
       };
     }
 
     return {
-      stage: "reconnecting",
       normalizedStatus: "connecting",
       normalizedErrorMessage: null,
     };
@@ -90,7 +75,6 @@ function normalizeRecommendationState({
 
   if (streamStatus === "connected" && hasMessages) {
     return {
-      stage: "collecting",
       normalizedStatus: "streaming",
       normalizedErrorMessage: null,
     };
@@ -101,7 +85,6 @@ function normalizeRecommendationState({
     case "connecting":
     case "connected":
       return {
-        stage: "initializing",
         normalizedStatus: streamStatus,
         normalizedErrorMessage: null,
       };
@@ -115,31 +98,16 @@ function toRecommendationPendingViewState({
   streamStatus,
   messages,
   errorMessage,
-  retryCount,
-  isExpired,
 }: RecommendationPendingViewStateInput): RecommendationPendingViewState {
   const dedupedMessages = dedupeMessages(messages);
   const {
-    stage,
     normalizedStatus,
     normalizedErrorMessage,
   } = normalizeRecommendationState({
     streamStatus,
     messages: dedupedMessages,
     errorMessage,
-    retryCount,
-    isExpired,
   });
-
-  const normalizedRetryCount =
-    stage === "reconnecting" || stage === "failed"
-      ? Math.max(retryCount, 1)
-      : retryCount;
-
-  const stateBase = {
-    retryCount: normalizedRetryCount,
-    isExpired,
-  };
 
   switch (normalizedStatus) {
     case "idle":
@@ -148,21 +116,18 @@ function toRecommendationPendingViewState({
     case "disconnected":
       return {
         type: normalizedStatus,
-        ...stateBase,
       };
 
     case "streaming":
       return {
         type: "streaming",
         messages: dedupedMessages,
-        ...stateBase,
       };
 
     case "error":
       return {
         type: "error",
         errorMessage: normalizedErrorMessage,
-        ...stateBase,
       };
 
     default:
@@ -174,14 +139,7 @@ export function RecommendationPendingSection({
   groupId,
   diningId,
 }: RecommendationPendingSectionProps) {
-  const {
-    streamStatus,
-    messages,
-    errorMessage,
-    retryCount,
-    isExpired,
-    reconnect,
-  } = useDiningRecommendationStream({
+  const { streamStatus, messages, errorMessage } = useDiningRecommendationStream({
     groupId,
     diningId,
     enabled: Boolean(groupId && diningId),
@@ -191,14 +149,7 @@ export function RecommendationPendingSection({
     streamStatus,
     messages,
     errorMessage,
-    retryCount,
-    isExpired,
   });
 
-  return (
-    <RecommendationPendingView
-      viewState={viewState}
-      onReconnect={reconnect}
-    />
-  );
+  return <RecommendationPendingView viewState={viewState} />;
 }
