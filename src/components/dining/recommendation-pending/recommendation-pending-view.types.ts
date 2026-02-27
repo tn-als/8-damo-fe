@@ -3,23 +3,18 @@ import type {
   RecommendationStreamStatus,
 } from "@/src/types/api/dining";
 
-interface RecommendationPendingViewStateBase {
-  isExpired: boolean;
-  retryCount: number;
-}
-
 export type RecommendationPendingViewState =
-  | ({
+  | {
       type: "idle" | "connecting" | "connected" | "disconnected";
-    } & RecommendationPendingViewStateBase)
-  | ({
+    }
+  | {
       type: "streaming";
       messages: RecommendationStreamMessage[];
-    } & RecommendationPendingViewStateBase)
-  | ({
+    }
+  | {
       type: "error";
       errorMessage: string | null;
-    } & RecommendationPendingViewStateBase);
+    };
 
 export interface RecommendationPendingStatusUi {
   label: string;

@@ -1,7 +1,6 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
 import type { RecommendationStreamStatus } from "@/src/types/api/dining";
 import { RecommendationPendingMessage } from "./recommendation-pending-message";
 import type {
@@ -14,7 +13,6 @@ import { RecommendationPendingErrorPanel } from "./panels/recommendation-pending
 
 interface RecommendationPendingViewProps {
   viewState: RecommendationPendingViewState;
-  onReconnect: () => void;
 }
 
 const STATUS_UI_CONFIG: RecommendationPendingStatusUiMap = {
@@ -56,9 +54,6 @@ const STATUS_UI_CONFIG: RecommendationPendingStatusUiMap = {
   },
 };
 
-const EXPIRED_DESCRIPTION =
-  "추천이 예상보다 오래 걸리고 있어요. 연결을 다시 시도해 주세요.";
-
 function isStreamingState(
   viewState: RecommendationPendingViewState
 ): viewState is Extract<RecommendationPendingViewState, { type: "streaming" }> {
@@ -72,10 +67,6 @@ function isErrorState(
 }
 
 function getDescription(viewState: RecommendationPendingViewState): string {
-  if (viewState.isExpired) {
-    return EXPIRED_DESCRIPTION;
-  }
-
   if (isErrorState(viewState) && viewState.errorMessage) {
     return viewState.errorMessage;
   }
@@ -130,11 +121,9 @@ function renderBody(viewState: RecommendationPendingViewState) {
 
 export function RecommendationPendingView({
   viewState,
-  onReconnect,
 }: RecommendationPendingViewProps) {
   const statusUi = STATUS_UI_CONFIG[viewState.type];
   const description = getDescription(viewState);
-  const isRetryAvailable = viewState.type === "error" || viewState.isExpired;
 
   return (
     <section className="relative w-full rounded-[22px] border border-[#ffd7b5] sm:p-5">
@@ -155,21 +144,6 @@ export function RecommendationPendingView({
       </div>
 
       {renderBody(viewState)}
-
-      {isRetryAvailable ? (
-        <div className="mt-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-9 w-full rounded-xl border-[#ffcf9f] bg-white/80 text-[13px] font-semibold text-[#b2611f] active:bg-[#fff1e3]"
-            onClick={onReconnect}
-          >
-            {viewState.retryCount > 0
-              ? `연결 다시 시도 (${viewState.retryCount + 1}회차)`
-              : "연결 다시 시도"}
-          </Button>
-        </div>
-      ) : null}
     </section>
   );
 }
