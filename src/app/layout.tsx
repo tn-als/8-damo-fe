@@ -6,6 +6,7 @@ import localFont from 'next/font/local';
 import { UserProvider } from "@/src/components/providers/UserProvider";
 import { RouteGuard } from "@/src/components/guards/RouteGuard";
 import { QueryProvider } from "@/src/components/providers/query-provider";
+import { WebPushProvider } from "@/src/components/providers/web-push-provider";
 
 const pretendard = localFont({
   src: 'fonts/PretendardVariable.woff2',
@@ -40,9 +41,11 @@ export default function RootLayout({
           <div className="app-root min-h-[100dvh] w-full max-w-[430px] mx-auto bg-app-background">
             <QueryProvider>
               <UserProvider>
-                <RouteGuard>
-                  {children}
-                </RouteGuard>
+                <WebPushProvider>
+                  <RouteGuard>
+                    {children}
+                  </RouteGuard>
+                </WebPushProvider>
               </UserProvider>
             </QueryProvider>
             <Toaster />
