@@ -33,9 +33,6 @@ export function useDiningRecommendationStream({
     diningId,
     enabled,
   });
-
-  console.log(messages);
-
   const syncDiningQueries = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({
