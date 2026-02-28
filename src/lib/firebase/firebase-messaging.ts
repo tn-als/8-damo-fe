@@ -131,6 +131,26 @@ export const requestForToken = async (): Promise<string | null> => {
   }
 }
 
+// FCM 토큰 삭제
+export const deletePushToken = async (): Promise<boolean> => {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  const messagingInstance = initMessaging()
+  if (!messagingInstance) {
+    return false
+  }
+
+  try {
+    await deleteToken(messagingInstance)
+    console.log('FCM 토큰 삭제 완료')
+    return true
+  } catch (error) {
+    console.error('FCM 토큰 삭제 실패:', error)
+    return false
+  }
+}
 
 // 포그라운드 메시지 수신 리스너
 export const onMessageListener = (

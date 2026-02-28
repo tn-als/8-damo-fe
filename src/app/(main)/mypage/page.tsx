@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useUserStore } from "@/src/stores/user-store";
 import {
   ProfileCard,
@@ -10,11 +9,12 @@ import {
 } from "@/src/components/mypage";
 import { Switch } from "@/src/components/ui/switch";
 import { BottomNavigationBar } from "@/src/components/layout";
+import { useHandlePushToggle } from "@/src/hooks/firebase/use-handle-push-toggle";
 
 export default function MyPage() {
   const { user, isLoading } = useUserStore();
-  const [isPushNotificationEnabled, setIsPushNotificationEnabled] =
-    useState(false);
+  const { isPushEnabled, isPushHydrated, isPushLoading, handlePushToggle } =
+    useHandlePushToggle();
 
   return (
     <>
@@ -42,8 +42,9 @@ export default function MyPage() {
           <div className="flex items-center justify-between border-b border-border px-5 py-5">
             <span className="text-xl font-bold text-foreground">푸시 알림</span>
             <Switch
-              checked={isPushNotificationEnabled}
-              onCheckedChange={setIsPushNotificationEnabled}
+              checked={isPushEnabled}
+              disabled={!isPushHydrated || isPushLoading}
+              onCheckedChange={handlePushToggle}
               aria-label="푸시 알림 토글"
             />
           </div>
