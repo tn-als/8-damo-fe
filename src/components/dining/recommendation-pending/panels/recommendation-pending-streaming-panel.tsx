@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useTypewriter } from "@/src/hooks/use-typewriter";
 import type { RecommendationStreamMessage } from "@/src/types/api/dining";
@@ -60,6 +60,7 @@ export function RecommendationPendingStreamingPanel({
   const [scrollRoot, setScrollRoot] = useState<HTMLUListElement | null>(null);
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const observedMessageIdRef = useRef<string | null>(null);
+  const didInitialScrollRef = useRef(false);
 
   const setScrollRootRef = useCallback((node: HTMLUListElement | null) => {
     setScrollRoot(node);
@@ -81,16 +82,23 @@ export function RecommendationPendingStreamingPanel({
     });
   }, [scrollRoot]);
 
+  useLayoutEffect(() => {
+    if (!scrollRoot) return;
+    if (didInitialScrollRef.current) return;
+    if (messages.length === 0) return;
+
+    scrollRoot.scrollTo({
+      top: scrollRoot.scrollHeight,
+    });
+    didInitialScrollRef.current = true;
+  }, [messages.length, scrollRoot]);
+
   useEffect(() => {
     if (!latestMessageId) return;
 
     if (observedMessageIdRef.current === null) {
       observedMessageIdRef.current = latestMessageId;
-
-      const frame = requestAnimationFrame(() => {
-        scrollToBottom();
-      });
-      return () => cancelAnimationFrame(frame);
+      return;
     }
 
     if (observedMessageIdRef.current === latestMessageId) return;
