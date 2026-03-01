@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, ReactNode } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/src/stores/user-store';
 import { getRedirectPath, isGuardBypassRoute } from '@/src/lib/route-guard/route-access';
 
@@ -19,7 +19,6 @@ function getAndClearReturnUrl(): string | null {
 
   if (!returnUrl) return null;
 
-  // 보안: 내부 URL만 허용 (외부 URL 방지)
   if (!returnUrl.startsWith('/')) return null;
 
   return returnUrl;
@@ -28,16 +27,18 @@ function getAndClearReturnUrl(): string | null {
 export function RouteGuard({ children }: RouteGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { user, isInitialized } = useUserStore();
 
+  const isProxyRedirectedLogin = pathname === '/login' && searchParams.has('redirect');
+
   useEffect(() => {
-    // 초기화 전이면 대기
     if (!isInitialized) return;
 
-    // 예외 경로는 Guard 검사 건너뜀
     if (isGuardBypassRoute(pathname)) return;
 
-    // DONE 상태이고 returnUrl이 있으면 해당 URL로 이동
+    if (isProxyRedirectedLogin) return;
+
     if (user?.onboardingStep === 'DONE') {
       const returnUrl = getAndClearReturnUrl();
       if (returnUrl && pathname !== returnUrl) {
@@ -46,24 +47,24 @@ export function RouteGuard({ children }: RouteGuardProps) {
       }
     }
 
-    // 리다이렉트가 필요한지 확인
     const redirectPath = getRedirectPath(pathname, user);
     if (redirectPath) {
       router.replace(redirectPath);
     }
-  }, [pathname, user, isInitialized, router]);
+  }, [pathname, user, isInitialized, router, isProxyRedirectedLogin]);
 
-  // 초기화 전이면 로딩 표시
   if (!isInitialized) {
     return <RouteGuardSkeleton />;
   }
 
-  // 예외 경로는 즉시 렌더링
   if (isGuardBypassRoute(pathname)) {
     return <>{children}</>;
   }
 
-  // 리다이렉트가 필요하면 로딩 표시
+  if (isProxyRedirectedLogin) {
+    return <>{children}</>;
+  }
+
   const redirectPath = getRedirectPath(pathname, user);
   if (redirectPath) {
     return <RouteGuardSkeleton />;
