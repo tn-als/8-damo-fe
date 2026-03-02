@@ -1,14 +1,16 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 
 import { LocationPermissionGate } from "./location-permission-gate";
 import { LightningCreateActionBar } from "./lightning-create-action-bar";
 import { LightningCapacityInput } from "./lightning-capacity-input";
 import { LightningDescriptionInput } from "./lightning-description-input";
 import { RecommendedRestaurantSection } from "./recommended-restaurant-section";
+import { LightningDateTimeField, type LightningCreateFormValues } from "./lightning-date-time-field";
 
 import { useLightningLocation } from "@/src/hooks/lightning/create/use-lightning-location";
 import { useLightningDescription } from "@/src/hooks/lightning/create/use-lightning-description";
@@ -31,32 +33,35 @@ export function LightningCreateContainer() {
   const [maxParticipants, setMaxParticipants] = useState(2);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const disabled = useMemo(() => {
-    return permission !== "granted" || description.length === 0;
-  }, [permission, description]);
+  const { control, handleSubmit: rhfHandleSubmit, formState: { isValid: isDateValid } } = useForm<LightningCreateFormValues>({
+    mode: "onChange",
+  });
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const disabled = useMemo(() => {
+    return permission !== "granted" || description.length === 0 || !isDateValid;
+  }, [permission, description, isDateValid]);
+
+  const handleSubmit = rhfHandleSubmit(async (formData) => {
     if (disabled) return;
 
     setIsSubmitting(true);
 
-    try{
+    try {
       await createLightning({
-        restaurantId: "1", 
-        maxParticipants, 
-        description, 
-        lightningDate: formatDateToMinute(new Date())
+        restaurantId: "285564029998141440",
+        maxParticipants,
+        description,
+        lightningDate: formatDateToMinute(formData.lightningDate),
       });
       toast.success("번개가 생성되었습니다.");
       router.push("/lightning");
     } catch (error) {
       console.error(error);
       toast.error("번개 생성에 실패했습니다.");
-    } finally{
+    } finally {
       setIsSubmitting(false);
     }
-  };
+  });
 
   return (
     <form
@@ -75,6 +80,11 @@ export function LightningCreateContainer() {
             count={descriptionCount}
             maxLength={maxLength}
             onChange={setNormalizedDescription}
+          />
+
+          <LightningDateTimeField
+            name="lightningDate"
+            control={control}
           />
 
           <LightningCapacityInput
