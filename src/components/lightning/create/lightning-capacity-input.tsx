@@ -6,7 +6,7 @@ interface LightningCapacityInputProps {
   onChange: (value: number) => void;
 }
 
-const MIN_CAPACITY = 1;
+const MIN_CAPACITY = 2;
 const MAX_CAPACITY = 8;
 
 export function LightningCapacityInput({
@@ -51,7 +51,7 @@ export function LightningCapacityInput({
           <Plus className="size-4" />
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">1명부터 8명까지 설정할 수 있습니다.</p>
+      <p className="text-xs text-muted-foreground">2명부터 8명까지 설정할 수 있습니다.</p>
     </section>
   );
 }
