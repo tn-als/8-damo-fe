@@ -55,12 +55,7 @@ export function GroupDetailContent({
     router.push("/groups");
   };
 
-  const handleMoreClick = () => {
-    // TODO: 더보기 메뉴 열기
-  };
-
   const handleCreateDining = () => {
-    // TODO: 회식 생성 페이지로 이동
     router.push(`/groups/${groupId}/dining/create`);
   };
 
@@ -75,7 +70,6 @@ export function GroupDetailContent({
       <GroupDetailHeaderContainer
         groupName={group?.name ?? ""}
         onBack={handleBack}
-        onMoreClick={handleMoreClick}
       />
 
       <GroupDetailInformationContainer
