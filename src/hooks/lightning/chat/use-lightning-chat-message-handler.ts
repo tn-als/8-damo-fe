@@ -33,7 +33,7 @@ function normalizeSocketMessage(
     chatType: raw.chatType ?? "TEXT",
     content: raw.content ?? "",
     createdAt: raw.createdAt ?? new Date().toISOString(),
-    senderNickname: raw.senderNickname,
+    senderNickname: raw.senderNickname ?? "user",
     unreadCount: Number.isFinite(parsedUnreadCount)
       ? parsedUnreadCount
       : 0,

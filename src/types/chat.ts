@@ -9,7 +9,7 @@ export interface ChatBroadcastMessagePayload {
   chatType: ChatType;
   content: string;
   createdAt: string;
-  senderNickname: string;
+  senderNickname: string | undefined;
   unreadCount: number;
 }
 
@@ -44,7 +44,7 @@ export interface ChatBroadcastMessage {
   chatType: ChatType;
   content: string;
   createdAt: string;
-  senderNickname: string;
+  senderNickname: string | undefined;
   unreadCount: number;
 }
 
