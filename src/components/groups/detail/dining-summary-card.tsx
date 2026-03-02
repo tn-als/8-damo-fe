@@ -48,7 +48,7 @@ export function DiningSummaryCard({
       disabled={disabled}
       aria-disabled={disabled}
       className={cn(
-        "flex min-h-[84px] w-full items-start gap-2 rounded-lg bg-white p-3.5 text-left transition-colors active:bg-gray-50 disabled:cursor-default disabled:bg-white disabled:opacity-60 disabled:active:bg-white sm:min-h-[88px] sm:p-4",
+        "flex cursor-pointer min-h-[84px] w-full items-start gap-2 rounded-lg bg-white p-3.5 text-left transition-colors active:bg-gray-50 disabled:cursor-default disabled:bg-white disabled:opacity-60 disabled:active:bg-white sm:min-h-[88px] sm:p-4",
         className
       )}
     >
