@@ -3,7 +3,7 @@ import {
     WeeklyDiningScheduleSection,
     WeeklyPopularRestaurantsSection,
 } from "@/src/components/home";
-import { BottomNavigationBar } from "@/src/components/layout";
+import { BottomNavigationBar, Header } from "@/src/components/layout";
 import {
     mockWeeklyDinings,
 } from "@/src/constants/mock-data";
@@ -11,7 +11,8 @@ import {
 export default function HomePage() {
     return (
         <>
-            <main className="flex min-h-screen flex-col items-center gap-6 px-4 py-8 pb-24">
+            <Header showBackButton={false} showMoreButton={true} showAlarmButton={true} />
+            <main className="flex min-h-screen flex-col items-center gap-6 px-4 pb-24">
                 <AdBannerSection/>
                 <WeeklyDiningScheduleSection dinings={mockWeeklyDinings} />
                 <WeeklyPopularRestaurantsSection /> 

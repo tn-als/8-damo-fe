@@ -16,7 +16,6 @@ export default async function KakaoCallbackPage({
   const params = await searchParams;
   const { code, error, error_description, state } = params;
 
-  // 1. OAuth 자체 에러
   if (error) {
     const message = error_description
       ? `${error}: ${error_description}`
@@ -24,11 +23,9 @@ export default async function KakaoCallbackPage({
     return <KakaoCallbackError message={message} />;
   }
 
-  // 2. 인가 코드 없음
   if (!code) {
     return <KakaoCallbackError message="인가코드가 전달되지 않았습니다." />;
   }
 
-  // 3. 클라이언트 컴포넌트에서 서버 액션 호출
   return <KakaoCallbackContent code={code} redirectPath={state} />;
 }
