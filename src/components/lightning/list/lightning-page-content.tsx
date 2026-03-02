@@ -25,11 +25,8 @@ export function LightningPageContent({ items, activeTab }: LightningPageContentP
 
   return (
     <>
-      <main className="mx-auto flex min-h-dvh w-full min-w-[320px] max-w-[430px] flex-col bg-background px-3 pb-24 pt-4 sm:px-4">
-        <h1 className="text-2xl font-bold leading-8 text-[#111111] sm:text-[28px] sm:leading-9">
-          번개
-        </h1>
-
+      <Header title={"번개 모임"} showBackButton={false}/>
+      <main className="mx-auto flex min-h-dvh w-full min-w-[320px] max-w-[430px] flex-col bg-background px-3 pb-24 sm:px-4">
         <SegmentedTabs
           tabs={TAB_OPTIONS}
           value={activeTab}
