@@ -3,6 +3,28 @@
 import { cn } from "@/src/lib/utils";
 import { useState } from "react";
 
+const COLORS = [
+  "#f7a649", // muted orange
+  "#ff6b6b", // muted red
+  "#35f5ce", // muted teal
+  "#489aff", // muted blue
+  "#7d60fc", // muted violet
+  "#6cff9f", // muted green
+  "#fb70bf", // muted pink
+  "#748ffb", // muted indigo
+  "#f9d855", // muted amber
+  "#5eecfc", // muted cyan
+] as const;
+
+function pickColor(text: string): string {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+    hash |= 0;
+  }
+  return COLORS[Math.abs(hash) % COLORS.length];
+}
+
 const sizeStyles = {
   sm: "size-10 sm:size-12",
   md: "size-14 sm:size-16",
@@ -99,8 +121,9 @@ export function Avatar({
 
       {renderType === "initials" && (
         <div
+          style={{ background: pickColor(fallbackText ?? alt) }}
           className={cn(
-            "flex size-full items-center justify-center font-semibold text-muted-foreground",
+            "flex size-full items-center justify-center font-bold text-white",
             textSizeStyles[size]
           )}
         >
