@@ -37,6 +37,15 @@ body {
   display: none;
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE, Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari */
+}
+
 :root {
   /* Layout */
   --bottom-nav-height: 4rem; /* 64px - h-16 */
