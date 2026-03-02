@@ -18,6 +18,7 @@ interface DateTimePickerProps {
   disabled?: boolean;
   minDate?: Date;
   className?: string;
+  buttonClassName?: string;
 }
 
 export function DateTimePicker({
@@ -27,6 +28,7 @@ export function DateTimePicker({
   disabled = false,
   minDate,
   className,
+  buttonClassName,
 }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
@@ -101,9 +103,10 @@ export function DateTimePicker({
         onClick={toggleCalendar}
         disabled={disabled}
         className={cn(
-          "flex h-[54px] w-full items-center gap-2 rounded-[8px] bg-[#f2f2f7] px-4 text-left transition-colors",
+          "cursor-pointer flex h-[54px] w-full items-center gap-2 rounded-[8px] bg-[#f2f2f7] px-4 text-left transition-colors",
           "hover:bg-[#e5e5ea]",
-          disabled && "cursor-not-allowed opacity-50"
+          disabled && "cursor-not-allowed opacity-50",
+          buttonClassName
         )}
       >
         <span
