@@ -16,6 +16,8 @@ export function useDiningAttendanceVote(
       return response.data;
     },
     enabled,
+    staleTime: 0,
+    refetchInterval: 5_000, 
     refetchOnWindowFocus: true,
   });
 }

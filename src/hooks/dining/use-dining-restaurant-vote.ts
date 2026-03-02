@@ -16,6 +16,8 @@ export function useDiningRestaurantVote(
       return response.data;
     },
     enabled,
+    staleTime: 10_000, 
+    refetchInterval: 10_000, 
     refetchOnWindowFocus: true,
   });
 }
