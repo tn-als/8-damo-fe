@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDiningCommon } from "@/src/lib/api/client/dining";
 import type { DiningCommonResponse } from "@/src/types/api/dining";
 
-const POLLING_INTERVAL_MS = 300_000;
+const POLLING_INTERVAL_MS = 20_000;
 
 export function useDiningCommon(
   groupId: string,
