@@ -17,6 +17,7 @@ export function useChatScrollController({
   isFetchingNextPage,
   fetchPreviousPage,
   fetchNextPage,
+  markInitialized,
   topInView,
   bottomInView,
   lastChatMessageId,
@@ -31,16 +32,16 @@ export function useChatScrollController({
   isFetchingNextPage: boolean;
   fetchPreviousPage: () => Promise<unknown>;
   fetchNextPage: () => Promise<unknown>;
+  markInitialized: () => void;
   topInView: boolean;
   bottomInView: boolean;
   lastChatMessageId: string | null;
 }) {
   const initialLoadDoneRef = useRef(false);
+  const topFetchTriggeredRef = useRef(false);
   const handledChatMessageIdRef = useRef<string | null>(
     null
   );
-  const fetchingPrevRef = useRef(false);
-  const fetchingNextRef = useRef(false);
   const [isBottomOutOfView, setIsBottomOutOfView] =
     useState(false);
 
@@ -57,6 +58,7 @@ export function useChatScrollController({
     if (!scrollRoot || initialLoadDoneRef.current) return;
     if (messagesLength === 0) return;
 
+    initialLoadDoneRef.current = true;
     requestAnimationFrame(() => {
       switch (initialScrollMode) {
         case "TOP":
@@ -83,7 +85,7 @@ export function useChatScrollController({
         }
       }
 
-      initialLoadDoneRef.current = true;
+      markInitialized();
       setIsBottomOutOfView(!bottomInView);
     });
   }, [
@@ -92,30 +94,37 @@ export function useChatScrollController({
     initialScrollMode,
     anchorCursor,
     bottomInView,
+    markInitialized,
   ]);
 
   // 2. 위쪽 로딩
   useEffect(() => {
     if (!scrollRoot || !initialLoadDoneRef.current) return;
-    if (!topInView || !hasPreviousPage) return;
-    if (isFetchingPreviousPage || fetchingPrevRef.current) return;
 
-    fetchingPrevRef.current = true;
+    if (!topInView) {
+      const frame = requestAnimationFrame(() => {
+        topFetchTriggeredRef.current = false;
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+
+    if (!hasPreviousPage) return;
+    if (isFetchingPreviousPage) return;
+    if (topFetchTriggeredRef.current) return;
+
+    topFetchTriggeredRef.current = true;
+
     const beforeHeight = scrollRoot.scrollHeight;
 
-    void fetchPreviousPage()
-      .then(() => {
-        requestAnimationFrame(() => {
-          const delta =
-            scrollRoot.scrollHeight - beforeHeight;
-          scrollRoot.scrollTo({
-            top: scrollRoot.scrollTop + delta,
-          });
+    void fetchPreviousPage().then(() => {
+      requestAnimationFrame(() => {
+        const delta =
+          scrollRoot.scrollHeight - beforeHeight;
+        scrollRoot.scrollTo({
+          top: scrollRoot.scrollTop + delta,
         });
-      })
-      .finally(() => {
-        fetchingPrevRef.current = false;
       });
+    });
   }, [
     scrollRoot,
     topInView,
@@ -128,12 +137,9 @@ export function useChatScrollController({
   useEffect(() => {
     if (!initialLoadDoneRef.current) return;
     if (!bottomInView || !hasNextPage) return;
-    if (isFetchingNextPage || fetchingNextRef.current) return;
+    if (isFetchingNextPage) return;
 
-    fetchingNextRef.current = true;
-    void fetchNextPage().finally(() => {
-      fetchingNextRef.current = false;
-    });
+    void fetchNextPage();
   }, [
     bottomInView,
     hasNextPage,

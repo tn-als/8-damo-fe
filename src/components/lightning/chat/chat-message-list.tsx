@@ -24,6 +24,7 @@ interface Props {
   isFetchingNextPage: boolean;
   fetchPreviousPage: () => Promise<unknown>;
   fetchNextPage: () => Promise<unknown>;
+  markInitialized: () => void;
   lastChatMessageId: string | null;
 }
 
@@ -49,6 +50,7 @@ export function ChatMessageList({
   isFetchingNextPage,
   fetchPreviousPage,
   fetchNextPage,
+  markInitialized,
   lastChatMessageId,
 }: Props) {
   const [scrollRoot, setScrollRoot] =
@@ -88,6 +90,7 @@ export function ChatMessageList({
     isFetchingNextPage,
     fetchPreviousPage,
     fetchNextPage,
+    markInitialized,
     topInView,
     bottomInView,
     lastChatMessageId,
