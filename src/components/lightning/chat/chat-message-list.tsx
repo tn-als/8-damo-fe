@@ -17,7 +17,7 @@ interface Props {
   currentUserId: string | null;
   readBoundary: ChatReadBoundary | null;
   initialScrollMode: ChatInitialScrollMode;
-  anchorCursor: number;
+  anchorCursor: string | null;
   hasPreviousPage: boolean;
   hasNextPage: boolean;
   isFetchingPreviousPage: boolean;
