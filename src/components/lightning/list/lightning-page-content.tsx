@@ -47,14 +47,17 @@ export function LightningPageContent({ activeTab }: LightningPageContentProps) {
     <>
       <Header title={"번개 모임"} showBackButton={false}/>
       <main className="mx-auto flex min-h-dvh w-full min-w-[320px] max-w-[430px] flex-col bg-background px-3 pb-24 sm:px-4">
-        <SegmentedTabs
-          tabs={TAB_OPTIONS}
-          value={activeTab}
-          onChange={(value) =>
-            router.push(`/lightning?tab=${value as LightningTab}`)
-          }
-          className="mt-3 rounded-2xl bg-[#e8e8ed] p-1"
-        />
+
+        <div className="sticky top-0 z-10 bg-background pt-3">
+          <SegmentedTabs
+            tabs={TAB_OPTIONS}
+            value={activeTab}
+            onChange={(value) =>
+              router.push(`/lightning?tab=${value as LightningTab}`)
+            }
+            className="rounded-2xl bg-[#e8e8ed] p-1"
+          />
+        </div>
 
         <section className="mt-4 flex flex-col gap-3">
           {isLoading ? (
@@ -69,8 +72,9 @@ export function LightningPageContent({ activeTab }: LightningPageContentProps) {
                 href={
                   isJoinedTab
                     ? `/lightning/${item.id}`
-                    : `/lightning/details/${item.id}` 
+                    : `/lightning/details/${item.id}`
                 }
+                isJoined={isJoinedTab}
               />
             ))
           ) : (

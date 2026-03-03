@@ -99,6 +99,7 @@ interface MyLightningRaw {
   lightningStatus?: string;
   lightningDate?: string;
   lightningData?: string;
+  unreadCount?: number;
 }
 
 interface LightningListDto {
@@ -125,6 +126,7 @@ export async function getLightningList(
     maxParticipants: item.maxParticipants,
     participantsCount: item.participantsCount,
     lightningStatus: item.lightningStatus,
+    unreadCount: item.unreadCount,
     dateLabel: formatLightningDateLabel(
       item.lightningDate ?? item.lightningData ?? ""
     ),

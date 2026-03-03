@@ -12,6 +12,7 @@ export interface LightningItem {
   participantsCount: number;
   dateLabel: string;
   lightningStatus?: LightningStatus;
+  unreadCount?: number;
 }
 
 export interface LightningParticipant {

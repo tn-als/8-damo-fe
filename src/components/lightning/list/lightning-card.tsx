@@ -6,9 +6,10 @@ import { cn } from "@/src/lib/utils";
 interface LightningCardProps {
   item: LightningItem;
   href: string;
+  isJoined?: boolean;
 }
 
-export function LightningCard({ item, href }: LightningCardProps) {
+export function LightningCard({ item, href, isJoined }: LightningCardProps) {
   const isFull = item.participantsCount >= item.maxParticipants;
   const participationRate =
     item.maxParticipants > 0
@@ -31,6 +32,11 @@ export function LightningCard({ item, href }: LightningCardProps) {
           >
             {isFull ? "모집 마감" : "모집 중"}
           </span>
+          {isJoined && !!item.unreadCount && item.unreadCount > 0 && (
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[#f04438] px-1.5 text-[11px] font-semibold text-white">
+              {item.unreadCount > 99 ? "99+" : item.unreadCount}
+            </span>
+          )}
         </div>
 
         <h3 className="mt-3 line-clamp-2 text-base font-bold leading-6 text-[#111111] sm:text-lg sm:leading-7">
