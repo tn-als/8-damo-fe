@@ -1,5 +1,5 @@
 import { bffPost, bffGet, type ApiResponse } from "./index";
-import type { GroupSummary } from "@/src/types/groups";
+import type { GroupSummary, GroupSummaryPage } from "@/src/types/groups";
 
 export interface CreateGroupRequest {
   name: string;
@@ -23,6 +23,17 @@ interface MyGroupSummaryResponse {
   imagePath: string;
 }
 
+interface MyGroupListDto {
+  data: MyGroupSummaryResponse[];
+  nextCursor: string | null;
+  hasNext: boolean;
+}
+
+interface MyGroupListParams {
+  lastGroupId?: string;
+  size?: number;
+}
+
 export async function createGroup(
   data: CreateGroupRequest
 ): Promise<ApiResponse<number>> {
@@ -35,18 +46,28 @@ export async function getGroupDetail(
   return bffGet<GroupDetailResponse>(`/groups/${groupId}`);
 }
 
-export async function getMyGroups(): Promise<ApiResponse<MyGroupSummaryResponse[]>> {
-  return bffGet<MyGroupSummaryResponse[]>("/users/me/groups");
-}
+export async function getMyGroups(
+  params?: MyGroupListParams
+): Promise<ApiResponse<GroupSummaryPage>> {
+  const size = params?.size ?? 10;
+  const query: Record<string, string | number> = { size };
+  if (params?.lastGroupId) query.lastGroupId = params.lastGroupId;
 
-// 클라이언트에서 사용할 매핑 함수
-export function mapToGroupSummary(data: MyGroupSummaryResponse[]): GroupSummary[] {
-  return data.map((group) => ({
+  const response = await bffGet<MyGroupListDto>("/users/me/groups", { params: query });
+  const items: GroupSummary[] = response.data.data.map((group) => ({
     id: group.groupId,
     name: group.name,
     introduction: group.introduction ?? undefined,
     imagePath: group.imagePath,
   }));
+
+  return {
+    ...response,
+    data: {
+      items,
+      nextCursor: response.data.hasNext ? response.data.nextCursor : null,
+    },
+  };
 }
 
 export async function joinGroup(
