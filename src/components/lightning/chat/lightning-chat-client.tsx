@@ -2,12 +2,24 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { MoreVertical } from "lucide-react";
+import { AxiosError } from "axios";
 import { useLightningChatSocket } from "@/src/hooks/lightning/chat/use-lightning-chat-socket";
 import { useLightningChatInfinite } from "@/src/hooks/lightning/chat/use-lightning-chat-infinite";
+import { useInvalidateLightning } from "@/src/hooks/lightning/use-invalidate-lightning";
 import { useUserStore } from "@/src/stores/user-store";
+import { leaveLightning } from "@/src/lib/api/client/lightning";
 import { ChatMessageList } from "./chat-message-list";
 import { ChatInput } from "./chat-input";
 import { Header } from "../../layout";
+import { Button } from "../../ui/button";
+import { toast } from "@/src/components/ui/sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../ui/dropdown-menu";
 
 interface Props {
   lightningId: string;
@@ -19,10 +31,34 @@ export function LightningChatClient({
   const router = useRouter();
   const [realtimeChatMessageId, setRealtimeChatMessageId] =
     useState<string | null>(null);
+  const [isLeaving, setIsLeaving] = useState(false);
   const currentUserId = useUserStore((state) => state.user?.userId ?? null);
+  const { invalidateLightningList } = useInvalidateLightning();
 
   const handleBack = () => {
     router.push("/lightning?tab=joined");
+  };
+
+  const handleLeaveLightning = async () => {
+    if (isLeaving) return;
+    setIsLeaving(true);
+    try {
+      const res = await leaveLightning(lightningId);
+      if (res.errorMessage) {
+        toast.error(res.errorMessage);
+        return;
+      }
+      await invalidateLightningList();
+      router.push("/lightning?tab=joined");
+    } catch (error) {
+      const message =
+        error instanceof AxiosError
+          ? (error.response?.data?.errorMessage ?? "번개 모임을 나가는 중 오류가 발생했습니다.")
+          : "번개 모임을 나가는 중 오류가 발생했습니다.";
+      toast.error(message);
+    } finally {
+      setIsLeaving(false);
+    }
   };
 
   const {
@@ -76,12 +112,32 @@ export function LightningChatClient({
   const errorMessage =
     socketError ?? (queryError instanceof Error ? queryError.message : null);
 
+  const moreMenu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="sm:size-10">
+          <MoreVertical className="size-5 sm:size-6" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          className=""
+          disabled={isLeaving}
+          onClick={handleLeaveLightning}
+        >
+          번개에서 나가기
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   if (isWaitingInitialResponse) {
     return (
       <div className="mx-auto flex h-full w-full min-w-[320px] max-w-[430px] flex-col bg-background">
         <Header
           title="번개 채팅"
           onBack={handleBack}
+          rightElement={moreMenu}
         />
 
         <section className="flex-1 bg-card px-4 py-4">
@@ -101,6 +157,7 @@ export function LightningChatClient({
       <Header
         title="번개 채팅"
         onBack={handleBack}
+        rightElement={moreMenu}
       />
       
       <ChatMessageList
