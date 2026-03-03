@@ -1,10 +1,16 @@
+import { NextRequest } from "next/server";
 import { AxiosError } from "axios";
 import { bffAxios, passthroughResponse, errorResponse } from "@/src/app/bff/_lib";
 
 // GET - 내 그룹 목록 조회
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const response = await bffAxios.get("/api/v1/users/me/groups");
+    const { searchParams } = request.nextUrl;
+    const params: Record<string, string> = {};
+    if (searchParams.get("lastGroupId")) params.lastGroupId = searchParams.get("lastGroupId")!;
+    if (searchParams.get("size")) params.size = searchParams.get("size")!;
+
+    const response = await bffAxios.get("/api/v1/users/me/groups", { params });
     return passthroughResponse(response.data, response.status);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
