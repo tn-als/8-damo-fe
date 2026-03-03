@@ -12,7 +12,7 @@ export function useMyGroupList() {
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    staleTime: 60_000,
+    staleTime: 180_000,
     refetchOnWindowFocus: true
   });
 }
