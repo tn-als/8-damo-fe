@@ -51,7 +51,7 @@ export function ChatMessageItem({
           </div>
         )}
 
-        <div className="max-w-[78%] space-y-1">
+        <div className="max-w-[78%] min-w-0 space-y-1">
           {!isMine && (
             <p className="px-1 text-xs text-muted-foreground">
               {senderLabel}
@@ -74,8 +74,8 @@ export function ChatMessageItem({
             <p
               className={
                 isMine
-                  ? "break-words rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-base leading-6 text-primary-foreground"
-                  : "break-words rounded-2xl rounded-bl-md bg-background px-4 py-2.5 text-base leading-6 text-foreground shadow-xs"
+                  ? "max-w-full break-all rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-base leading-6 text-primary-foreground"
+                  : "max-w-full break-all break-words rounded-2xl rounded-bl-md bg-background px-4 py-2.5 text-base leading-6 text-foreground shadow-xs"
               }
             >
               {message.content}
