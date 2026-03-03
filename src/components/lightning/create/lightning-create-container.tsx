@@ -15,6 +15,7 @@ import { LightningDateTimeField, type LightningCreateFormValues } from "./lightn
 
 import { useLightningLocation } from "@/src/hooks/lightning/create/use-lightning-location";
 import { useLightningDescription } from "@/src/hooks/lightning/create/use-lightning-description";
+import { useInvalidateLightning } from "@/src/hooks/lightning/use-invalidate-lightning";
 
 import { MOCK_RECOMMENDED_RESTAURANTS } from "../mock/mock-recommended-restaurant";
 import { createLightning } from "@/src/lib/api/client/lightning";
@@ -30,6 +31,7 @@ export function LightningCreateContainer() {
     maxLength,
     setNormalizedDescription,
   } = useLightningDescription();
+  const { invalidateLightningList } = useInvalidateLightning();
 
   const [maxParticipants, setMaxParticipants] = useState(2);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,6 +57,7 @@ export function LightningCreateContainer() {
         lightningDate: formatDateToMinute(formData.lightningDate),
       });
       toast.success("번개가 생성되었습니다.");
+      await invalidateLightningList();
       router.push("/lightning");
     } catch (error: unknown) {
       console.error(error);

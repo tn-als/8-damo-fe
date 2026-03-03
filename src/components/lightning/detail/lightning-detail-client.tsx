@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/src/components/ui/button";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { getLightningDetail, joinLightning } from "@/src/lib/api/client/lightning";
+import { useInvalidateLightning } from "@/src/hooks/lightning/use-invalidate-lightning";
 import { LightningDetailPageContent } from "./lightning-detail-page-content";
 
 interface LightningDetailClientProps {
@@ -15,6 +16,7 @@ interface LightningDetailClientProps {
 
 export function LightningDetailClient({ lightningId }: LightningDetailClientProps) {
   const router = useRouter();
+  const { invalidateLightningList, invalidateLightningDetail } = useInvalidateLightning();
 
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["lightning", "detail", lightningId],
@@ -29,8 +31,12 @@ export function LightningDetailClient({ lightningId }: LightningDetailClientProp
 
   const participateMutation = useMutation({
     mutationFn: async () => joinLightning(lightningId),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("번개 참가가 완료되었습니다.");
+      await Promise.all([
+        invalidateLightningList(),
+        invalidateLightningDetail(lightningId),
+      ]);
       router.push(`/lightning/${lightningId}`);
     },
     onError: () => {
