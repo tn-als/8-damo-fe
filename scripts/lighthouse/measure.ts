@@ -58,10 +58,9 @@ async function runOnce(url: string, cookieHeader: string, mode: LighthouseMode):
         onlyAudits: AUDITS,
         extraHeaders: { Cookie: cookieHeader },
         logLevel: 'error',
+        ...getSettings(mode),
       },
-      {
-        settings: getSettings(mode),
-      }
+      undefined
     );
 
     const lhr = result?.lhr;
