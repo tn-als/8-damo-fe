@@ -43,7 +43,7 @@ async function main() {
       rows.push({ measured_at: measuredAt, label: name, mode, url, metrics });
 
       console.log(
-        `   → 평균 — FCP: ${metrics.fcp.toFixed(0)}ms, LCP: ${metrics.lcp.toFixed(0)}ms, CLS: ${metrics.cls.toFixed(3)}, TBT: ${metrics.tbt.toFixed(0)}ms, Score: ${metrics.score.toFixed(1)}\n`,
+        `   → 평균 — FCP: ${metrics.fcp.toFixed(0)}ms, LCP: ${metrics.lcp.toFixed(0)}ms, CLS: ${metrics.cls.toFixed(3)}, TBT: ${metrics.tbt.toFixed(0)}ms, TTFB: ${metrics.ttfb.toFixed(0)}ms, Score: ${metrics.score.toFixed(1)}\n`,
       );
     }
   }
@@ -55,11 +55,11 @@ async function main() {
   console.log('=== 측정 완료 ===\n');
   console.log('요약:');
   console.log(
-    ['label', 'mode', 'FCP(ms)', 'LCP(ms)', 'CLS', 'TBT(ms)', 'Score']
+    ['label', 'mode', 'FCP(ms)', 'LCP(ms)', 'CLS', 'TBT(ms)', 'TTFB(ms)', 'Score']
       .map((h) => h.padEnd(18))
       .join(''),
   );
-  console.log('-'.repeat(126));
+  console.log('-'.repeat(144));
   for (const { label, mode, metrics } of rows) {
     console.log(
       [
@@ -69,6 +69,7 @@ async function main() {
         metrics.lcp.toFixed(0),
         metrics.cls.toFixed(3),
         metrics.tbt.toFixed(0),
+        metrics.ttfb.toFixed(0),
         metrics.score.toFixed(1),
       ]
         .map((v) => v.padEnd(18))
