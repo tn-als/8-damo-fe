@@ -6,13 +6,14 @@ export function useLightningRecommendation() {
     mutationFn: ({
       longitude,
       latitude,
+      signal,
     }: {
       longitude: number;
       latitude: number;
+      signal?: AbortSignal;
     }) =>
-      getLightningRecommendation(
-        String(longitude),
-        String(latitude)
-      ),
+      getLightningRecommendation(String(longitude), String(latitude), {
+        signal,
+      }),
   });
 }
