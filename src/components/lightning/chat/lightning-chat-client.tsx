@@ -4,11 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreVertical } from "lucide-react";
 import { AxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLightningChatSocket } from "@/src/hooks/lightning/chat/use-lightning-chat-socket";
 import { useLightningChatInfinite } from "@/src/hooks/lightning/chat/use-lightning-chat-infinite";
 import { useInvalidateLightning } from "@/src/hooks/lightning/use-invalidate-lightning";
 import { useUserStore } from "@/src/stores/user-store";
 import { leaveLightning } from "@/src/lib/api/client/lightning";
+import { appendChatMessageToCache } from "@/src/lib/lightning/chat/append-chat-message-to-cache";
 import { ChatMessageList } from "./chat-message-list";
 import { ChatInput } from "./chat-input";
 import { Header } from "../../layout";
@@ -29,6 +31,7 @@ export function LightningChatClient({
   lightningId,
 }: Props) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [realtimeChatMessageId, setRealtimeChatMessageId] =
     useState<string | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
@@ -86,6 +89,27 @@ export function LightningChatClient({
       : null;
   const lastChatMessageId =
     realtimeChatMessageId ?? initialLastReadMessageId;
+  console.log(process.env.NEXT_PUBLIC_APP_ENV);
+  // Scenario 2: 버스트 메시지 (10개 / 1초) 시뮬레이션
+  const simulateBurst = useCallback((count = 10) => {
+    Array.from({ length: count }).forEach((_, i) => {
+      setTimeout(() => {
+        const fakeId = `burst-${Date.now()}-${i}`;
+        performance.mark(`chat:ws-received:${fakeId}`);
+        appendChatMessageToCache(queryClient, lightningId, {
+          messageId: fakeId,
+          senderId: "9999",
+          lightningId,
+          chatType: "TEXT",
+          content: `[버스트 ${i + 1}/${count}] 성능 테스트 메시지`,
+          createdAt: new Date().toISOString(),
+          senderNickname: "테스터",
+          senderImagePath: null,
+          unreadCount: 0,
+        });
+      }, i * 100);
+    });
+  }, [queryClient, lightningId]); // perf
 
   const handleChatMessage = useCallback((messageId: string) => {
     setRealtimeChatMessageId(messageId);
@@ -181,6 +205,13 @@ export function LightningChatClient({
           {errorMessage}
         </p>
       )}
+
+      <button
+        onClick={() => simulateBurst(10)}
+        className="mx-4 mb-1 rounded bg-yellow-200 px-3 py-1 text-xs text-yellow-900"
+      >
+        [DEV - perf] 시나리오 2: 버스트 10개 전송
+      </button>
 
       <ChatInput onSend={sendMessage}/>
     </div>

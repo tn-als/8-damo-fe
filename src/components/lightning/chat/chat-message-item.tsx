@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useLayoutEffect } from "react";
 import { Avatar } from "@/src/components/ui/avatar";
 import { PROFILE_FALLBACK_IMAGE } from "@/src/constants/image";
 import { getProfileImageUrl } from "@/src/lib/profile-image";
@@ -31,6 +31,20 @@ export function ChatMessageItem({
   showDividerBefore,
   showDividerAfter,
 }: Props) {
+  useLayoutEffect(() => {
+    performance.mark(`chat:rendered:${message.messageId}`);
+    try {
+      performance.measure(
+        `chat:render-latency:${message.messageId}`,
+        `chat:ws-received:${message.messageId}`,
+        `chat:rendered:${message.messageId}`,
+      );
+    } catch {
+      // ws-received mark가 없는 기존 메시지는 조용히 무시
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // perf
+
   const isMine = message.senderId === currentUserId;
   const timeText = formatChatTime(message.createdAt);
   const senderLabel = isMine ? "나" : message.senderNickname;

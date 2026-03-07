@@ -55,6 +55,7 @@ export function useLightningChatMessageHandler({
         switch (parsed.type) {
           case "CHAT_MESSAGE": {
             const incoming = normalizeSocketMessage(parsed.payload, lightningId);
+            performance.mark(`chat:ws-received:${incoming.messageId}`); // perf
             console.log("[WS][CHAT_MESSAGE]", { incoming, });
             appendChatMessageToCache(queryClient, lightningId, incoming);
             onChatMessage?.(incoming.messageId);
