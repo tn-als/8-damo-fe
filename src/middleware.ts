@@ -18,7 +18,7 @@ function isPublicRoute(pathname: string): boolean {
   );
 }
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   if (isPublicRoute(pathname)) {
@@ -51,21 +51,16 @@ export async function proxy(request: NextRequest) {
         const setCookieHeader = reissueResponse.headers.get("set-cookie");
 
         if (setCookieHeader) {
-          const cookieStrings = setCookieHeader.split(/,(?=\s*\w+=)/);
-          const requestHeaders = new Headers(request.headers);
+          const parsedCookies = setCookieHeader
+            .split(/,(?=\s*\w+=)/)
+            .map((s) => parseCookie(s.trim()))
+            .filter((c): c is NonNullable<typeof c> => c !== null);
 
-          for (const cookieString of cookieStrings) {
-            const parsed = parseCookie(cookieString.trim());
-            if (parsed) {
-              requestHeaders.set(parsed.name, parsed.value);
-            }
+          const response = NextResponse.next();
+
+          for (const cookie of parsedCookies) {
+            response.cookies.set(cookie.name, cookie.value, cookie.options);
           }
-
-          const response = NextResponse.next({
-            request: { headers: requestHeaders },
-          });
-
-          response.headers.set("Set-Cookie", setCookieHeader);
 
           return response;
         }
