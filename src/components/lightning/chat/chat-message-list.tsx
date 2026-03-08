@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
 import type {
@@ -38,7 +38,7 @@ function isSameMessageId(
   return Number(messageId) === targetMessageId;
 }
 
-export function ChatMessageList({
+export const ChatMessageList = memo(function ChatMessageList({
   messages,
   currentUserId,
   readBoundary,
@@ -220,4 +220,4 @@ export function ChatMessageList({
       )}
     </div>
   );
-}
+});
