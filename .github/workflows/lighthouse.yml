@@ -37,3 +37,9 @@ jobs:
           GOOGLE_SHEETS_SPREADSHEET_ID: ${{ secrets.GOOGLE_SHEETS_SPREADSHEET_ID }}
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa-key.json
           PR_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          PERF_TEST_GROUP_ID: ${{ secrets.PERF_TEST_GROUP_ID }}
+          PERF_TEST_DINING_ID_AV: ${{ secrets.PERF_TEST_DINING_ID_AV }}
+          PERF_TEST_DINING_ID_RV: ${{ secrets.PERF_TEST_DINING_ID_RV }}
+          PERF_TEST_DINING_ID_CF: ${{ secrets.PERF_TEST_DINING_ID_CF }}
+          PERF_TEST_LIGHTNING_ID_CHAT: ${{ secrets.PERF_TEST_LIGHTNING_ID_CHAT }}
+          PERF_TEST_LIGHTNING_ID_DETAIL: ${{ secrets.PERF_TEST_LIGHTNING_ID_DETAIL }}
