@@ -1,7 +1,6 @@
 import type { ChangeEvent, RefObject } from "react";
 import { AnalyzingPanel } from "./panels/analyzing-panel";
 import { UploadPanel } from "./panels/upload-panel";
-import { SuccessPanel } from "./panels/success-panel";
 import { FailedPanel } from "./panels/failed-panel";
 import { RECEIPT_BOTTOM_NAV_RESERVED_SPACE } from "./receipt-bottom-navigation.constants";
 
@@ -21,18 +20,7 @@ export type ReceiptPageViewState =
       selectedFileName: string;
     }
   | {
-      type: "analyzing";
-      previewUrl: string;
-      selectedFileName: string;
-    }
-  | {
-      type: "success";
-      analysisResult: ReceiptAnalysisResult;
-      previewUrl: string;
-      selectedFileName: string;
-    }
-  | {
-      type: "invalid_receipt";
+      type: "submitting";
       previewUrl: string;
       selectedFileName: string;
     }
@@ -78,29 +66,13 @@ export function ReceiptPageClient({
         );
       }
 
-      case "analyzing": {
-        return <AnalyzingPanel previewUrl={viewState.previewUrl} />;
-      }
-
-      case "success": {
+      case "submitting": {
         return (
-          <SuccessPanel
+          <AnalyzingPanel
             previewUrl={viewState.previewUrl}
-            imageAlt="유효한 영수증 이미지"
-            title="유효한 영수증입니다."
-            description="현재 영수증으로 회식을 확정할까요?"
-            analysisResult={viewState.analysisResult}
-          />
-        );
-      }
-
-      case "invalid_receipt": {
-        return (
-          <FailedPanel
-            previewUrl={viewState.previewUrl}
-            imageAlt="유효하지 않은 영수증 이미지"
-            title="유효하지 않은 영수증입니다."
-            description="다시 업로드해주세요."
+            imageAlt="업로드 중인 영수증"
+            title="영수증 업로드 중..."
+            description="영수증을 업로드하고 검증을 요청하고 있습니다"
           />
         );
       }
@@ -109,8 +81,8 @@ export function ReceiptPageClient({
         return (
           <FailedPanel
             previewUrl={viewState.previewUrl}
-            imageAlt="시스템 오류가 발생한 이미지"
-            title="시스템 오류가 발생했습니다."
+            imageAlt="업로드에 실패한 영수증 이미지"
+            title="업로드에 실패했습니다."
             description={
               viewState.errorMessage ?? "다시 시도해주세요."
             }

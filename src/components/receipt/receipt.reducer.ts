@@ -1,5 +1,3 @@
-import type { ReceiptAnalysisResult } from "@/src/components/receipt/receipt-page-client";
-
 interface FileContext {
   selectedFile: File;
   previewUrl: string;
@@ -13,14 +11,7 @@ export type ReceiptState =
       type: "selected";
     } & FileContext)
   | ({
-      type: "analyzing";
-    } & FileContext)
-  | ({
-      type: "success";
-      analysisResult: ReceiptAnalysisResult;
-    } & FileContext)
-  | ({
-      type: "invalid_receipt";
+      type: "submitting";
     } & FileContext)
   | ({
       type: "error";
@@ -34,17 +25,10 @@ export type ReceiptAction =
       previewUrl: string;
     }
   | {
-      type: "START_ANALYSIS";
+      type: "START_UPLOAD";
     }
   | {
-      type: "ANALYSIS_SUCCESS";
-      analysisResult: ReceiptAnalysisResult;
-    }
-  | {
-      type: "ANALYSIS_INVALID";
-    }
-  | {
-      type: "ANALYSIS_ERROR";
+      type: "UPLOAD_ERROR";
       errorMessage?: string;
     }
   | {
@@ -68,7 +52,6 @@ export function receiptReducer(
       switch (state.type) {
         case "idle":
         case "selected":
-        case "invalid_receipt":
         case "error": {
           return {
             type: "selected",
@@ -77,8 +60,7 @@ export function receiptReducer(
           };
         }
 
-        case "analyzing":
-        case "success": {
+        case "submitting": {
           return state;
         }
 
@@ -88,45 +70,20 @@ export function receiptReducer(
       }
     }
 
-    case "START_ANALYSIS": {
+    case "START_UPLOAD": {
       if (state.type !== "selected" && state.type !== "error") {
         return state;
       }
 
       return {
-        type: "analyzing",
+        type: "submitting",
         selectedFile: state.selectedFile,
         previewUrl: state.previewUrl,
       };
     }
 
-    case "ANALYSIS_SUCCESS": {
-      if (state.type !== "analyzing") {
-        return state;
-      }
-
-      return {
-        type: "success",
-        selectedFile: state.selectedFile,
-        previewUrl: state.previewUrl,
-        analysisResult: action.analysisResult,
-      };
-    }
-
-    case "ANALYSIS_INVALID": {
-      if (state.type !== "analyzing") {
-        return state;
-      }
-
-      return {
-        type: "invalid_receipt",
-        selectedFile: state.selectedFile,
-        previewUrl: state.previewUrl,
-      };
-    }
-
-    case "ANALYSIS_ERROR": {
-      if (state.type !== "analyzing") {
+    case "UPLOAD_ERROR": {
+      if (state.type !== "submitting") {
         return state;
       }
 
@@ -139,7 +96,7 @@ export function receiptReducer(
     }
 
     case "RESET": {
-      if (state.type !== "success") {
+      if (state.type === "idle") {
         return state;
       }
 
