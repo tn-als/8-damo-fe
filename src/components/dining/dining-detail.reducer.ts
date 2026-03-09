@@ -14,15 +14,6 @@ export type DiningState =
       type: "confirmed";
     }
   | {
-      type: "receipt-verifying";
-    }
-  | {
-      type: "receipt-approved";
-    }
-  | {
-      type: "receipt-rejected";
-    }
-  | {
       type: "completed";
     };
 
@@ -45,12 +36,6 @@ export function mapDiningStatusToState(diningStatus: DiningStatus): DiningState 
       return { type: "restaurant-voting" };
     case "CONFIRMED":
       return { type: "confirmed" };
-    case "RECEIPT_VERIFYING":
-      return { type: "receipt-verifying" };
-    case "RECEIPT_APPROVED":
-      return { type: "receipt-approved" };
-    case "RECEIPT_REJECTED":
-      return { type: "receipt-rejected" };
     case "COMPLETE":
       return { type: "completed" };
     default:

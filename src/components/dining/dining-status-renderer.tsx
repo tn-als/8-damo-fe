@@ -4,9 +4,6 @@ import {
   RecommendationPendingSection,
   RestaurantVotingContainer,
 } from "@/src/components/dining";
-import { ReceiptVerifyingSection } from "@/src/components/dining/receipt-verifying/receipt-verifying-section";
-import { ReceiptApprovedSection } from "@/src/components/dining/receipt-approved/receipt-approved-section";
-import { ReceiptRejectedSection } from "@/src/components/dining/receipt-rejected/receipt-rejected-section";
 import { CompletedSection } from "@/src/components/dining/completed/completed-section";
 import { DiningCommonResponse } from "@/src/types/api/dining";
 import type { DiningState } from "./dining-detail.reducer";
@@ -59,26 +56,6 @@ export function DiningStatusRenderer({
           diningCommon={diningCommon}
         />
       );
-
-    case "receipt-verifying":
-      return (
-        <ReceiptVerifyingSection
-          groupId={groupId}
-          diningId={diningId}
-          diningStatus={diningCommon.diningStatus}
-        />
-      );
-
-    case "receipt-approved":
-      return (
-        <ReceiptApprovedSection
-          groupId={groupId}
-          diningId={diningId}
-        />
-      );
-
-    case "receipt-rejected":
-      return <ReceiptRejectedSection />;
 
     case "completed":
       return <CompletedSection />;

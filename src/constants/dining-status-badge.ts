@@ -27,18 +27,6 @@ export const STATUS_BADGE_CONFIG: Record<
     label: "회식 확정",
     variant: "diningConfirmed",
   },
-  RECEIPT_VERIFYING: {
-    label: "영수증 검증중",
-    variant: "diningRestaurant",
-  },
-  RECEIPT_APPROVED: {
-    label: "영수증 승인",
-    variant: "diningConfirmed",
-  },
-  RECEIPT_REJECTED: {
-    label: "영수증 거부",
-    variant: "diningAttendance",
-  },
   COMPLETE: {
     label: "회식 완료",
     variant: "diningCompleted",

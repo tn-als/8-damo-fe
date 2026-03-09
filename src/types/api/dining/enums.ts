@@ -5,9 +5,6 @@ export type DiningStatus =
   | "RESTAURANT_RECOMMENDATION_PENDING"
   | "RESTAURANT_VOTING"
   | "CONFIRMED"
-  | "RECEIPT_VERIFYING"
-  | "RECEIPT_APPROVED"
-  | "RECEIPT_REJECTED"
   | "COMPLETE";
   
 export type RestaurantVoteOption = "LIKE" | "DISLIKE";
