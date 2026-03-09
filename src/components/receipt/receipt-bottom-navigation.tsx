@@ -32,26 +32,19 @@ function getBottomActionConfig(
 ): BottomActionConfig {
   switch (viewState.type) {
     case "idle": {
+      const hasSelection = Boolean(viewState.previewUrl && viewState.selectedFileName);
+
       return {
         leftLabel: "다시 선택",
-        leftDisabled: true,
+        leftDisabled: !hasSelection,
+        leftAction: hasSelection ? handlers.onReset : undefined,
         rightLabel: "업로드하기",
-        rightDisabled: true,
+        rightDisabled: !hasSelection,
+        rightAction: hasSelection ? handlers.onConfirm : undefined,
       };
     }
 
-    case "selected": {
-      return {
-        leftLabel: "다시 선택",
-        leftDisabled: false,
-        leftAction: handlers.onReset,
-        rightLabel: "업로드하기",
-        rightDisabled: false,
-        rightAction: handlers.onConfirm,
-      };
-    }
-
-    case "submitting": {
+    case "upload": {
       return {
         leftLabel: "업로드 중...",
         leftDisabled: true,
@@ -60,7 +53,16 @@ function getBottomActionConfig(
       };
     }
 
-    case "error": {
+    case "analyzing": {
+      return {
+        leftLabel: "검증 중...",
+        leftDisabled: true,
+        rightLabel: "결과 확인 중...",
+        rightDisabled: true,
+      };
+    }
+
+    case "upload_fail": {
       return {
         leftLabel: "다시 업로드",
         leftDisabled: false,

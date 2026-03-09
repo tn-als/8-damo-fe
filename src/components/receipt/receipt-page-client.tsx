@@ -13,22 +13,24 @@ export interface ReceiptAnalysisResult {
 export type ReceiptPageViewState =
   | {
       type: "idle";
+      previewUrl?: string;
+      selectedFileName?: string;
     }
   | {
-      type: "selected";
+      type: "upload";
       previewUrl: string;
       selectedFileName: string;
     }
   | {
-      type: "submitting";
-      previewUrl: string;
-      selectedFileName: string;
-    }
-  | {
-      type: "error";
+      type: "upload_fail";
       previewUrl: string;
       selectedFileName: string;
       errorMessage?: string;
+    }
+  | {
+      type: "analyzing";
+      previewUrl: string;
+      selectedFileName: string;
     };
 
 interface ReceiptPageClientProps {
@@ -49,24 +51,14 @@ export function ReceiptPageClient({
       case "idle": {
         return (
           <UploadPanel
-            previewUrl={null}
-            selectedFileName={null}
+            previewUrl={viewState.previewUrl ?? null}
+            selectedFileName={viewState.selectedFileName ?? null}
             onOpenFilePicker={onOpenFilePicker}
           />
         );
       }
 
-      case "selected": {
-        return (
-          <UploadPanel
-            previewUrl={viewState.previewUrl}
-            selectedFileName={viewState.selectedFileName}
-            onOpenFilePicker={onOpenFilePicker}
-          />
-        );
-      }
-
-      case "submitting": {
+      case "upload":
         return (
           <AnalyzingPanel
             previewUrl={viewState.previewUrl}
@@ -75,17 +67,25 @@ export function ReceiptPageClient({
             description="영수증을 업로드하고 검증을 요청하고 있습니다"
           />
         );
+
+      case "analyzing": {
+        return (
+          <AnalyzingPanel
+            previewUrl={viewState.previewUrl}
+            imageAlt="검증 중인 영수증"
+            title="영수증 검증 중..."
+            description="서버에서 영수증 검증 결과를 확인하고 있습니다"
+          />
+        );
       }
 
-      case "error": {
+      case "upload_fail": {
         return (
           <FailedPanel
             previewUrl={viewState.previewUrl}
             imageAlt="업로드에 실패한 영수증 이미지"
             title="업로드에 실패했습니다."
-            description={
-              viewState.errorMessage ?? "다시 시도해주세요."
-            }
+            description={viewState.errorMessage ?? "다시 시도해주세요."}
           />
         );
       }

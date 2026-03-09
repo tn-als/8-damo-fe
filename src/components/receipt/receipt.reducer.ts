@@ -6,16 +6,18 @@ interface FileContext {
 export type ReceiptState =
   | {
       type: "idle";
+      selectedFile?: File;
+      previewUrl?: string;
     }
   | ({
-      type: "selected";
+      type: "upload";
     } & FileContext)
   | ({
-      type: "submitting";
-    } & FileContext)
-  | ({
-      type: "error";
+      type: "upload_fail";
       errorMessage?: string;
+    } & FileContext)
+  | ({
+      type: "analyzing";
     } & FileContext);
 
 export type ReceiptAction =
@@ -28,8 +30,11 @@ export type ReceiptAction =
       type: "START_UPLOAD";
     }
   | {
-      type: "UPLOAD_ERROR";
+      type: "UPLOAD_FAIL";
       errorMessage?: string;
+    }
+  | {
+      type: "START_ANALYZING";
     }
   | {
       type: "RESET";
@@ -51,16 +56,16 @@ export function receiptReducer(
     case "SELECT_FILE": {
       switch (state.type) {
         case "idle":
-        case "selected":
-        case "error": {
+        case "upload_fail":
+        case "analyzing": {
           return {
-            type: "selected",
+            type: "idle",
             selectedFile: action.file,
             previewUrl: action.previewUrl,
           };
         }
 
-        case "submitting": {
+        case "upload": {
           return state;
         }
 
@@ -71,27 +76,39 @@ export function receiptReducer(
     }
 
     case "START_UPLOAD": {
-      if (state.type !== "selected" && state.type !== "error") {
+      if (!state.selectedFile || !state.previewUrl) {
         return state;
       }
 
       return {
-        type: "submitting",
+        type: "upload",
         selectedFile: state.selectedFile,
         previewUrl: state.previewUrl,
       };
     }
 
-    case "UPLOAD_ERROR": {
-      if (state.type !== "submitting") {
+    case "UPLOAD_FAIL": {
+      if (state.type !== "upload") {
         return state;
       }
 
       return {
-        type: "error",
+        type: "upload_fail",
         selectedFile: state.selectedFile,
         previewUrl: state.previewUrl,
         errorMessage: action.errorMessage,
+      };
+    }
+
+    case "START_ANALYZING": {
+      if (state.type !== "upload") {
+        return state;
+      }
+
+      return {
+        type: "analyzing",
+        selectedFile: state.selectedFile,
+        previewUrl: state.previewUrl,
       };
     }
 
