@@ -1,10 +1,9 @@
 name: Lighthouse Performance
 
 on:
-  schedule:
-    # KST 12:07, 18:07, 23:07
-    # UTC 03:07, 09:07, 14:07
-    - cron: '7 3,9,14 * * *'
+  pull_request:
+    branches: 
+      - develop
   workflow_dispatch:
 
 jobs:
