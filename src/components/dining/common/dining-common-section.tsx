@@ -6,6 +6,7 @@ import type {
 } from "@/src/types/api/dining";
 import { DiningHeaderContainer } from "./dining-header-container";
 import { DiningParticipantList } from "./dining-participant-list";
+import { DiningProgressSteps } from "./dining-progress-steps";
 
 interface DiningCommonSectionProps {
   diningDate: string;
@@ -29,7 +30,8 @@ export function DiningCommonSection({
     >
       <DiningHeaderContainer diningDate={diningDate} diningStatus={diningStatus} />
       
-      <div className="flex flex-col gap-6 px-4 pb-10 sm:gap-8 sm:px-5">
+      <div className="flex flex-col gap-2 px-4 pb-10 sm:px-5">
+        <DiningProgressSteps diningStatus={diningStatus} />
         {children}
         <DiningParticipantList participants={diningParticipants} />
       </div>
