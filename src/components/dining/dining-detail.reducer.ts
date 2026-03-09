@@ -10,6 +10,18 @@ export type DiningState =
     }
   | {
       type: "confirmed";
+    }
+  | {
+      type: "receipt-verifying";
+    }
+  | {
+      type: "receipt-approved";
+    }
+  | {
+      type: "receipt-rejected";
+    }
+  | {
+      type: "completed";
     };
 
 export type DiningAction =
@@ -24,6 +36,21 @@ export type DiningAction =
     }
   | {
       type: "RETRY_RECOMMENDATION";
+    }
+  | {
+      type: "RECEIPT_UPLOAD_CONFIRMED";
+    }
+  | {
+      type: "RECEIPT_APPROVED";
+    }
+  | {
+      type: "RECEIPT_REJECTED";
+    }
+  | {
+      type: "BACK_TO_CONFIRMED";
+    }
+  | {
+      type: "DINING_COMPLETED";
     }
 
 function assertNever(value: never): never {
@@ -62,6 +89,37 @@ export function diningDetailReducer(
     }
 
     case "confirmed": {
+      if (action.type === "RECEIPT_UPLOAD_CONFIRMED") {
+        return { type: "receipt-verifying" };
+      }
+      return state;
+    }
+
+    case "receipt-verifying": {
+      if (action.type === "RECEIPT_APPROVED") {
+        return { type: "receipt-approved" };
+      }
+      if (action.type === "RECEIPT_REJECTED") {
+        return { type: "receipt-rejected" };
+      }
+      return state;
+    }
+
+    case "receipt-approved": {
+      if (action.type === "DINING_COMPLETED") {
+        return { type: "completed" };
+      }
+      return state;
+    }
+
+    case "receipt-rejected": {
+      if (action.type === "BACK_TO_CONFIRMED") {
+        return { type: "confirmed" };
+      }
+      return state;
+    }
+
+    case "completed": {
       return state;
     }
 
