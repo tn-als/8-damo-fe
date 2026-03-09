@@ -1,5 +1,6 @@
 "use client";
 
+import { Receipt } from "lucide-react";
 import { RestaurantCard } from "../restaurant-vote/restaurant-card";
 import { ConfirmedFallback } from "./confirmed-fallback";
 import type { ConfirmedRestaurantResponse } from "@/src/types/api/dining";
@@ -26,20 +27,21 @@ export function ConfirmedSection({
   }
 
   return (
-    <section className="flex w-full flex-col items-center gap-4 px-4 sm:px-5">
-      <RestaurantCard
-        restaurant={restaurant}
-        showActions={false}
-        badgeLabel="확정 장소"
-      />
+    <section className="flex w-full flex-col gap-4 px-4 sm:px-5">
+      <h2 className="text-lg font-bold leading-6 text-[#101828]">확정된 회식 장소</h2>
+      <RestaurantCard restaurant={restaurant} showActions={false} />
       {isGroupLeader && (
-        <button
-          type="button"
-          onClick={onUploadReceipt}
-          className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white"
-        >
-          영수증 업로드
-        </button>
+        <div className="flex flex-col items-center gap-3">
+          <button
+            type="button"
+            onClick={onUploadReceipt}
+            className="flex w-full items-center justify-center gap-2 rounded-[14px] bg-primary py-4 text-base font-semibold text-white"
+          >
+            <Receipt className="size-5" />
+            영수증 제출하기
+          </button>
+          <p className="text-xs text-[#6b7280]">영수증 제출 후 리뷰를 작성할 수 있습니다</p>
+        </div>
       )}
     </section>
   );
