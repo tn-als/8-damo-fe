@@ -1,3 +1,1 @@
-export interface ReceiptOcrStatusResponse {
-  ocrStatus: "PENDING" | "SUCCESS" | "FAIL" | null;
-}
+export type ReceiptOcrStatus = "PENDING" | "SUCCESS" | "FAIL" | null;

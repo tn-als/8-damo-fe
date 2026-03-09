@@ -1,12 +1,14 @@
-import { bffGet, type ApiResponse } from "./index";
+import "server-only";
+import { serverGet } from "./index";
 import type { ReceiptOcrStatus } from "@/src/types/api/dining";
 
 export async function getDiningReceiptOcrStatus(params: {
   groupId: string;
   diningId: string;
-}): Promise<ApiResponse<ReceiptOcrStatus>> {
+}): Promise<ReceiptOcrStatus> {
   const { groupId, diningId } = params;
-  return bffGet<ReceiptOcrStatus>(
-    `/groups/${groupId}/dining/${diningId}/receipt-ocr/status`
+
+  return serverGet<ReceiptOcrStatus>(
+    `/api/v1/groups/${groupId}/dining/${diningId}/receipt-ocr/status`
   );
 }
