@@ -15,7 +15,7 @@ export const STATUS_BADGE_CONFIG: Record<
     label: "참석 투표",
     variant: "diningAttendance",
   },
-  RECOMMENDATION_PENDING: {
+  RESTAURANT_RECOMMENDATION_PENDING: {
     label: "장소 추천중",
     variant: "diningRestaurant",
   },
@@ -26,6 +26,18 @@ export const STATUS_BADGE_CONFIG: Record<
   CONFIRMED: {
     label: "회식 확정",
     variant: "diningConfirmed",
+  },
+  RECEIPT_VERIFYING: {
+    label: "영수증 검증중",
+    variant: "diningRestaurant",
+  },
+  RECEIPT_APPROVED: {
+    label: "영수증 승인",
+    variant: "diningConfirmed",
+  },
+  RECEIPT_REJECTED: {
+    label: "영수증 거부",
+    variant: "diningAttendance",
   },
   COMPLETE: {
     label: "회식 완료",
