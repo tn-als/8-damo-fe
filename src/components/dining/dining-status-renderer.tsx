@@ -1,4 +1,3 @@
-import type { Dispatch } from "react";
 import {
   AttendanceVotingContainer,
   ConfirmedContainer,
@@ -10,14 +9,13 @@ import { ReceiptApprovedSection } from "@/src/components/dining/receipt-approved
 import { ReceiptRejectedSection } from "@/src/components/dining/receipt-rejected/receipt-rejected-section";
 import { CompletedSection } from "@/src/components/dining/completed/completed-section";
 import { DiningCommonResponse } from "@/src/types/api/dining";
-import type { DiningAction, DiningState } from "./dining-detail.reducer";
+import type { DiningState } from "./dining-detail.reducer";
 
 interface DiningStatusRendererProps {
   groupId: string;
   diningId: string;
   diningCommon: DiningCommonResponse;
   diningState: DiningState;
-  dispatch: Dispatch<DiningAction>;
 }
 
 export function DiningStatusRenderer({
@@ -25,7 +23,6 @@ export function DiningStatusRenderer({
   diningId,
   diningCommon,
   diningState,
-  dispatch,
 }: DiningStatusRendererProps) {
   switch (diningState.type) {
     case "attendance-voting":
@@ -34,9 +31,6 @@ export function DiningStatusRenderer({
           groupId={groupId}
           diningId={diningId}
           diningCommon={diningCommon}
-          onVotingCompleted={() =>
-            dispatch({ type: "ATTENDANCE_VOTING_COMPLETED" })
-          }
         />
       );
 
@@ -45,9 +39,6 @@ export function DiningStatusRenderer({
         <RecommendationPendingSection
           groupId={groupId}
           diningId={diningId}
-          onRecommendationReady={() =>
-            dispatch({ type: "RECOMMENDATION_READY" })
-          }
         />
       );
 
@@ -57,10 +48,6 @@ export function DiningStatusRenderer({
           groupId={groupId}
           diningId={diningId}
           diningCommon={diningCommon}
-          onConfirmDining={() => dispatch({ type: "CONFIRM_RESTAURANT" })}
-          onRetryRecommendation={() =>
-            dispatch({ type: "RETRY_RECOMMENDATION" })
-          }
         />
       );
 
@@ -70,9 +57,6 @@ export function DiningStatusRenderer({
           groupId={groupId}
           diningId={diningId}
           diningCommon={diningCommon}
-          onUploadReceipt={() =>
-            dispatch({ type: "RECEIPT_UPLOAD_CONFIRMED" })
-          }
         />
       );
 
@@ -81,9 +65,7 @@ export function DiningStatusRenderer({
         <ReceiptVerifyingSection
           groupId={groupId}
           diningId={diningId}
-          diningStatus="RECEIPT_VERIFYING"
-          onApproved={() => dispatch({ type: "RECEIPT_APPROVED" })}
-          onRejected={() => dispatch({ type: "RECEIPT_REJECTED" })}
+          diningStatus={diningCommon.diningStatus}
         />
       );
 
