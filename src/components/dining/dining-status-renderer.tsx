@@ -4,6 +4,10 @@ import {
   RecommendationPendingSection,
   RestaurantVotingContainer,
 } from "@/src/components/dining";
+import { ReceiptVerifyingSection } from "@/src/components/dining/receipt-verifying/receipt-verifying-section";
+import { ReceiptApprovedSection } from "@/src/components/dining/receipt-approved/receipt-approved-section";
+import { ReceiptRejectedSection } from "@/src/components/dining/receipt-rejected/receipt-rejected-section";
+import { CompletedSection } from "@/src/components/dining/completed/completed-section";
 import { DiningCommonResponse } from "@/src/types/api/dining";
 
 interface DiningStatusRendererProps {
@@ -41,16 +45,34 @@ export function DiningStatusRenderer({
         <ConfirmedContainer
           groupId={groupId}
           diningId={diningId}
+          diningCommon={diningCommon}
         />
       );
 
-    case "RECOMMENDATION_PENDING":
+    case "RESTAURANT_RECOMMENDATION_PENDING":
       return (
         <RecommendationPendingSection
           groupId={groupId}
           diningId={diningId}
         />
       );
+
+    case "RECEIPT_VERIFYING":
+      return <ReceiptVerifyingSection />;
+
+    case "RECEIPT_APPROVED":
+      return (
+        <ReceiptApprovedSection
+          groupId={groupId}
+          diningId={diningId}
+        />
+      );
+
+    case "RECEIPT_REJECTED":
+      return <ReceiptRejectedSection />;
+
+    case "COMPLETE":
+      return <CompletedSection />;
 
     default:
       return null;
