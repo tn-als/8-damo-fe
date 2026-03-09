@@ -173,7 +173,7 @@ export function RestaurantCard({
         />
 
         {showActions && (
-          <div className="mt-3.5 flex w-full items-center justify-end text-black sm:mt-4">
+          <div className="mt-3.5 flex w-full items-center sm:mt-4">
             <RestaurantAction
               likeCount={likeCount}
               dislikeCount={dislikeCount}
