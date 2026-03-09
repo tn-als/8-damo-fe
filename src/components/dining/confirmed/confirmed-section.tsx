@@ -7,11 +7,15 @@ import type { ConfirmedRestaurantResponse } from "@/src/types/api/dining";
 interface ConfirmedSectionProps {
   restaurant: ConfirmedRestaurantResponse | null;
   fallbackDescription: string;
+  isGroupLeader: boolean;
+  onUploadReceipt: () => void;
 }
 
 export function ConfirmedSection({
   restaurant,
   fallbackDescription,
+  isGroupLeader,
+  onUploadReceipt,
 }: ConfirmedSectionProps) {
   if (!restaurant) {
     return (
@@ -28,6 +32,15 @@ export function ConfirmedSection({
         showActions={false}
         badgeLabel="확정 장소"
       />
+      {isGroupLeader && (
+        <button
+          type="button"
+          onClick={onUploadReceipt}
+          className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white"
+        >
+          영수증 업로드
+        </button>
+      )}
     </section>
   );
 }

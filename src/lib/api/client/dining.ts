@@ -134,3 +134,15 @@ export async function confirmRestaurant(params: {
     `/groups/${groupId}/dining/${diningId}/recommend-restaurants/${recommendRestaurantsId}/confirmed`
   );
 }
+
+export async function uploadReceipt(params: {
+  groupId: string;
+  diningId: string;
+  receiptUrl: string;
+}): Promise<ApiResponse<void>> {
+  const { groupId, diningId, receiptUrl } = params;
+  return bffPost<void>(
+    `/groups/${groupId}/dining/${diningId}/receipt`,
+    { receiptUrl }
+  );
+}

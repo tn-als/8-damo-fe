@@ -47,9 +47,14 @@ export function AttendanceVotingSection({
       });
 
       setCurrentVoteStatus(vote);
-      await queryClient.invalidateQueries({
-        queryKey: diningAttendanceVoteQueryKey(params.groupId, params.diningId),
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: diningAttendanceVoteQueryKey(params.groupId, params.diningId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["dining", "detail", params.groupId, params.diningId, "common"],
+        }),
+      ]);
     } catch {
       toast.error("참석 투표에 실패했습니다.");
     } finally {

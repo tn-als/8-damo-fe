@@ -56,7 +56,7 @@ export function RecommendationPendingSection({
       try {
         const res = await getGroupDiningSummaries(
           groupId,
-          "RECOMMENDATION_PENDING"
+          "RESTAURANT_RECOMMENDATION_PENDING"
         );
 
         if (!alive) return false;
@@ -65,7 +65,7 @@ export function RecommendationPendingSection({
 
         if (
           data.length === 0 ||
-          data.some((d) => d.status !== "RECOMMENDATION_PENDING")
+          data.some((d) => d.status !== "RESTAURANT_RECOMMENDATION_PENDING")
         ) {
           setPendingDinings([]);
           stopAll();
