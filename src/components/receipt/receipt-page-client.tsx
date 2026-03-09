@@ -71,10 +71,10 @@ export function ReceiptPageClient({
       case "analyzing": {
         return (
           <AnalyzingPanel
-            previewUrl={viewState.previewUrl}
             imageAlt="검증 중인 영수증"
             title="영수증 검증 중..."
             description="서버에서 영수증 검증 결과를 확인하고 있습니다"
+            showPreview={false}
           />
         );
       }

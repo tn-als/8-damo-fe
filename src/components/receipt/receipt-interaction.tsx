@@ -201,7 +201,7 @@ export function ReceiptInteraction({
     try {
       presignedResult = await getPresignedUrl({
         directory: "dining/receipt",
-        fileName: file.name,
+        fileName: diningId,
         contentType,
       });
     } catch (error: unknown) {
