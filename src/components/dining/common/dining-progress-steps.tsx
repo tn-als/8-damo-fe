@@ -29,7 +29,7 @@ function getActiveStepIndex(diningStatus: DiningStatus): number {
   switch (diningStatus) {
     case "ATTENDANCE_VOTING":
       return 0;
-    case "RESTAURANT_RECOMMENDATION_PENDING":
+    case "RECOMMENDATION_PENDING":
       return 1;
     case "RESTAURANT_VOTING":
       return 2;
