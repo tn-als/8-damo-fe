@@ -29,8 +29,8 @@ export type ReceiptPageViewState =
     }
   | {
       type: "analyzing";
-      previewUrl: string;
-      selectedFileName: string;
+      previewUrl?: string;
+      selectedFileName?: string;
     };
 
 interface ReceiptPageClientProps {

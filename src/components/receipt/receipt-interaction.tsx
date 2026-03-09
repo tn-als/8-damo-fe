@@ -11,7 +11,7 @@ import { ReceiptBottomNavigation } from "@/src/components/receipt/receipt-bottom
 import { toast } from "@/src/components/ui/sonner";
 import { useDiningReceiptStatus } from "@/src/hooks/use-dining-receipt-status";
 import {
-  initialReceiptState,
+  getInitialReceiptState,
   receiptReducer,
   type ReceiptState,
 } from "./receipt.reducer";
@@ -19,10 +19,12 @@ import { uploadReceipt } from "@/src/lib/api/client/dining";
 import { getPresignedUrl } from "@/src/lib/api/client/s3";
 import { getImageContentType } from "@/src/constants/s3/util";
 import type { ApiResponse } from "@/src/lib/api/client";
+import type { ReceiptOcrStatus } from "@/src/types/api/dining";
 
 interface ReceiptInteractionProps {
   groupId: string;
   diningId: string;
+  initialReceiptOcrStatus: ReceiptOcrStatus;
 }
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -63,7 +65,7 @@ function toViewState(state: ReceiptState): ReceiptPageViewState {
       return {
         type: "analyzing",
         previewUrl: state.previewUrl,
-        selectedFileName: state.selectedFile.name,
+        selectedFileName: state.selectedFile?.name,
       };
     }
 
@@ -75,17 +77,26 @@ function toViewState(state: ReceiptState): ReceiptPageViewState {
   }
 }
 
-export function ReceiptInteraction({ groupId, diningId }: ReceiptInteractionProps) {
+export function ReceiptInteraction({
+  groupId,
+  diningId,
+  initialReceiptOcrStatus,
+}: ReceiptInteractionProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
 
-  const [state, dispatch] = useReducer(receiptReducer, initialReceiptState);
+  const [state, dispatch] = useReducer(
+    receiptReducer,
+    initialReceiptOcrStatus,
+    getInitialReceiptState
+  );
   const { data: receiptStatus } = useDiningReceiptStatus(
     groupId,
     diningId,
-    state.type === "analyzing"
+    state.type === "analyzing",
+    initialReceiptOcrStatus
   );
   const uploadFailMessage =
     state.type === "upload_fail" ? state.errorMessage : undefined;
@@ -239,7 +250,7 @@ export function ReceiptInteraction({ groupId, diningId }: ReceiptInteractionProp
       return;
     }
 
-    if (receiptStatus?.ocrStatus !== "SUCCESS" && receiptStatus?.ocrStatus !== "FAIL") {
+    if (receiptStatus !== "SUCCESS" && receiptStatus !== "FAIL") {
       return;
     }
 
@@ -248,7 +259,7 @@ export function ReceiptInteraction({ groupId, diningId }: ReceiptInteractionProp
         queryKey: ["dining", "detail", groupId, diningId, "common"],
       });
 
-      if (receiptStatus.ocrStatus === "SUCCESS") {
+      if (receiptStatus === "SUCCESS") {
         toast("영수증 검증에 성공하셨습니다!");
       } else {
         toast.error("올바른 영수증 이미지를 올려주세요");
@@ -258,7 +269,7 @@ export function ReceiptInteraction({ groupId, diningId }: ReceiptInteractionProp
     };
 
     void completeReceiptFlow();
-  }, [diningId, groupId, queryClient, receiptStatus?.ocrStatus, router, state.type]);
+  }, [diningId, groupId, queryClient, receiptStatus, router, state.type]);
 
   const viewState = toViewState(state);
 

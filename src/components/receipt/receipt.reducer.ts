@@ -16,9 +16,11 @@ export type ReceiptState =
       type: "upload_fail";
       errorMessage?: string;
     } & FileContext)
-  | ({
+  | {
       type: "analyzing";
-    } & FileContext);
+      selectedFile?: File;
+      previewUrl?: string;
+    };
 
 export type ReceiptAction =
   | {
@@ -43,6 +45,16 @@ export type ReceiptAction =
 export const initialReceiptState: ReceiptState = {
   type: "idle",
 };
+
+export function getInitialReceiptState(initialOcrStatus: "PENDING" | "SUCCESS" | "FAIL" | null) {
+  if (initialOcrStatus === "PENDING") {
+    return {
+      type: "analyzing",
+    } satisfies ReceiptState;
+  }
+
+  return initialReceiptState;
+}
 
 function assertNever(value: never): never {
   throw new Error(`Unhandled case: ${String(value)}`);

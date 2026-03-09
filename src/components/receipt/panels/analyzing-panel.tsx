@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Loader2 } from "lucide-react";
 
 interface AnalyzingPanelProps {
-  previewUrl: string;
+  previewUrl?: string;
   imageAlt?: string;
   title?: string;
   description?: string;
@@ -18,14 +18,20 @@ export function AnalyzingPanel({
   return (
     <>
       <SectionCard tone="muted" className="rounded-2xl bg-[#f2f2f7] p-4 shadow-none">
-        <Image
-          src={previewUrl}
-          alt={imageAlt}
-          width={640}
-          height={380}
-          unoptimized
-          className="h-[190px] w-full rounded-xl object-cover"
-        />
+        {previewUrl ? (
+          <Image
+            src={previewUrl}
+            alt={imageAlt}
+            width={640}
+            height={380}
+            unoptimized
+            className="h-[190px] w-full rounded-xl object-cover"
+          />
+        ) : (
+          <div className="flex h-[190px] w-full items-center justify-center rounded-xl bg-[#e5e5ea]">
+            <Loader2 className="size-10 animate-spin text-[#ff8d28]" />
+          </div>
+        )}
       </SectionCard>
 
       <SectionCard tone="muted" className="rounded-2xl bg-[#f2f2f7] p-8 shadow-none">
