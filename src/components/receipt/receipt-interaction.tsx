@@ -14,6 +14,10 @@ import {
   type ReceiptState,
 } from "./receipt.reducer";
 import { classifyReceiptImage } from "@/src/lib/receipt/receipt-classifier";
+import { uploadReceipt } from "@/src/lib/api/client/dining";
+import { getPresignedUrl } from "@/src/lib/api/client/s3";
+import { getImageContentType } from "@/src/constants/s3/util";
+import type { ApiResponse } from "@/src/lib/api/client";
 
 interface ReceiptInteractionProps {
   groupId: string;
@@ -235,9 +239,56 @@ export function ReceiptInteraction({ groupId, diningId }: ReceiptInteractionProp
     }
   };
 
-  const handleConfirm = () => {
-    toast.success("영수증 확인이 완료되었습니다.");
-    router.push(`/groups/${groupId}/dining/${diningId}`);
+  const showApiError = (response: ApiResponse<unknown> | undefined, fallback: string) => {
+    toast.error(response?.errorMessage ?? fallback);
+  };
+
+  const handleConfirm = async () => {
+    if (state.type !== "success") return;
+
+    const file = state.selectedFile;
+    const contentType = getImageContentType(file);
+
+    if (!contentType) {
+      toast.error("지원하지 않는 이미지 형식입니다.");
+      return;
+    }
+
+    let presignedResult: Awaited<ReturnType<typeof getPresignedUrl>>;
+    try {
+      presignedResult = await getPresignedUrl({
+        directory: "dining/receipt",
+        fileName: file.name,
+        contentType,
+      });
+    } catch (error: unknown) {
+      const apiError = (error as { response?: { data?: ApiResponse<unknown> } })?.response?.data;
+      showApiError(apiError, "영수증 업로드에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    const s3Response = await fetch(presignedResult.data.presignedUrl, {
+      method: "PUT",
+      headers: { "Content-Type": contentType },
+      body: file,
+    });
+
+    if (!s3Response.ok) {
+      toast.error("영수증 업로드에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    try {
+      await uploadReceipt({
+        groupId,
+        diningId,
+        receiptImagePath: presignedResult.data.objectKey,
+      });
+      router.push(`/groups/${groupId}/dining/${diningId}`);
+    } catch (error: unknown) {
+      const apiError = (error as { response?: { data?: ApiResponse<unknown> } })?.response?.data;
+      showApiError(apiError, "영수증 업로드에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   const viewState = toViewState(state);
