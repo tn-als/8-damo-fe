@@ -1,3 +1,5 @@
+import type { DiningStatus } from "@/src/types/api/dining";
+
 export type DiningState =
   | {
       type: "attendance-voting";
@@ -55,6 +57,52 @@ export type DiningAction =
 
 function assertNever(value: never): never {
   throw new Error(`Unhandled case: ${String(value)}`);
+}
+
+export function mapDiningStatusToState(diningStatus: DiningStatus): DiningState {
+  switch (diningStatus) {
+    case "ATTENDANCE_VOTING":
+      return { type: "attendance-voting" };
+    case "RESTAURANT_RECOMMENDATION_PENDING":
+      return { type: "recommendation-pending" };
+    case "RESTAURANT_VOTING":
+      return { type: "restaurant-voting" };
+    case "CONFIRMED":
+      return { type: "confirmed" };
+    case "RECEIPT_VERIFYING":
+      return { type: "receipt-verifying" };
+    case "RECEIPT_APPROVED":
+      return { type: "receipt-approved" };
+    case "RECEIPT_REJECTED":
+      return { type: "receipt-rejected" };
+    case "COMPLETE":
+      return { type: "completed" };
+    default:
+      return assertNever(diningStatus);
+  }
+}
+
+export function getDiningStateStep(state: DiningState): number {
+  switch (state.type) {
+    case "attendance-voting":
+      return 0;
+    case "recommendation-pending":
+      return 1;
+    case "restaurant-voting":
+      return 2;
+    case "confirmed":
+      return 3;
+    case "receipt-verifying":
+      return 4;
+    case "receipt-approved":
+      return 5;
+    case "receipt-rejected":
+      return 5;
+    case "completed":
+      return 6;
+    default:
+      return assertNever(state);
+  }
 }
 
 export function diningDetailReducer(
