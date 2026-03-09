@@ -1,6 +1,6 @@
 "use client"
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { RestaurantCard } from "./restaurant-card";
 import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
@@ -24,8 +24,6 @@ interface RestaurantVotingSectionProps {
   restaurants: RestaurantVoteResponse[];
   isGroupLeader: boolean;
   canAdditionalAttend?: boolean;
-  onConfirmDining?: (restaurantId: number) => void;
-  onRetryRecommendation?: () => void;
   onAdditionalAttend?: () => void;
 }
 
@@ -33,11 +31,8 @@ export function RestaurantVotingSection({
   restaurants,
   isGroupLeader,
   canAdditionalAttend = false,
-  onConfirmDining,
-  onRetryRecommendation,
   onAdditionalAttend,
 }: RestaurantVotingSectionProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const params = useParams<{ groupId?: string | string[]; diningId?: string | string[] }>();
   const resolveParam = (value?: string | string[]) =>
@@ -64,24 +59,6 @@ export function RestaurantVotingSection({
   if (!restaurants.length) {
     return <RestaurantVoteFallback />;
   }
-
-  const moveToReceiptPage = () => {
-    if (!groupId || !diningId) {
-      toast.error("경로 정보를 확인할 수 없습니다.");
-      return;
-    }
-
-    router.push(`/groups/${groupId}/dining/${diningId}/receipt`);
-  };
-
-  const handleConfirmDining = (restaurantId: number) => {
-    if (onConfirmDining) {
-      onConfirmDining(restaurantId);
-      return;
-    }
-
-    moveToReceiptPage();
-  };
 
   const handleRetryRecommendation = async () => {
     if (!isGroupLeader) {
@@ -111,7 +88,9 @@ export function RestaurantVotingSection({
       await queryClient.invalidateQueries({
         queryKey: diningRestaurantVoteQueryKey(groupId, diningId),
       });
-      onRetryRecommendation?.();
+      await queryClient.invalidateQueries({
+        queryKey: ["dining", "detail", groupId, diningId, "common"],
+      });
     } catch {
       toast.error("재추천 요청에 실패했습니다.");
     } finally {
@@ -121,15 +100,6 @@ export function RestaurantVotingSection({
 
   const handleAdditionalAttend = () => {
     onAdditionalAttend?.();
-  };
-
-  const handleConfirmClick = () => {
-    if (isGroupLeader) {
-      moveToReceiptPage();
-      return;
-    }
-
-    setIsDialogOpen(true);
   };
 
   const handleConfirmSubmit = async () => {
@@ -155,8 +125,10 @@ export function RestaurantVotingSection({
       await queryClient.invalidateQueries({
         queryKey: diningRestaurantVoteQueryKey(groupId, diningId),
       });
+      await queryClient.invalidateQueries({
+        queryKey: ["dining", "detail", groupId, diningId, "common"],
+      });
       toast.success("회식 장소가 확정되었습니다.");
-      handleConfirmDining(activeRestaurantId);
     } catch {
       toast.error("회식 장소 확정에 실패했습니다.");
     } finally {
@@ -181,7 +153,7 @@ export function RestaurantVotingSection({
         <RestaurantPermissionAction
           isGroupLeader={isGroupLeader}
           canAdditionalAttend={canAdditionalAttend}
-          onConfirmDining={handleConfirmClick}
+          onConfirmDining={() => setIsDialogOpen(true)}
           onRetryRecommendation={handleRetryRecommendation}
           onAdditionalAttend={handleAdditionalAttend}
           isRetryingRecommendation={isRetryingRecommendation}
