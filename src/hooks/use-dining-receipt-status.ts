@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getDiningReceiptOcrStatus } from "@/src/lib/api/client/receipt";
+import type { ReceiptOcrStatus } from "@/src/types/api/dining";
 
 const RECEIPT_POLLING_INTERVAL_MS = 20_000;
 
 export function useDiningReceiptStatus(
   groupId: string,
   diningId: string,
-  enabled: boolean
+  enabled: boolean,
+  initialOcrStatus?: ReceiptOcrStatus
 ) {
   return useQuery({
     queryKey: ["dining", "detail", groupId, diningId, "receipt-ocr-status"],
@@ -15,8 +17,9 @@ export function useDiningReceiptStatus(
       return response.data;
     },
     enabled,
+    initialData: initialOcrStatus,
     refetchInterval: (query) => {
-      const status = query.state.data?.ocrStatus;
+      const status = query.state.data;
       if (status === "SUCCESS" || status === "FAIL") return false;
       return RECEIPT_POLLING_INTERVAL_MS;
     },
