@@ -7,6 +7,7 @@
     "dev": "next dev --turbopack",
     "prebuild": "node scripts/generate-sw.js",
     "build": "next build",
+    "analyze": "ANALYZE=true next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
@@ -44,10 +45,12 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.6",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.33",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "eslint-config-prettier": "^10.1.8",
