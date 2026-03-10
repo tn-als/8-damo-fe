@@ -30,7 +30,7 @@ export function mapDiningStatusToState(diningStatus: DiningStatus): DiningState 
   switch (diningStatus) {
     case "ATTENDANCE_VOTING":
       return { type: "attendance-voting" };
-    case "RESTAURANT_RECOMMENDATION_PENDING":
+    case "RECOMMENDATION_PENDING":
       return { type: "recommendation-pending" };
     case "RESTAURANT_VOTING":
       return { type: "restaurant-voting" };

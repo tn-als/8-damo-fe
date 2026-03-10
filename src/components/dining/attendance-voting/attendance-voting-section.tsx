@@ -7,8 +7,6 @@ import { toast } from "@/src/components/ui/sonner";
 import { voteAttendance } from "@/src/lib/api/client/dining";
 import { type AttendanceVoteStatus } from "@/src/types/api/dining";
 import { diningAttendanceVoteQueryKey } from "@/src/hooks/dining/use-dining-attendance-vote";
-import { AttendanceVoteProgress } from "./attendance-vote-progress";
-import { AttendanceVotePrompt } from "./attendance-vote-prompt";
 import { AttendanceVoteActions } from "./attendance-vote-action";
 
 interface AttendanceVotingSectionProps {
@@ -16,13 +14,11 @@ interface AttendanceVotingSectionProps {
     totalCount: number;
     voteCount: number;
   };
-  diningDate: string;
   myVoteStatus: AttendanceVoteStatus;
 }
 
 export function AttendanceVotingSection({
   progress,
-  diningDate,
   myVoteStatus,
 }: AttendanceVotingSectionProps) {
   const params = useParams<{ groupId: string; diningId: string }>();
@@ -63,19 +59,21 @@ export function AttendanceVotingSection({
   };
 
   return (
-    <section className="w-full rounded-[20px] bg-white p-4 sm:p-5">
-      <div className="flex flex-col items-center gap-10 sm:gap-[52px]">
-        <AttendanceVoteProgress
-          totalCount={progress.totalCount}
-          voteCount={progress.voteCount} />
-
-        <AttendanceVotePrompt diningDate={diningDate}/>
-
-        <AttendanceVoteActions
-          myVoteStatus={currentVoteStatus}
-          isSubmitting={isSubmitting}
-          onSubmit={handleSubmit}/>
+    <section className="w-full rounded-[20px] bg-white p-5">
+      <h2 className="mb-4 text-lg font-bold leading-6 text-[#101828]">
+        참석 투표
+      </h2>
+      <AttendanceVoteActions
+        myVoteStatus={currentVoteStatus}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSubmit}
+      />
+      <div className="mt-4 flex items-center justify-between border-t border-[#e5e7eb] pt-4">
+        <span className="text-sm text-[#4a5565]">투표 참여</span>
+        <span className="text-sm font-semibold text-[#101828]">
+          {progress.voteCount}/{progress.totalCount}명
+        </span>
       </div>
     </section>
-  )
+  );
 }

@@ -1,4 +1,5 @@
 "use client"
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import type { RestaurantVoteResponse } from "@/src/types/api/dining";
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,7 +8,7 @@ import { RestaurantVotingCarousel } from "./restaurant-voting-carousel";
 import { RestaurantVoteFallback } from "./restaurant-vote-fallback";
 import { RestaurantPermissionAction } from "./restaurant-permission-action";
 import { toast } from "@/src/components/ui/sonner";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { diningRestaurantVoteQueryKey } from "@/src/hooks/dining/use-dining-restaurant-vote";
 import {
   Dialog,
@@ -39,22 +40,10 @@ export function RestaurantVotingSection({
     Array.isArray(value) ? value[0] : value;
   const groupId = resolveParam(params?.groupId);
   const diningId = resolveParam(params?.diningId);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRetryingRecommendation, setIsRetryingRecommendation] = useState(false);
-
-  const activeRestaurantId = useMemo(() => {
-    if (!restaurants.length) {
-      return null;
-    }
-
-    const clampedIndex = Math.min(
-      Math.max(activeIndex, 0),
-      restaurants.length - 1
-    );
-    return restaurants[clampedIndex].recommendRestaurantsId;
-  }, [activeIndex, restaurants]);
   
   if (!restaurants.length) {
     return <RestaurantVoteFallback />;
@@ -108,8 +97,8 @@ export function RestaurantVotingSection({
       return;
     }
 
-    if (activeRestaurantId === null) {
-      toast.error("확정할 식당을 선택할 수 없습니다.");
+    if (selectedId === null) {
+      toast.error("확정할 식당을 선택해주세요.");
       return;
     }
 
@@ -119,7 +108,7 @@ export function RestaurantVotingSection({
       await confirmRestaurant({
         groupId,
         diningId,
-        recommendRestaurantsId: activeRestaurantId,
+        recommendRestaurantsId: selectedId,
       });
 
       await queryClient.invalidateQueries({
@@ -138,18 +127,48 @@ export function RestaurantVotingSection({
   };
 
   return (
-    <section className="flex w-full flex-col items-center gap-4">
-      <RestaurantVotingCarousel onIndexChange={setActiveIndex}>
-        {restaurants.map((restaurant) => (
-          <div
-            key={restaurant.recommendRestaurantsId}
-            className="flex w-full flex-col items-center"
-          >
-            <RestaurantCard restaurant={restaurant} />
-          </div>
-        ))}
-      </RestaurantVotingCarousel>
-      <div className="w-full px-4 sm:px-5">
+    <section className="flex w-full flex-col">
+      {/* 투표 현황 */}
+      <div className="flex w-full flex-col gap-4 bg-white px-5 pb-6 pt-6">
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-lg font-semibold leading-6 text-[#101828]">투표 현황</h3>
+          <p className="text-[14px] leading-5 text-[#6a7282]">현재까지 투표 결과입니다</p>
+        </div>
+        <div className="flex flex-col gap-3">
+          {restaurants.map((restaurant) => {
+            const isSelected = selectedId === restaurant.recommendRestaurantsId;
+            return (
+              <button
+                key={restaurant.recommendRestaurantsId}
+                type="button"
+                onClick={() => setSelectedId(isSelected ? null : restaurant.recommendRestaurantsId)}
+                className={`flex h-[70px] w-full items-center justify-between rounded-[14px] border px-[17px] transition-colors ${
+                  isSelected
+                    ? "border-[#ff8d28] bg-[#fff7ed]"
+                    : "border-[#e5e7eb] bg-white"
+                }`}
+              >
+                <p className="text-[14px] font-semibold leading-5 text-[#101828]">
+                  {restaurant.restaurantsName}
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1">
+                    <ThumbsUp className="size-4" fill="none" strokeWidth={1.5} />
+                    <span className="text-[14px] font-medium leading-5 text-[#0a0a0a]">
+                      {restaurant.likeCount}
+                    </span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <ThumbsDown className="size-4" fill="none" strokeWidth={1.5} />
+                    <span className="text-[14px] font-medium leading-5 text-[#6a7282]">
+                      {restaurant.dislikeCount}
+                    </span>
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
         <RestaurantPermissionAction
           isGroupLeader={isGroupLeader}
           canAdditionalAttend={canAdditionalAttend}
@@ -157,7 +176,22 @@ export function RestaurantVotingSection({
           onRetryRecommendation={handleRetryRecommendation}
           onAdditionalAttend={handleAdditionalAttend}
           isRetryingRecommendation={isRetryingRecommendation}
+          isConfirmDisabled={selectedId === null}
         />
+      </div>
+
+      {/* 식당 카드 캐러셀 */}
+      <div className="flex w-full flex-col items-center gap-4 pt-4">
+        <RestaurantVotingCarousel>
+          {restaurants.map((restaurant) => (
+            <div
+              key={restaurant.recommendRestaurantsId}
+              className="flex w-full flex-col items-center"
+            >
+              <RestaurantCard restaurant={restaurant} />
+            </div>
+          ))}
+        </RestaurantVotingCarousel>
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
