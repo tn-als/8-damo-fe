@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/src/components/ui/sonner";
 import { voteAttendance } from "@/src/lib/api/client/dining";
@@ -22,6 +22,7 @@ export function AttendanceVotingSection({
   myVoteStatus,
 }: AttendanceVotingSectionProps) {
   const params = useParams<{ groupId: string; diningId: string }>();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [currentVoteStatus, setCurrentVoteStatus] =
     useState<AttendanceVoteStatus>(myVoteStatus);
@@ -51,6 +52,7 @@ export function AttendanceVotingSection({
           queryKey: ["dining", "detail", params.groupId, params.diningId, "common"],
         }),
       ]);
+      router.refresh();
     } catch {
       toast.error("참석 투표에 실패했습니다.");
     } finally {

@@ -1,5 +1,10 @@
 import type { NextConfig } from 'next';
+import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -13,13 +18,12 @@ const nextConfig: NextConfig = {
     ],
   },
   compiler: {
-    removeConsole: process.env.APP_ENV === "dev"
-     ? false
-     : { exclude: ["error", "warn"] }, 
-  }
+    removeConsole:
+      process.env.APP_ENV === 'dev' ? false : { exclude: ['error', 'warn'] },
+  },
 };
 
-export default withSentryConfig(nextConfig, {
+const sentryWrappedConfig = withSentryConfig(nextConfig, {
   org: 'damo-dev',
   project: 'damo-dev-fe',
   silent: !process.env.CI,
@@ -33,3 +37,5 @@ export default withSentryConfig(nextConfig, {
     },
   },
 });
+
+export default bundleAnalyzer(sentryWrappedConfig);
