@@ -1,5 +1,3 @@
-"use client";
-
 import { Avatar } from "@/src/components/ui/avatar";
 
 export interface Participant {

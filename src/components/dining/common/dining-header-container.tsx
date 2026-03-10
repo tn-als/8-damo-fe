@@ -1,5 +1,3 @@
-"use client";
-
 import type { DiningStatus } from "@/src/types/api/dining";
 import { DiningHeader } from "./dining-header";
 
