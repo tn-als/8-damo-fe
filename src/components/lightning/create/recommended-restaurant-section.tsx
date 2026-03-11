@@ -14,7 +14,7 @@ export function RecommendedRestaurantSection({
   onRetry,
 }: RecommendedRestaurantSectionProps) {
   return (
-    <section className="space-y-3">
+    <section className="font-system-ui space-y-3">
       <h2 className="text-sm font-semibold text-[#444444]">추천 식당</h2>
 
       {restaurant ? (
