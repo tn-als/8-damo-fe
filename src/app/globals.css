@@ -6,6 +6,7 @@ body {
   height: 100%;
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
+  font-family: var(--font-sans);
 }
 
 #app-root,
@@ -46,6 +47,10 @@ body {
   display: none;             /* Chrome, Safari */
 }
 
+.font-system-ui {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+}
+
 :root {
   /* Layout */
   --bottom-nav-height: 4rem; /* 64px - h-16 */
@@ -84,7 +89,7 @@ body {
   --sidebar-border: #ffe0d5;
   --sidebar-ring: #ff8163;
 
-  --font-sans: Montserrat, sans-serif;
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
   --font-serif: Merriweather, serif;
   --font-mono: Ubuntu Mono, monospace;
 
@@ -217,7 +222,7 @@ body {
   --rdp-selected-color: #ffffff;
   --rdp-selected-background-color: #ff8d28;
   --rdp-today-color: #ff8d28;
-  font-family: 'Pretendard', sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* Chevron (화살표) 색상 - primary color */
