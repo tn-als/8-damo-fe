@@ -211,21 +211,7 @@ jobs:
 
       - name: Create empty .env.local for CI
         run: touch .env.local
-
-      - name: Wait until deployment is ready
-        run: |
-          for i in {1..30}; do
-            STATUS=$(curl -o /dev/null -s -w "%{http_code}" "${{ secrets.LIGHTHOUSE_BASE_URL }}")
-            if [ "$STATUS" = "200" ]; then
-              echo "Site is ready"
-              exit 0
-            fi
-            echo "Waiting for deployment..."
-            sleep 10
-          done
-          echo "Site did not become ready"
-          exit 1
-
+        
       - name: Run Lighthouse measurement
         run: npm run lighthouse
         env:
