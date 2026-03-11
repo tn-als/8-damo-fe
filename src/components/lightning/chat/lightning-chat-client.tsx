@@ -72,7 +72,7 @@ export function LightningChatClient({ lightningId }: Props) {
   ), [isLeaving, handleLeaveLightning]);
 
   return (
-    <div className="mx-auto flex h-full w-full min-w-[320px] max-w-[430px] flex-col bg-background">
+    <div className="font-system-ui mx-auto flex h-full w-full min-w-[320px] max-w-[430px] flex-col bg-background">
       <Header title="번개 채팅" onBack={handleBack} rightElement={moreMenu} />
       <ChatBody lightningId={lightningId} />
     </div>
