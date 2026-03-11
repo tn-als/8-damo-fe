@@ -3,24 +3,16 @@ import type { Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import { Toaster } from "@/src/components/ui/sonner";
-import localFont from 'next/font/local';
 import { UserProvider } from "@/src/components/providers/UserProvider";
 import { RouteGuard } from "@/src/components/guards/RouteGuard";
 import { QueryProvider } from "@/src/components/providers/query-provider";
 import { WebPushProvider } from "@/src/components/providers/web-push-provider";
 
-const pretendard = localFont({
-  src: 'fonts/PretendardVariable.woff2',
-  display: 'swap',
-  weight: '45 920',
-  variable: '--font-pretendard',
-})
-
 const viewPort: Viewport = {
   width: "device-width",
-  initialScale: 1, 
+  initialScale: 1,
   maximumScale: 1
-}
+};
 
 export const metadata: Metadata = {
   title: "다모",
@@ -34,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={pretendard.variable}>
-      <body className="--font-pretendard antialiased bg-page-background overflow-hidden">
+    <html lang="ko">
+      <body className="font-sans antialiased bg-page-background overflow-hidden">
         {/* 전체 배경 */}
         <div className="min-h-[100dvh] w-full bg-[#f5f5f7]">
           {/* 모바일 앱 프레임 */}
