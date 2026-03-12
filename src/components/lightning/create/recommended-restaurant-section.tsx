@@ -1,6 +1,6 @@
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import { KakaoMapView } from "@/src/components/ui/kakao-map-view";
+import { LazyKakaoMapView } from "@/src/components/ui/lazy-kakao-map-view";
 import type { Restaurant } from "@/src/types/lightning";
 import { Phone } from "lucide-react";
 
@@ -37,12 +37,13 @@ export function RecommendedRestaurantSection({
           </article>
 
           <div className="overflow-hidden rounded-2xl border border-[#d1d1d6] bg-white">
-            <KakaoMapView
+            <LazyKakaoMapView
               location={{
                 lat: restaurant.location?.lat,
                 lng: restaurant.location?.lng
               }}
               className="h-52 w-full"
+              fallbackClassName="h-52 w-full"
             />
           </div>
         </>
