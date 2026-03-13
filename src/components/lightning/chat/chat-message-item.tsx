@@ -59,7 +59,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({
     <Fragment>
       {showDividerBefore && <ChatUnreadDivider />}
 
-      <li
+      <div
         data-message-id={String(message.messageId)}
         className={isMine ? "flex justify-end" : "flex items-start gap-2"}
       >
@@ -124,7 +124,7 @@ export const ChatMessageItem = memo(function ChatMessageItem({
             </p>
           )}
         </div>
-      </li>
+      </div>
 
       {showDividerAfter && <ChatUnreadDivider />}
     </Fragment>
