@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
+import type { Virtualizer } from "@tanstack/react-virtual";
 import type { ChatInitialScrollMode } from "@/src/types/api/lightning/chat";
+import type { ChatBroadcastMessage } from "@/src/types/chat";
 
 export function useChatScrollController({
   scrollRoot,
@@ -18,6 +20,8 @@ export function useChatScrollController({
   topInView,
   bottomInView,
   lastChatMessageId,
+  virtualizer,
+  messages,
 }: {
   scrollRoot: HTMLDivElement | null;
   messagesLength: number;
@@ -33,6 +37,8 @@ export function useChatScrollController({
   topInView: boolean;
   bottomInView: boolean;
   lastChatMessageId: string | null;
+  virtualizer: Virtualizer<HTMLDivElement, Element> | null;
+  messages: ChatBroadcastMessage[];
 }) {
   const initialLoadDoneRef = useRef(false);
   const userScrolledRef = useRef(false);
@@ -63,26 +69,21 @@ export function useChatScrollController({
 
   const scrollToAnchor = useCallback(
     (root: HTMLDivElement): number | null => {
-      const anchor = root.querySelector<HTMLElement>(
-        `[data-message-id="${anchorCursor}"]`
+      if (!virtualizer || !anchorCursor) return null;
+      const anchorIndex = messages.findIndex(
+        (m) => String(m.messageId) === anchorCursor
       );
+      if (anchorIndex === -1) return null;
 
-      if (!anchor) return null;
+      virtualizer.scrollToIndex(anchorIndex, { align: "start" });
 
-      const anchorRect = anchor.getBoundingClientRect();
-      const rootRect = root.getBoundingClientRect();
-      
-      const target =
-        root.scrollTop +
-        (anchorRect.top - rootRect.top) -
-        root.clientHeight * 0.25;
+      requestAnimationFrame(() => {
+        root.scrollBy({ top: -root.clientHeight * 0.25 });
+      });
 
-      const maxTop = root.scrollHeight - root.clientHeight;
-      const clamped = Math.max(0, Math.min(maxTop, target));
-      root.scrollTo({ top: clamped });
-      return target;
+      return anchorIndex;
     },
-    [anchorCursor]
+    [anchorCursor, messages, virtualizer]
   );
 
   useEffect(() => {
@@ -102,10 +103,9 @@ export function useChatScrollController({
           break;
 
         case "CENTER": {
-          const target = scrollToAnchor(scrollRoot);
-          if (target === null) {
-            scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
-          } else if (target < 0) {
+          const result = scrollToAnchor(scrollRoot);
+          if (result === null) {
+            scrollRoot.scrollTo({ top: 0 });
             centerPreloadRef.current = true;
           }
           break;
@@ -141,7 +141,7 @@ export function useChatScrollController({
       requestAnimationFrame(() => {
         if (centerPreloadRef.current && !userScrolledRef.current) {
           const newTarget = scrollToAnchor(scrollRoot);
-          if (newTarget === null || newTarget >= 0) {
+          if (newTarget !== null) {
             centerPreloadRef.current = false;
           }
         } else {

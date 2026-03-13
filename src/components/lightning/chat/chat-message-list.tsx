@@ -3,6 +3,7 @@
 import { ArrowDown } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
 import type {
   ChatInitialScrollMode,
@@ -65,6 +66,14 @@ export const ChatMessageList = memo(function ChatMessageList({
     []
   );
 
+  const virtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => scrollRoot,
+    estimateSize: () => 80,
+    overscan: 5,
+    gap: 16,
+  });
+
   const { ref: topSentinelRef, inView: topInView } =
     useInView({
       root: scrollRoot,
@@ -94,6 +103,8 @@ export const ChatMessageList = memo(function ChatMessageList({
     topInView,
     bottomInView,
     lastChatMessageId,
+    virtualizer,
+    messages,
   });
 
   useEffect(() => {
@@ -176,23 +187,43 @@ export const ChatMessageList = memo(function ChatMessageList({
         )}
 
         {messages.length > 0 && (
-          <ul className="space-y-4 pb-2">
-            {messages.map((message) => (
-              <ChatMessageItem
-                key={message.messageId}
-                message={message}
-                currentUserId={currentUserId}
-                showDividerBefore={isSameMessageId(
-                  message.messageId,
-                  dividerBeforeMessageId
-                )}
-                showDividerAfter={isSameMessageId(
-                  message.messageId,
-                  dividerAfterMessageId
-                )}
-              />
-            ))}
-          </ul>
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              position: "relative",
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const message = messages[virtualRow.index];
+              return (
+                <div
+                  key={virtualRow.key}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <ChatMessageItem
+                    message={message}
+                    currentUserId={currentUserId}
+                    showDividerBefore={isSameMessageId(
+                      message.messageId,
+                      dividerBeforeMessageId
+                    )}
+                    showDividerAfter={isSameMessageId(
+                      message.messageId,
+                      dividerAfterMessageId
+                    )}
+                  />
+                </div>
+              );
+            })}
+          </div>
         )}
 
         <div ref={bottomSentinelRef} className="h-px w-full" />
