@@ -51,11 +51,22 @@ export function useChatScrollController({
   useEffect(() => {
     if (!scrollRoot) return;
 
+    const updateAutoFollowState = () => {
+      const distanceFromBottom =
+        scrollRoot.scrollHeight - scrollRoot.clientHeight - scrollRoot.scrollTop;
+      const isNearBottom = distanceFromBottom <= BOTTOM_FOLLOW_THRESHOLD_PX;
+      shouldAutoFollowRef.current = isNearBottom;
+      setIsBottomOutOfView(!isNearBottom);
+    };
+
     const handleScroll = () => {
       userScrolledRef.current = true;
+      updateAutoFollowState();
     };
 
     scrollRoot.addEventListener("scroll", handleScroll, { passive: true });
+    updateAutoFollowState();
+
     return () => {
       scrollRoot.removeEventListener("scroll", handleScroll);
     };
