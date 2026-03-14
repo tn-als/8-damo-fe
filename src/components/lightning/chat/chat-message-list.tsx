@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
@@ -55,11 +55,9 @@ export const ChatMessageList = memo(function ChatMessageList({
   lastChatMessageId,
 }: Props) {
   const scrollElementRef = useRef<HTMLDivElement | null>(null);
-  const [scrollRoot, setScrollRoot] =
+  const [scrollRoot, setScrollRoot] = useState<HTMLDivElement | null>(null);
+  const [lastMessageElement, setLastMessageElement] =
     useState<HTMLDivElement | null>(null);
-  const [hasPendingIncomingMessage, setHasPendingIncomingMessage] = useState(false);
-  const observedChatMessageIdRef = useRef<string | null>(null);
-  const lastMessageElementRef = useRef<HTMLDivElement | null>(null);
 
   const setScrollRootRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -91,7 +89,7 @@ export const ChatMessageList = memo(function ChatMessageList({
       threshold: 0.3,
     });
 
-  const { scrollToBottom, shouldAutoFollowRef } = useChatScrollController({
+  const { hasPendingIncomingMessage, scrollToLatestMessage } = useChatScrollController({
     scrollRoot,
     messagesLength: messages.length,
     initialScrollMode,
@@ -106,59 +104,10 @@ export const ChatMessageList = memo(function ChatMessageList({
     topInView,
     bottomInView,
     lastChatMessageId,
+    lastMessageElement,
     virtualizer,
     messages,
   });
-
-  useEffect(() => {
-    if (!lastChatMessageId) return;
-
-    if (observedChatMessageIdRef.current === null) {
-      observedChatMessageIdRef.current = lastChatMessageId;
-      return;
-    }
-
-    if (observedChatMessageIdRef.current === lastChatMessageId) return;
-    observedChatMessageIdRef.current = lastChatMessageId;
-
-    if (bottomInView) return;
-
-    const frame = requestAnimationFrame(() => {
-      setHasPendingIncomingMessage(true);
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [bottomInView, lastChatMessageId]);
-
-  useEffect(() => {
-    if (!bottomInView) return;
-    if (!hasPendingIncomingMessage) return;
-
-    const frame = requestAnimationFrame(() => {
-      setHasPendingIncomingMessage(false);
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [bottomInView, hasPendingIncomingMessage]);
-
-  useEffect(() => {
-    if (!scrollRoot || !lastMessageElementRef.current) return;
-
-    const target = lastMessageElementRef.current;
-    const resizeObserver = new ResizeObserver(() => {
-      if (!shouldAutoFollowRef.current) return;
-
-      requestAnimationFrame(() => {
-        scrollToBottom();
-      });
-    });
-
-    resizeObserver.observe(target);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [lastChatMessageId, scrollRoot, scrollToBottom, shouldAutoFollowRef]);
 
   const showDivider = readBoundary?.showDivider === true;
   const loadedMessageIds = useMemo(
@@ -231,7 +180,7 @@ export const ChatMessageList = memo(function ChatMessageList({
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  <div ref={isLastMessage ? lastMessageElementRef : null}>
+                  <div ref={isLastMessage ? setLastMessageElement : null}>
                     <ChatMessageItem
                       message={message}
                       currentUserId={currentUserId}
@@ -258,7 +207,7 @@ export const ChatMessageList = memo(function ChatMessageList({
         <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-end px-4">
           <Button
             type="button"
-            onClick={scrollToBottom}
+            onClick={scrollToLatestMessage}
             className="
               pointer-events-auto
               h-9 w-9
