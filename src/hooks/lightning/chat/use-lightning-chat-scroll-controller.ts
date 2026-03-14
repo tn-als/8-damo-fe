@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import type { ChatInitialScrollMode } from "@/src/types/api/lightning/chat";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
-
-const BOTTOM_FOLLOW_THRESHOLD_PX = 96;
+import { useLightningChatAutoFollow } from "@/src/hooks/lightning/chat/use-lightning-chat-auto-follow";
+import { useLightningChatPaginationScroll } from "@/src/hooks/lightning/chat/use-lightning-chat-pagination-scroll";
 
 export function useChatScrollController({
   scrollRoot,
@@ -22,6 +22,7 @@ export function useChatScrollController({
   topInView,
   bottomInView,
   lastChatMessageId,
+  lastMessageElement,
   virtualizer,
   messages,
 }: {
@@ -39,48 +40,13 @@ export function useChatScrollController({
   topInView: boolean;
   bottomInView: boolean;
   lastChatMessageId: string | null;
+  lastMessageElement: HTMLDivElement | null;
   virtualizer: Virtualizer<HTMLDivElement, Element> | null;
   messages: ChatBroadcastMessage[];
 }) {
   const initialLoadDoneRef = useRef(false);
   const userScrolledRef = useRef(false);
-  const topFetchTriggeredRef = useRef(false);
   const centerPreloadRef = useRef(false);
-  const handledChatMessageIdRef = useRef<string | null>(null);
-  const shouldAutoFollowRef = useRef(initialScrollMode === "BOTTOM");
-
-  const [isBottomOutOfView, setIsBottomOutOfView] = useState(false);
-
-  useEffect(() => {
-    if (!scrollRoot) return;
-
-    const updateAutoFollowState = () => {
-      const distanceFromBottom =
-        scrollRoot.scrollHeight - scrollRoot.clientHeight - scrollRoot.scrollTop;
-      const isNearBottom = distanceFromBottom <= BOTTOM_FOLLOW_THRESHOLD_PX;
-      shouldAutoFollowRef.current = isNearBottom;
-      setIsBottomOutOfView(!isNearBottom);
-    };
-
-    const handleScroll = () => {
-      userScrolledRef.current = true;
-      updateAutoFollowState();
-    };
-
-    scrollRoot.addEventListener("scroll", handleScroll, { passive: true });
-    updateAutoFollowState();
-
-    return () => {
-      scrollRoot.removeEventListener("scroll", handleScroll);
-    };
-  }, [scrollRoot]);
-
-  const scrollToBottom = useCallback(() => {
-    if (!scrollRoot) return;
-    shouldAutoFollowRef.current = true;
-    scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
-    setIsBottomOutOfView(false);
-  }, [scrollRoot]);
 
   const scrollToAnchor = useCallback(
     (root: HTMLDivElement): number | null => {
@@ -101,128 +67,45 @@ export function useChatScrollController({
     [anchorCursor, messages, virtualizer]
   );
 
-  useEffect(() => {
-    if (!scrollRoot || initialLoadDoneRef.current) return;
-    if (messagesLength === 0) return;
+  const {
+    hasPendingIncomingMessage,
+    isBottomOutOfView,
+    scrollToBottom,
+    setAutoFollowEnabled,
+    shouldAutoFollowRef,
+  } = useLightningChatAutoFollow({
+    scrollRoot,
+    bottomInView,
+    lastChatMessageId,
+    lastMessageElement,
+    initialScrollMode,
+    onUserScroll: () => {
+      userScrolledRef.current = true;
+    },
+  });
 
-    initialLoadDoneRef.current = true;
-
-    requestAnimationFrame(() => {
-      switch (initialScrollMode) {
-        case "TOP":
-          shouldAutoFollowRef.current = false;
-          scrollRoot.scrollTo({ top: 0 });
-          break;
-
-        case "BOTTOM":
-          shouldAutoFollowRef.current = true;
-          scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
-          break;
-
-        case "CENTER": {
-          shouldAutoFollowRef.current = false;
-          const result = scrollToAnchor(scrollRoot);
-          if (result === null) {
-            scrollRoot.scrollTo({ top: 0 });
-            centerPreloadRef.current = true;
-          }
-          break;
-        }
-      }
-
-      markInitialized();
-      setIsBottomOutOfView(!bottomInView);
-    });
-  }, [
+  useLightningChatPaginationScroll({
     scrollRoot,
     messagesLength,
     initialScrollMode,
-    bottomInView,
-    markInitialized,
-    scrollToAnchor,
-  ]);
-
-  useEffect(() => {
-    if (!scrollRoot) return;
-    if (!initialLoadDoneRef.current) return;
-    if (!userScrolledRef.current && !centerPreloadRef.current) return;
-
-    if (!topInView) return;
-    if (!hasPreviousPage) return;
-    if (isFetchingPreviousPage) return;
-    if (topFetchTriggeredRef.current) return;
-
-    topFetchTriggeredRef.current = true;
-    const beforeHeight = scrollRoot.scrollHeight;
-
-    void fetchPreviousPage().then(() => {
-      requestAnimationFrame(() => {
-        if (centerPreloadRef.current && !userScrolledRef.current) {
-          const newTarget = scrollToAnchor(scrollRoot);
-          if (newTarget !== null) {
-            centerPreloadRef.current = false;
-          }
-        } else {
-          const delta = scrollRoot.scrollHeight - beforeHeight;
-          scrollRoot.scrollTo({ top: scrollRoot.scrollTop + delta });
-          centerPreloadRef.current = false;
-        }
-
-        topFetchTriggeredRef.current = false;
-      });
-    });
-  }, [
-    scrollRoot,
-    topInView,
     hasPreviousPage,
+    hasNextPage,
     isFetchingPreviousPage,
+    isFetchingNextPage,
     fetchPreviousPage,
+    fetchNextPage,
+    markInitialized,
+    topInView,
+    bottomInView,
+    initialLoadDoneRef,
+    userScrolledRef,
+    centerPreloadRef,
     scrollToAnchor,
-  ]);
-
-  useEffect(() => {
-    if (!initialLoadDoneRef.current) return;
-    if (!userScrolledRef.current) return;
-
-    if (!bottomInView || !hasNextPage) return;
-    if (isFetchingNextPage) return;
-
-    void fetchNextPage();
-  }, [bottomInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  useEffect(() => {
-    if (!initialLoadDoneRef.current) return;
-
-    if (bottomInView) {
-      shouldAutoFollowRef.current = true;
-    }
-
-    const frame = requestAnimationFrame(() => {
-      setIsBottomOutOfView(!shouldAutoFollowRef.current);
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [bottomInView]);
-
-  useEffect(() => {
-    if (!scrollRoot) return;
-    if (!initialLoadDoneRef.current) return;
-    if (!lastChatMessageId) return;
-
-    if (handledChatMessageIdRef.current === lastChatMessageId) return;
-    handledChatMessageIdRef.current = lastChatMessageId;
-
-    if (!shouldAutoFollowRef.current) return;
-
-    requestAnimationFrame(() => {
-      scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
-      requestAnimationFrame(() => {
-        scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
-      });
-    });
-  }, [lastChatMessageId, scrollRoot]);
+    setAutoFollowEnabled,
+  });
 
   return {
+    hasPendingIncomingMessage,
     isBottomOutOfView,
     scrollToBottom,
     shouldAutoFollowRef,
