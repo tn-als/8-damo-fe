@@ -59,6 +59,7 @@ export const ChatMessageList = memo(function ChatMessageList({
     useState<HTMLDivElement | null>(null);
   const [hasPendingIncomingMessage, setHasPendingIncomingMessage] = useState(false);
   const observedChatMessageIdRef = useRef<string | null>(null);
+  const lastMessageElementRef = useRef<HTMLDivElement | null>(null);
 
   const setScrollRootRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -90,7 +91,7 @@ export const ChatMessageList = memo(function ChatMessageList({
       threshold: 0.3,
     });
 
-  const { scrollToBottom } = useChatScrollController({
+  const { scrollToBottom, shouldAutoFollowRef } = useChatScrollController({
     scrollRoot,
     messagesLength: messages.length,
     initialScrollMode,
@@ -139,6 +140,25 @@ export const ChatMessageList = memo(function ChatMessageList({
 
     return () => cancelAnimationFrame(frame);
   }, [bottomInView, hasPendingIncomingMessage]);
+
+  useEffect(() => {
+    if (!scrollRoot || !lastMessageElementRef.current) return;
+
+    const target = lastMessageElementRef.current;
+    const resizeObserver = new ResizeObserver(() => {
+      if (!shouldAutoFollowRef.current) return;
+
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    });
+
+    resizeObserver.observe(target);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [lastChatMessageId, scrollRoot, scrollToBottom, shouldAutoFollowRef]);
 
   const showDivider = readBoundary?.showDivider === true;
   const loadedMessageIds = useMemo(
@@ -197,6 +217,7 @@ export const ChatMessageList = memo(function ChatMessageList({
           >
             {virtualizer.getVirtualItems().map((virtualRow) => {
               const message = messages[virtualRow.index];
+              const isLastMessage = virtualRow.index === messages.length - 1;
               return (
                 <div
                   key={virtualRow.key}
@@ -210,18 +231,20 @@ export const ChatMessageList = memo(function ChatMessageList({
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  <ChatMessageItem
-                    message={message}
-                    currentUserId={currentUserId}
-                    showDividerBefore={isSameMessageId(
-                      message.messageId,
-                      dividerBeforeMessageId
-                    )}
-                    showDividerAfter={isSameMessageId(
-                      message.messageId,
-                      dividerAfterMessageId
-                    )}
-                  />
+                  <div ref={isLastMessage ? lastMessageElementRef : null}>
+                    <ChatMessageItem
+                      message={message}
+                      currentUserId={currentUserId}
+                      showDividerBefore={isSameMessageId(
+                        message.messageId,
+                        dividerBeforeMessageId
+                      )}
+                      showDividerAfter={isSameMessageId(
+                        message.messageId,
+                        dividerAfterMessageId
+                      )}
+                    />
+                  </div>
                 </div>
               );
             })}
