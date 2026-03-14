@@ -71,16 +71,24 @@ export function useLightningChatAutoFollow({
     };
 
     scrollRoot.addEventListener("scroll", handleScroll, { passive: true });
-    syncAutoFollowState();
+    const frame = requestAnimationFrame(() => {
+      syncAutoFollowState();
+    });
 
     return () => {
+      cancelAnimationFrame(frame);
       scrollRoot.removeEventListener("scroll", handleScroll);
     };
   }, [onUserScroll, scrollRoot, syncAutoFollowState]);
 
   useEffect(() => {
     if (!bottomInView) return;
-    setAutoFollowEnabled(true);
+
+    const frame = requestAnimationFrame(() => {
+      setAutoFollowEnabled(true);
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, [bottomInView, setAutoFollowEnabled]);
 
   useEffect(() => {
