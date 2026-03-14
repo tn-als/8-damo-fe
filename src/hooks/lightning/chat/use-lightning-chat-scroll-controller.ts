@@ -84,6 +84,32 @@ export function useChatScrollController({
     },
   });
 
+  const scrollToLatestMessage = useCallback(() => {
+    if (!scrollRoot) return;
+
+    shouldAutoFollowRef.current = true;
+    setAutoFollowEnabled(true);
+
+    if (!virtualizer || messages.length === 0) {
+      scrollToBottom();
+      return;
+    }
+
+    const lastIndex = messages.length - 1;
+    virtualizer.scrollToIndex(lastIndex, { align: "end" });
+
+    requestAnimationFrame(() => {
+      virtualizer.scrollToIndex(lastIndex, { align: "end" });
+    });
+  }, [
+    messages.length,
+    scrollRoot,
+    scrollToBottom,
+    setAutoFollowEnabled,
+    shouldAutoFollowRef,
+    virtualizer,
+  ]);
+
   useLightningChatPaginationScroll({
     scrollRoot,
     messagesLength,
@@ -108,6 +134,7 @@ export function useChatScrollController({
     hasPendingIncomingMessage,
     isBottomOutOfView,
     scrollToBottom,
+    scrollToLatestMessage,
     shouldAutoFollowRef,
   };
 }

@@ -89,7 +89,7 @@ export const ChatMessageList = memo(function ChatMessageList({
       threshold: 0.3,
     });
 
-  const { hasPendingIncomingMessage, scrollToBottom } = useChatScrollController({
+  const { hasPendingIncomingMessage, scrollToLatestMessage } = useChatScrollController({
     scrollRoot,
     messagesLength: messages.length,
     initialScrollMode,
@@ -207,7 +207,7 @@ export const ChatMessageList = memo(function ChatMessageList({
         <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-end px-4">
           <Button
             type="button"
-            onClick={scrollToBottom}
+            onClick={scrollToLatestMessage}
             className="
               pointer-events-auto
               h-9 w-9
