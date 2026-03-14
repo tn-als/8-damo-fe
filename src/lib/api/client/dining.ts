@@ -7,6 +7,7 @@ import type {
   DiningCommonResponse,
   AttendanceVoteResponse,
   RecommendationHistoryResponse,
+  CreateDiningReviewRequest,
 } from "@/src/types/api/dining";
 
 export interface CreateDiningRequest {
@@ -145,4 +146,12 @@ export async function uploadReceipt(params: {
     `/groups/${groupId}/dining/${diningId}/receipt`,
     { receiptUrl }
   );
+}
+
+export async function createDiningReview(params: {
+  diningId: string;
+  data: CreateDiningReviewRequest;
+}): Promise<ApiResponse<void>> {
+  const { diningId, data } = params;
+  return bffPost<void>(`/dining/${diningId}/reviews`, data);
 }
