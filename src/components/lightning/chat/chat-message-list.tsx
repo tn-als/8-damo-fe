@@ -54,6 +54,7 @@ export const ChatMessageList = memo(function ChatMessageList({
   markInitialized,
   lastChatMessageId,
 }: Props) {
+  const scrollElementRef = useRef<HTMLDivElement | null>(null);
   const [scrollRoot, setScrollRoot] =
     useState<HTMLDivElement | null>(null);
   const [hasPendingIncomingMessage, setHasPendingIncomingMessage] = useState(false);
@@ -61,6 +62,7 @@ export const ChatMessageList = memo(function ChatMessageList({
 
   const setScrollRootRef = useCallback(
     (node: HTMLDivElement | null) => {
+      scrollElementRef.current = node;
       setScrollRoot(node);
     },
     []
@@ -68,7 +70,7 @@ export const ChatMessageList = memo(function ChatMessageList({
 
   const virtualizer = useVirtualizer({
     count: messages.length,
-    getScrollElement: () => scrollRoot,
+    getScrollElement: () => scrollElementRef.current,
     estimateSize: () => 80,
     overscan: 5,
     gap: 16,
