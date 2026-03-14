@@ -1,7 +1,11 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
+import type { Virtualizer } from "@tanstack/react-virtual";
 import type { ChatInitialScrollMode } from "@/src/types/api/lightning/chat";
+import type { ChatBroadcastMessage } from "@/src/types/chat";
+
+const BOTTOM_FOLLOW_THRESHOLD_PX = 96;
 
 export function useChatScrollController({
   scrollRoot,
@@ -18,6 +22,8 @@ export function useChatScrollController({
   topInView,
   bottomInView,
   lastChatMessageId,
+  virtualizer,
+  messages,
 }: {
   scrollRoot: HTMLDivElement | null;
   messagesLength: number;
@@ -33,23 +39,37 @@ export function useChatScrollController({
   topInView: boolean;
   bottomInView: boolean;
   lastChatMessageId: string | null;
+  virtualizer: Virtualizer<HTMLDivElement, Element> | null;
+  messages: ChatBroadcastMessage[];
 }) {
   const initialLoadDoneRef = useRef(false);
   const userScrolledRef = useRef(false);
   const topFetchTriggeredRef = useRef(false);
   const centerPreloadRef = useRef(false);
   const handledChatMessageIdRef = useRef<string | null>(null);
+  const shouldAutoFollowRef = useRef(initialScrollMode === "BOTTOM");
 
   const [isBottomOutOfView, setIsBottomOutOfView] = useState(false);
 
   useEffect(() => {
     if (!scrollRoot) return;
 
+    const updateAutoFollowState = () => {
+      const distanceFromBottom =
+        scrollRoot.scrollHeight - scrollRoot.clientHeight - scrollRoot.scrollTop;
+      const isNearBottom = distanceFromBottom <= BOTTOM_FOLLOW_THRESHOLD_PX;
+      shouldAutoFollowRef.current = isNearBottom;
+      setIsBottomOutOfView(!isNearBottom);
+    };
+
     const handleScroll = () => {
       userScrolledRef.current = true;
+      updateAutoFollowState();
     };
 
     scrollRoot.addEventListener("scroll", handleScroll, { passive: true });
+    updateAutoFollowState();
+
     return () => {
       scrollRoot.removeEventListener("scroll", handleScroll);
     };
@@ -57,32 +77,28 @@ export function useChatScrollController({
 
   const scrollToBottom = useCallback(() => {
     if (!scrollRoot) return;
+    shouldAutoFollowRef.current = true;
     scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
     setIsBottomOutOfView(false);
   }, [scrollRoot]);
 
   const scrollToAnchor = useCallback(
     (root: HTMLDivElement): number | null => {
-      const anchor = root.querySelector<HTMLElement>(
-        `[data-message-id="${anchorCursor}"]`
+      if (!virtualizer || !anchorCursor) return null;
+      const anchorIndex = messages.findIndex(
+        (m) => String(m.messageId) === anchorCursor
       );
+      if (anchorIndex === -1) return null;
 
-      if (!anchor) return null;
+      virtualizer.scrollToIndex(anchorIndex, { align: "start" });
 
-      const anchorRect = anchor.getBoundingClientRect();
-      const rootRect = root.getBoundingClientRect();
-      
-      const target =
-        root.scrollTop +
-        (anchorRect.top - rootRect.top) -
-        root.clientHeight * 0.25;
+      requestAnimationFrame(() => {
+        root.scrollBy({ top: -root.clientHeight * 0.25 });
+      });
 
-      const maxTop = root.scrollHeight - root.clientHeight;
-      const clamped = Math.max(0, Math.min(maxTop, target));
-      root.scrollTo({ top: clamped });
-      return target;
+      return anchorIndex;
     },
-    [anchorCursor]
+    [anchorCursor, messages, virtualizer]
   );
 
   useEffect(() => {
@@ -94,18 +110,20 @@ export function useChatScrollController({
     requestAnimationFrame(() => {
       switch (initialScrollMode) {
         case "TOP":
+          shouldAutoFollowRef.current = false;
           scrollRoot.scrollTo({ top: 0 });
           break;
 
         case "BOTTOM":
+          shouldAutoFollowRef.current = true;
           scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
           break;
 
         case "CENTER": {
-          const target = scrollToAnchor(scrollRoot);
-          if (target === null) {
-            scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
-          } else if (target < 0) {
+          shouldAutoFollowRef.current = false;
+          const result = scrollToAnchor(scrollRoot);
+          if (result === null) {
+            scrollRoot.scrollTo({ top: 0 });
             centerPreloadRef.current = true;
           }
           break;
@@ -141,7 +159,7 @@ export function useChatScrollController({
       requestAnimationFrame(() => {
         if (centerPreloadRef.current && !userScrolledRef.current) {
           const newTarget = scrollToAnchor(scrollRoot);
-          if (newTarget === null || newTarget >= 0) {
+          if (newTarget !== null) {
             centerPreloadRef.current = false;
           }
         } else {
@@ -175,8 +193,12 @@ export function useChatScrollController({
   useEffect(() => {
     if (!initialLoadDoneRef.current) return;
 
+    if (bottomInView) {
+      shouldAutoFollowRef.current = true;
+    }
+
     const frame = requestAnimationFrame(() => {
-      setIsBottomOutOfView(!bottomInView);
+      setIsBottomOutOfView(!shouldAutoFollowRef.current);
     });
 
     return () => cancelAnimationFrame(frame);
@@ -190,15 +212,19 @@ export function useChatScrollController({
     if (handledChatMessageIdRef.current === lastChatMessageId) return;
     handledChatMessageIdRef.current = lastChatMessageId;
 
-    if (!bottomInView) return;
+    if (!shouldAutoFollowRef.current) return;
 
     requestAnimationFrame(() => {
       scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
+      requestAnimationFrame(() => {
+        scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
+      });
     });
-  }, [bottomInView, lastChatMessageId, scrollRoot]);
+  }, [lastChatMessageId, scrollRoot]);
 
   return {
     isBottomOutOfView,
     scrollToBottom,
+    shouldAutoFollowRef,
   };
 }

@@ -3,6 +3,7 @@
 import { ArrowDown } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
 import type {
   ChatInitialScrollMode,
@@ -53,17 +54,28 @@ export const ChatMessageList = memo(function ChatMessageList({
   markInitialized,
   lastChatMessageId,
 }: Props) {
+  const scrollElementRef = useRef<HTMLDivElement | null>(null);
   const [scrollRoot, setScrollRoot] =
     useState<HTMLDivElement | null>(null);
   const [hasPendingIncomingMessage, setHasPendingIncomingMessage] = useState(false);
   const observedChatMessageIdRef = useRef<string | null>(null);
+  const lastMessageElementRef = useRef<HTMLDivElement | null>(null);
 
   const setScrollRootRef = useCallback(
     (node: HTMLDivElement | null) => {
+      scrollElementRef.current = node;
       setScrollRoot(node);
     },
     []
   );
+
+  const virtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => scrollElementRef.current,
+    estimateSize: () => 80,
+    overscan: 5,
+    gap: 16,
+  });
 
   const { ref: topSentinelRef, inView: topInView } =
     useInView({
@@ -79,7 +91,7 @@ export const ChatMessageList = memo(function ChatMessageList({
       threshold: 0.3,
     });
 
-  const { scrollToBottom } = useChatScrollController({
+  const { scrollToBottom, shouldAutoFollowRef } = useChatScrollController({
     scrollRoot,
     messagesLength: messages.length,
     initialScrollMode,
@@ -94,6 +106,8 @@ export const ChatMessageList = memo(function ChatMessageList({
     topInView,
     bottomInView,
     lastChatMessageId,
+    virtualizer,
+    messages,
   });
 
   useEffect(() => {
@@ -126,6 +140,25 @@ export const ChatMessageList = memo(function ChatMessageList({
 
     return () => cancelAnimationFrame(frame);
   }, [bottomInView, hasPendingIncomingMessage]);
+
+  useEffect(() => {
+    if (!scrollRoot || !lastMessageElementRef.current) return;
+
+    const target = lastMessageElementRef.current;
+    const resizeObserver = new ResizeObserver(() => {
+      if (!shouldAutoFollowRef.current) return;
+
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    });
+
+    resizeObserver.observe(target);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [lastChatMessageId, scrollRoot, scrollToBottom, shouldAutoFollowRef]);
 
   const showDivider = readBoundary?.showDivider === true;
   const loadedMessageIds = useMemo(
@@ -176,23 +209,46 @@ export const ChatMessageList = memo(function ChatMessageList({
         )}
 
         {messages.length > 0 && (
-          <ul className="space-y-4 pb-2">
-            {messages.map((message) => (
-              <ChatMessageItem
-                key={message.messageId}
-                message={message}
-                currentUserId={currentUserId}
-                showDividerBefore={isSameMessageId(
-                  message.messageId,
-                  dividerBeforeMessageId
-                )}
-                showDividerAfter={isSameMessageId(
-                  message.messageId,
-                  dividerAfterMessageId
-                )}
-              />
-            ))}
-          </ul>
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              position: "relative",
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const message = messages[virtualRow.index];
+              const isLastMessage = virtualRow.index === messages.length - 1;
+              return (
+                <div
+                  key={virtualRow.key}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <div ref={isLastMessage ? lastMessageElementRef : null}>
+                    <ChatMessageItem
+                      message={message}
+                      currentUserId={currentUserId}
+                      showDividerBefore={isSameMessageId(
+                        message.messageId,
+                        dividerBeforeMessageId
+                      )}
+                      showDividerAfter={isSameMessageId(
+                        message.messageId,
+                        dividerAfterMessageId
+                      )}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
 
         <div ref={bottomSentinelRef} className="h-px w-full" />
