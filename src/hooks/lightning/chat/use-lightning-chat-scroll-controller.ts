@@ -5,6 +5,8 @@ import type { Virtualizer } from "@tanstack/react-virtual";
 import type { ChatInitialScrollMode } from "@/src/types/api/lightning/chat";
 import type { ChatBroadcastMessage } from "@/src/types/chat";
 
+const BOTTOM_FOLLOW_THRESHOLD_PX = 96;
+
 export function useChatScrollController({
   scrollRoot,
   messagesLength,
@@ -45,6 +47,7 @@ export function useChatScrollController({
   const topFetchTriggeredRef = useRef(false);
   const centerPreloadRef = useRef(false);
   const handledChatMessageIdRef = useRef<string | null>(null);
+  const shouldAutoFollowRef = useRef(initialScrollMode === "BOTTOM");
 
   const [isBottomOutOfView, setIsBottomOutOfView] = useState(false);
 
@@ -74,6 +77,7 @@ export function useChatScrollController({
 
   const scrollToBottom = useCallback(() => {
     if (!scrollRoot) return;
+    shouldAutoFollowRef.current = true;
     scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
     setIsBottomOutOfView(false);
   }, [scrollRoot]);
@@ -106,14 +110,17 @@ export function useChatScrollController({
     requestAnimationFrame(() => {
       switch (initialScrollMode) {
         case "TOP":
+          shouldAutoFollowRef.current = false;
           scrollRoot.scrollTo({ top: 0 });
           break;
 
         case "BOTTOM":
+          shouldAutoFollowRef.current = true;
           scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
           break;
 
         case "CENTER": {
+          shouldAutoFollowRef.current = false;
           const result = scrollToAnchor(scrollRoot);
           if (result === null) {
             scrollRoot.scrollTo({ top: 0 });
@@ -186,8 +193,12 @@ export function useChatScrollController({
   useEffect(() => {
     if (!initialLoadDoneRef.current) return;
 
+    if (bottomInView) {
+      shouldAutoFollowRef.current = true;
+    }
+
     const frame = requestAnimationFrame(() => {
-      setIsBottomOutOfView(!bottomInView);
+      setIsBottomOutOfView(!shouldAutoFollowRef.current);
     });
 
     return () => cancelAnimationFrame(frame);
@@ -201,15 +212,19 @@ export function useChatScrollController({
     if (handledChatMessageIdRef.current === lastChatMessageId) return;
     handledChatMessageIdRef.current = lastChatMessageId;
 
-    if (!bottomInView) return;
+    if (!shouldAutoFollowRef.current) return;
 
     requestAnimationFrame(() => {
       scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
+      requestAnimationFrame(() => {
+        scrollRoot.scrollTo({ top: scrollRoot.scrollHeight });
+      });
     });
-  }, [bottomInView, lastChatMessageId, scrollRoot]);
+  }, [lastChatMessageId, scrollRoot]);
 
   return {
     isBottomOutOfView,
     scrollToBottom,
+    shouldAutoFollowRef,
   };
 }
