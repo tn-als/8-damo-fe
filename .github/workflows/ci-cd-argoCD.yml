@@ -46,7 +46,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     needs: [ci]
     if: github.event_name == 'push' && needs.ci.result == 'success'
-
+    outputs:
+      image_tag: ${{ steps.resolve_env.outputs.image_tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -65,6 +66,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Resolve environment
+        id: resolve_env
         env:
           ECR_REPO_DEV: ${{env.ECR_REGISTRY}}/${{env.ECR_REPO_DEV}}
           ECR_REPO_PROD: ${{env.ECR_REGISTRY}}/${{env.ECR_REPO_PROD}}
@@ -80,6 +82,7 @@ jobs:
           echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
           echo "IMAGE=${ECR_REPO}:${IMAGE_TAG}" >> "$GITHUB_ENV"
           echo "LATEST_IMAGE=${ECR_REPO}:latest" >> "$GITHUB_ENV"
+          echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -116,7 +119,7 @@ jobs:
 
       - name: Update image tag in values.yaml
         run: |
-          IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
+          IMAGE_TAG=${{ needs.build_push.outputs.image_tag }}
           sed -i "s/^  tag: .*/  tag: ${IMAGE_TAG}/" ${{ env.HELM_VALUES_PATH }}
 
       - name: Commit and push
@@ -127,7 +130,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit, image tag already up to date."
           else                                             
-            git commit -m "ci: update fe image tag to ${{ needs.build_and_push.outputs.image_tag }}"                  
+            git commit -m "ci: update fe image tag to ${{ needs.build_push.outputs.image_tag }}"                  
             git push                                       
           fi                          
 
@@ -166,7 +169,7 @@ jobs:
         run: |
           CI_RESULT="${{ needs.ci.result }}"
           BUILD_RESULT="${{ needs.build_push.result }}"
-          DEPLOY_RESULT="${{ needs.deploy.result }}"
+          DEPLOY_RESULT="${{ needs.update_helm.result }}"
           K6_RESULT="${{ needs.k6_test.result }}"
           REF="${{ github.repository }}@${{ github.ref_name }}"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
